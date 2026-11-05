@@ -163,6 +163,37 @@ public class CalendarViewModelTests
     }
 
     [TestMethod]
+    [DataRow(5, true, DisplayName = "Ready door swings")]
+    [DataRow(10, false, DisplayName = "Locked door stays shut")]
+    public void ShouldSwingOpen_ByState_OnlyForReadyDoors(int number, bool expected)
+    {
+        var (vm, _, _, _, _) = Create(new DateTime(2026, 12, 5));
+
+        Door(vm, number).ShouldSwingOpen.Should().Be(expected);
+    }
+
+    [TestMethod]
+    public void ShouldSwingOpen_AlreadyOpened_IsFalse()
+    {
+        var (vm, _, _, _, _) = Create(new DateTime(2026, 12, 5));
+
+        vm.TapDoor(Door(vm, 5));
+
+        Door(vm, 5).ShouldSwingOpen.Should().BeFalse();
+    }
+
+    [TestMethod]
+    public void ShouldSwingOpen_CalmMotion_IsFalse()
+    {
+        var (vm, family, _, _, _) = Create(new DateTime(2026, 12, 5));
+        family.Settings.CalmMotion = true;
+
+        vm.ViewLoaded();
+
+        Door(vm, 5).ShouldSwingOpen.Should().BeFalse();
+    }
+
+    [TestMethod]
     public void TapDoor_Ready_OpensItAndRevealsItsSurprise()
     {
         var (vm, family, _, _, _) = Create(new DateTime(2026, 12, 5));
