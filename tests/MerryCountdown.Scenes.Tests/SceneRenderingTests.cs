@@ -58,7 +58,7 @@ public class SceneRenderingTests
         using var scene = Scene.Create("village");
         using var before = Render(scene, 300, 300, 2);
 
-        scene.Tap(150, 150, 2);
+        scene.Tap(150, 150, 300, 300, 2);
         using var after = Render(scene, 300, 300, 2.1f);
 
         Difference(before, after).Should().BeGreaterThan(100);
@@ -69,7 +69,7 @@ public class SceneRenderingTests
     {
         using var calm = RenderFrame("globe", 400, 400, 2);
         using var scene = Scene.Create("globe");
-        scene.Tap(200, 200, 1.9f);
+        scene.Tap(200, 200, 400, 400, 1.9f);
         using var shaken = Render(scene, 400, 400, 2);
 
         Difference(calm, shaken).Should().BeGreaterThan(200);
