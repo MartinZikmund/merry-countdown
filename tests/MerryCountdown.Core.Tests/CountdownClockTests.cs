@@ -73,6 +73,29 @@ public class CountdownClockTests
     }
 
     [TestMethod]
+    public void Compute_WithSleepsLeft_NextSleepChangeIsMidnightEvenWithAnEveningArrival()
+    {
+        var state = CountdownClock.Compute(At(2026, 12, 9, 18, 30, 12), BigDay.ChristmasEve, arrivalMinutes: 17 * 60);
+
+        state.Sleeps.Should().Be(15);
+        state.UntilNextSleep.Should().Be(new TimeSpan(5, 29, 48));
+    }
+
+    [TestMethod]
+    public void Compute_OnTheBigDayBeforeArrivalTime_NextSleepChangeIsTheArrival()
+    {
+        var state = CountdownClock.Compute(At(2026, 12, 24, 10), BigDay.ChristmasEve, arrivalMinutes: 17 * 60);
+
+        state.UntilNextSleep.Should().Be(TimeSpan.FromHours(7));
+    }
+
+    [TestMethod]
+    public void Compute_WhileCelebrating_HasNoNextSleepChange()
+    {
+        CountdownClock.Compute(At(2026, 12, 25, 8), BigDay.ChristmasDay, 0).UntilNextSleep.Should().Be(TimeSpan.Zero);
+    }
+
+    [TestMethod]
     public void NextOccurrence_BirthdayAlreadyPassed_IsNextYear()
     {
         CountdownClock.NextOccurrence(At(2026, 11, 5), month: 3, day: 14).Should().Be(new DateTime(2027, 3, 14));

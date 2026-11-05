@@ -67,7 +67,13 @@ internal sealed class FakeNavigation : INavigationService
 
     public void Navigate<TViewModel>() => Visited.Add(typeof(TViewModel));
 
-    public void Navigate<TViewModel>(object? parameter) => Visited.Add(typeof(TViewModel));
+    public object? LastParameter { get; private set; }
+
+    public void Navigate<TViewModel>(object? parameter)
+    {
+        Visited.Add(typeof(TViewModel));
+        LastParameter = parameter;
+    }
 
     public bool GoBack() => false;
 
