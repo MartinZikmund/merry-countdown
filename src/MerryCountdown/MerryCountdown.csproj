@@ -1,0 +1,65 @@
+<Project Sdk="Uno.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>
+            net10.0-android;
+            net10.0-ios;
+            net10.0-windows10.0.26100;
+            net10.0-desktop;
+            net10.0-browserwasm;
+        </TargetFrameworks>
+
+        <OutputType>Exe</OutputType>
+        <UnoSingleProject>true</UnoSingleProject>
+
+        <!-- Application metadata -->
+        <ApplicationPublisher>Martin Zikmund</ApplicationPublisher>
+        <Description>A joyful Christmas countdown, advent calendar and wish list for kids and families.</Description>
+        <UnoFeatures>$(UnoFeatures);SkiaRenderer</UnoFeatures>
+    </PropertyGroup>
+
+    <!-- Channel-specific identity. See docs/versioning.md. -->
+    <PropertyGroup Condition="'$(AppChannel)' == 'Prod'">
+        <ApplicationTitle>Merry Countdown</ApplicationTitle>
+        <ApplicationId>dev.mzikmund.merrycountdown</ApplicationId>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(AppChannel)' == 'Dev'">
+        <ApplicationTitle>Merry Countdown Dev</ApplicationTitle>
+        <ApplicationId>dev.mzikmund.merrycountdown.dev</ApplicationId>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <!-- Application icon & splash screen adjustments-->
+        <!-- Background is shared across channels. The app-icon resource name is derived
+             from the background file (Uno maps UnoIcon.Include = UnoIconBackgroundFile),
+             so the background must stay constant or Android's @mipmap/icon breaks. -->
+        <UnoIconBackgroundFile>Assets/Icons/icon_transparent.svg</UnoIconBackgroundFile>
+        <UnoIconBackgroundFile Condition="'$(IsIOS)' == 'true' or '$(IsAndroid)' == 'true'">Assets/Icons/icon.svg</UnoIconBackgroundFile>
+
+        <!-- Dev channel: override only the foreground (the logo). This keeps the
+             generated icon resource name stable while giving Dev a distinct look. -->
+        <UnoIconForegroundFile Condition="'$(AppChannel)' == 'Dev'">Assets/Icons/icon_foreground_dev.svg</UnoIconForegroundFile>
+
+        <UnoIconForegroundScale>1</UnoIconForegroundScale>
+        <UnoIconForegroundScale Condition="'$(IsAndroid)' == 'true'">0.6</UnoIconForegroundScale>
+        <UnoSplashScreenScale>0.85</UnoSplashScreenScale>
+    </PropertyGroup>
+
+    <ItemGroup>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\MerryCountdown.Core\MerryCountdown.Core.csproj" />
+        <ProjectReference Include="..\CommunityToolkit.WinUI.Controls.SettingsControls\CommunityToolkit.WinUI.Controls.SettingsControls.csproj" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(IsWinAppSdk)' == 'true'">
+        <PackageReference Include="Microsoft.Windows.SDK.BuildTools.WinApp" PrivateAssets="all" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Page Update="Resources\DataTemplates.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
+</Project>

@@ -1,0 +1,23 @@
+<Project Sdk="Uno.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>
+            net10.0;
+            net10.0-android;
+            net10.0-ios;
+            net10.0-windows10.0.26100;
+            net10.0-desktop;
+            net10.0-browserwasm;
+        </TargetFrameworks>
+
+        <UnoSingleProject>true</UnoSingleProject>
+        <OutputType>Library</OutputType>
+        <GenerateLibraryLayout>true</GenerateLibraryLayout>
+        <RootNamespace>CommunityToolkit.WinUI.Controls</RootNamespace>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <!-- Upstream code, kept verbatim so it stays easy to diff and eventually delete. -->
+        <NoWarn>$(NoWarn);CS1591;CS0618;CS8600;CS8601;CS8602;CS8603;CS8604;CS8618;CS8625;CS8765;CS8767;IDE0005</NoWarn>
+        <Nullable>disable</Nullable>
+    </PropertyGroup>
+
+</Project>
