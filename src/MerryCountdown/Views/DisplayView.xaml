@@ -19,130 +19,108 @@
             ShowForeground="{x:Bind ViewModel.Backdrop.ShowForeground, Mode=OneWay}"
             Snow="{x:Bind ViewModel.Snow, Mode=OneWay}" />
 
+        <controls:Garland VerticalAlignment="Top" Visibility="{x:Bind controls:Stickers.WhenBaubles(ViewModel.Sign.Design), Mode=OneWay}" />
+
         <!--  Designed once at 1920x1080 for reading from the sofa, then scaled to whatever screen this is.  -->
         <Viewbox
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             IsHitTestVisible="False"
             Stretch="Uniform">
-            <Grid
-                Width="1920"
-                Height="1080"
-                Padding="72,48">
+            <Grid Width="1920" Height="1080">
                 <Grid.RenderTransform>
                     <TranslateTransform X="{x:Bind ViewModel.DriftX, Mode=OneWay}" Y="{x:Bind ViewModel.DriftY, Mode=OneWay}" />
                 </Grid.RenderTransform>
 
-                <!--  Time and date, top corners  -->
-                <Border
-                    Padding="24,8"
-                    HorizontalAlignment="Left"
+                <!--  Raised a little so the drift never lifts the ropes off the top of the screen.  -->
+                <Viewbox
+                    Width="1000"
+                    MaxHeight="560"
                     VerticalAlignment="Top"
-                    Background="{StaticResource SceneGlassStrongBrush}"
-                    CornerRadius="24">
-                    <TextBlock
-                        AutomationProperties.AutomationId="DisplayDate"
-                        FontSize="40"
-                        Style="{StaticResource SceneCaptionTextStyle}"
-                        Text="{x:Bind ViewModel.Today, Mode=OneWay}" />
-                </Border>
-                <Border
-                    Padding="24,8"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Top"
-                    Background="{StaticResource SceneGlassStrongBrush}"
-                    CornerRadius="24">
-                    <TextBlock
-                        AutomationProperties.AutomationId="DisplayClock"
-                        FontSize="64"
-                        Style="{StaticResource SceneTitleTextStyle}"
-                        Text="{x:Bind ViewModel.Clock, Mode=OneWay}" />
-                </Border>
+                    Stretch="Uniform">
+                    <Viewbox.RenderTransform>
+                        <TranslateTransform Y="-24" />
+                    </Viewbox.RenderTransform>
+                    <controls:CountdownSign CalmMotion="{x:Bind ViewModel.CalmMotion, Mode=OneWay}" Sign="{x:Bind ViewModel.Sign}" />
+                </Viewbox>
 
-                <!--  The big number  -->
-                <Border
-                    Padding="48,0,48,24"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Top"
-                    Background="{x:Bind controls:Stickers.TextBacking(ViewModel.Backdrop.IsActive), Mode=OneWay}"
-                    CornerRadius="32"
-                    Visibility="{x:Bind ViewModel.IsCounting, Mode=OneWay}">
-                    <StackPanel>
-                        <Grid Height="330">
-                            <TextBlock
-                                VerticalAlignment="Center"
-                                AutomationProperties.AutomationId="DisplaySleeps"
-                                FontSize="320"
-                                Style="{StaticResource HeroNumberTextStyle}"
-                                Text="{x:Bind ViewModel.SleepsNumber, Mode=OneWay}" />
-                        </Grid>
-                        <TextBlock
-                            FontSize="72"
-                            Style="{StaticResource SceneTitleTextStyle}"
-                            Text="{x:Bind ViewModel.SleepsCaption, Mode=OneWay}" />
-                        <TextBlock
-                            Margin="0,8,0,0"
-                            FontSize="44"
-                            Style="{StaticResource SceneCaptionTextStyle}"
-                            Text="{x:Bind ViewModel.Countdown, Mode=OneWay}" />
-                    </StackPanel>
-                </Border>
-                <TextBlock
-                    Margin="0,160,0,0"
-                    VerticalAlignment="Top"
-                    FontSize="160"
-                    Style="{StaticResource SceneTitleTextStyle}"
-                    Text="{markup:Localize Key=HeadlineCelebrating}"
-                    Visibility="{x:Bind ViewModel.IsCelebrating, Mode=OneWay}" />
+                <Grid Padding="72,48">
 
-                <!--  Everyone's day, bottom  -->
-                <StackPanel VerticalAlignment="Bottom" Spacing="16">
-                    <ItemsRepeater HorizontalAlignment="Center" ItemsSource="{x:Bind ViewModel.Kids}">
-                        <ItemsRepeater.Layout>
-                            <StackLayout Orientation="Horizontal" Spacing="24" />
-                        </ItemsRepeater.Layout>
-                        <ItemsRepeater.ItemTemplate>
-                            <DataTemplate x:DataType="vm:DisplayKidViewModel">
-                                <Border
-                                    Padding="24,12"
-                                    Background="{StaticResource SceneGlassStrongBrush}"
-                                    BorderBrush="{StaticResource SceneGlassBorderBrush}"
-                                    BorderThickness="1"
-                                    CornerRadius="24">
-                                    <StackPanel Orientation="Horizontal" Spacing="16">
-                                        <Image
-                                            Width="72"
-                                            Height="72"
-                                            Source="{x:Bind controls:Stickers.Image(Sticker)}" />
-                                        <StackPanel VerticalAlignment="Center">
-                                            <TextBlock
-                                                HorizontalAlignment="Left"
-                                                FontSize="40"
-                                                Style="{StaticResource SceneTitleTextStyle}"
-                                                Text="{x:Bind Name, Mode=OneWay}" />
-                                            <TextBlock
-                                                HorizontalAlignment="Left"
-                                                FontSize="28"
-                                                Style="{StaticResource SceneCaptionTextStyle}"
-                                                Text="{x:Bind Status, Mode=OneWay}" />
-                                        </StackPanel>
-                                    </StackPanel>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsRepeater.ItemTemplate>
-                    </ItemsRepeater>
+                    <!--  Time and date, top corners  -->
                     <Border
                         Padding="24,8"
-                        HorizontalAlignment="Center"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
                         Background="{StaticResource SceneGlassStrongBrush}"
                         CornerRadius="24">
                         <TextBlock
-                            AutomationProperties.AutomationId="DisplayFact"
-                            FontSize="36"
+                            AutomationProperties.AutomationId="DisplayDate"
+                            FontSize="40"
                             Style="{StaticResource SceneCaptionTextStyle}"
-                            Text="{x:Bind ViewModel.DailyFact, Mode=OneWay}" />
+                            Text="{x:Bind ViewModel.Today, Mode=OneWay}" />
                     </Border>
-                </StackPanel>
+                    <Border
+                        Padding="24,8"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Background="{StaticResource SceneGlassStrongBrush}"
+                        CornerRadius="24">
+                        <TextBlock
+                            AutomationProperties.AutomationId="DisplayClock"
+                            FontSize="64"
+                            Style="{StaticResource SceneTitleTextStyle}"
+                            Text="{x:Bind ViewModel.Clock, Mode=OneWay}" />
+                    </Border>
+
+                    <!--  Everyone's day, bottom  -->
+                    <StackPanel VerticalAlignment="Bottom" Spacing="16">
+                        <ItemsRepeater HorizontalAlignment="Center" ItemsSource="{x:Bind ViewModel.Kids}">
+                            <ItemsRepeater.Layout>
+                                <StackLayout Orientation="Horizontal" Spacing="24" />
+                            </ItemsRepeater.Layout>
+                            <ItemsRepeater.ItemTemplate>
+                                <DataTemplate x:DataType="vm:DisplayKidViewModel">
+                                    <Border
+                                        Padding="24,12"
+                                        Background="{StaticResource SceneGlassStrongBrush}"
+                                        BorderBrush="{StaticResource SceneGlassBorderBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="24">
+                                        <StackPanel Orientation="Horizontal" Spacing="16">
+                                            <Image
+                                                Width="72"
+                                                Height="72"
+                                                Source="{x:Bind controls:Stickers.Image(Sticker)}" />
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock
+                                                    HorizontalAlignment="Left"
+                                                    FontSize="40"
+                                                    Style="{StaticResource SceneTitleTextStyle}"
+                                                    Text="{x:Bind Name, Mode=OneWay}" />
+                                                <TextBlock
+                                                    HorizontalAlignment="Left"
+                                                    FontSize="28"
+                                                    Style="{StaticResource SceneCaptionTextStyle}"
+                                                    Text="{x:Bind Status, Mode=OneWay}" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsRepeater.ItemTemplate>
+                        </ItemsRepeater>
+                        <Border
+                            Padding="24,8"
+                            HorizontalAlignment="Center"
+                            Background="{StaticResource SceneGlassStrongBrush}"
+                            CornerRadius="24">
+                            <TextBlock
+                                AutomationProperties.AutomationId="DisplayFact"
+                                FontSize="36"
+                                Style="{StaticResource SceneCaptionTextStyle}"
+                                Text="{x:Bind ViewModel.DailyFact, Mode=OneWay}" />
+                        </Border>
+                    </StackPanel>
+                </Grid>
             </Grid>
         </Viewbox>
 

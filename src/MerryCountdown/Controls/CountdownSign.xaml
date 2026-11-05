@@ -1,0 +1,373 @@
+﻿<UserControl
+    x:Class="MerryCountdown.Controls.CountdownSign"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:MerryCountdown.Controls"
+    HorizontalAlignment="Center"
+    VerticalAlignment="Top"
+    Tapped="OnTapped">
+
+    <Grid
+        x:Name="Root"
+        AutomationProperties.AutomationId="CountdownSign"
+        AutomationProperties.Name="{x:Bind Sign.AccessibleName, Mode=OneWay}"
+        RenderTransformOrigin="0.5,0">
+        <Grid.RenderTransform>
+            <RotateTransform x:Name="SwingTransform" />
+        </Grid.RenderTransform>
+
+        <!--  Plank, gingerbread, parcel tag and station share one layout. Only the surface changes.  -->
+        <StackPanel x:Name="BoardSign">
+            <Grid x:Name="Hanger" Height="30">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="16*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="68*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="16*" />
+                </Grid.ColumnDefinitions>
+                <Rectangle x:Name="HangLeft" Grid.Column="1" />
+                <Rectangle x:Name="HangRight" Grid.Column="3" />
+                <Rectangle
+                    x:Name="HangCentre"
+                    Grid.ColumnSpan="5"
+                    HorizontalAlignment="Center" />
+            </Grid>
+
+            <Grid x:Name="Board" SizeChanged="OnBoardSizeChanged">
+                <Border x:Name="PlankFace" CornerRadius="10,12,8,14">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Offset="0" Color="#D9A05E" />
+                            <GradientStop Offset="1" Color="#C58646" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Rectangle
+                            Height="2"
+                            VerticalAlignment="Bottom"
+                            Fill="#70451F" />
+                        <Rectangle
+                            Grid.Row="1"
+                            Height="2"
+                            VerticalAlignment="Bottom"
+                            Fill="#70451F" />
+                    </Grid>
+                </Border>
+
+
+
+                <Canvas IsHitTestVisible="False">
+                    <Path
+                        x:Name="BiscuitFill"
+                        Fill="#A9622B"
+                        Stroke="#7F4519"
+                        StrokeThickness="2" />
+                    <Path
+                        x:Name="IcingLine"
+                        Stroke="#FFF9EE"
+                        StrokeLineJoin="Round"
+                        StrokeThickness="3" />
+                    <Path x:Name="TagPaper" Fill="#D6B37E" />
+                </Canvas>
+
+                <Border
+                    x:Name="StationFace"
+                    Background="#16265A"
+                    CornerRadius="14">
+                    <Grid>
+                        <Border
+                            Margin="4"
+                            BorderBrush="#FFC95C"
+                            BorderThickness="2"
+                            CornerRadius="10" />
+                        <Ellipse
+                            Width="6"
+                            Height="6"
+                            Margin="12"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Fill="#FFD57E" />
+                        <Ellipse
+                            Width="6"
+                            Height="6"
+                            Margin="12"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Top"
+                            Fill="#FFD57E" />
+                        <Ellipse
+                            Width="6"
+                            Height="6"
+                            Margin="12"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Bottom"
+                            Fill="#FFD57E" />
+                        <Ellipse
+                            Width="6"
+                            Height="6"
+                            Margin="12"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Bottom"
+                            Fill="#FFD57E" />
+                    </Grid>
+                </Border>
+
+                <Grid x:Name="BoardBody">
+                    <StackPanel
+                        x:Name="PlatesBody"
+                        HorizontalAlignment="Center"
+                        Orientation="Horizontal">
+                        <StackPanel>
+                            <controls:DigitText
+                                x:Name="DaysDigits"
+                                HorizontalAlignment="Center"
+                                Text="{x:Bind Sign.Days, Mode=OneWay}" />
+                            <TextBlock x:Name="DaysLabel" Text="{x:Bind Sign.DaysLabel, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel>
+                            <controls:DigitText
+                                x:Name="HoursDigits"
+                                HorizontalAlignment="Center"
+                                Text="{x:Bind Sign.Hours, Mode=OneWay}" />
+                            <TextBlock x:Name="HoursLabel" Text="{x:Bind Sign.HoursLabel, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel>
+                            <controls:DigitText
+                                x:Name="MinutesDigits"
+                                HorizontalAlignment="Center"
+                                Text="{x:Bind Sign.Minutes, Mode=OneWay}" />
+                            <TextBlock x:Name="MinutesLabel" Text="{x:Bind Sign.MinutesLabel, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel>
+                            <controls:DigitText
+                                x:Name="SecondsDigits"
+                                HorizontalAlignment="Center"
+                                Text="{x:Bind Sign.Seconds, Mode=OneWay}" />
+                            <TextBlock x:Name="SecondsLabel" Text="{x:Bind Sign.SecondsLabel, Mode=OneWay}" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel x:Name="SleepsBody" HorizontalAlignment="Center">
+                        <StackPanel
+                            HorizontalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="12">
+                            <controls:DigitText x:Name="SleepsDigits" Text="{x:Bind Sign.SleepsNumber, Mode=OneWay}" />
+                            <TextBlock
+                                x:Name="SleepsWord"
+                                VerticalAlignment="Center"
+                                Text="{x:Bind Sign.SleepsCaption, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel
+                            HorizontalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="4">
+                            <controls:DigitText x:Name="ClockHoursDigits" Text="{x:Bind Sign.ClockHours, Mode=OneWay}" />
+                            <TextBlock
+                                x:Name="ColonOne"
+                                VerticalAlignment="Center"
+                                Text=":" />
+                            <controls:DigitText x:Name="ClockMinutesDigits" Text="{x:Bind Sign.ClockMinutes, Mode=OneWay}" />
+                            <TextBlock
+                                x:Name="ColonTwo"
+                                VerticalAlignment="Center"
+                                Text=":" />
+                            <controls:DigitText x:Name="ClockSecondsDigits" Text="{x:Bind Sign.ClockSeconds, Mode=OneWay}" />
+                        </StackPanel>
+                        <TextBlock
+                            x:Name="NextChange"
+                            Margin="0,4,0,0"
+                            HorizontalAlignment="Center"
+                            Text="{x:Bind Sign.NextChangeCaption, Mode=OneWay}" />
+                    </StackPanel>
+
+                    <TextBlock
+                        x:Name="BoardMerry"
+                        Margin="24,12"
+                        HorizontalAlignment="Center"
+                        Text="{x:Bind Sign.CelebrationText, Mode=OneWay}" />
+                </Grid>
+
+                <Canvas IsHitTestVisible="False">
+                    <Path
+                        x:Name="SnowCap"
+                        Height="40"
+                        Data="M0 24C2 8 20 7 40 8 70 1 110 4 130 8c30-6 70-5 96 0 28-5 66-6 88 0 22-5 66-5 82 8 4 6 4 12 0 15-5 3-9-2-11-6-6-2-20-2-30 0-3 7-3 14-8 14s-6-8-8-14c-20-1-52-1-74 1-3 3-8 5-14 3-8-3-24-3-40-1-5 7-6 12-11 12-6 0-6-8-9-12-20-1-46 0-62 1-5 3-10 3-14 0-13-1-22 0-25 0C5 31 0 30 0 24Z"
+                        Fill="#F5F8FF"
+                        RenderTransformOrigin="0.5,0"
+                        Stretch="Fill">
+                        <Path.RenderTransform>
+                            <CompositeTransform ScaleX="1.03" TranslateY="-15" />
+                        </Path.RenderTransform>
+                    </Path>
+                </Canvas>
+
+                <Ellipse
+                    x:Name="Eyelet"
+                    Width="18"
+                    Height="18"
+                    Margin="0,9,0,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    Fill="#2D3560"
+                    Stroke="#FFC95C"
+                    StrokeThickness="4" />
+            </Grid>
+        </StackPanel>
+
+        <!--  The garland: each number hangs on its own bauble, so no board at all.  -->
+        <Grid x:Name="BaubleSign">
+            <StackPanel x:Name="BaublePlates" Orientation="Horizontal">
+                <controls:Bauble
+                    x:Name="DaysBauble"
+                    Fill="#B51F3A"
+                    StringLength="32">
+                    <StackPanel VerticalAlignment="Center">
+                        <controls:DigitText
+                            x:Name="DaysBall"
+                            HorizontalAlignment="Center"
+                            Text="{x:Bind Sign.Days, Mode=OneWay}" />
+                        <TextBlock
+                            x:Name="DaysBallLabel"
+                            HorizontalAlignment="Center"
+                            Foreground="White"
+                            Text="{x:Bind Sign.DaysLabel, Mode=OneWay}" />
+                    </StackPanel>
+                </controls:Bauble>
+                <controls:Bauble
+                    x:Name="HoursBauble"
+                    Fill="#FFC95C"
+                    StringLength="70">
+                    <StackPanel VerticalAlignment="Center">
+                        <controls:DigitText
+                            x:Name="HoursBall"
+                            HorizontalAlignment="Center"
+                            Text="{x:Bind Sign.Hours, Mode=OneWay}" />
+                        <TextBlock
+                            x:Name="HoursBallLabel"
+                            HorizontalAlignment="Center"
+                            Foreground="#2A2F55"
+                            Text="{x:Bind Sign.HoursLabel, Mode=OneWay}" />
+                    </StackPanel>
+                </controls:Bauble>
+                <controls:Bauble
+                    x:Name="MinutesBauble"
+                    Fill="#176A4E"
+                    StringLength="24">
+                    <StackPanel VerticalAlignment="Center">
+                        <controls:DigitText
+                            x:Name="MinutesBall"
+                            HorizontalAlignment="Center"
+                            Text="{x:Bind Sign.Minutes, Mode=OneWay}" />
+                        <TextBlock
+                            x:Name="MinutesBallLabel"
+                            HorizontalAlignment="Center"
+                            Foreground="White"
+                            Text="{x:Bind Sign.MinutesLabel, Mode=OneWay}" />
+                    </StackPanel>
+                </controls:Bauble>
+                <controls:Bauble
+                    x:Name="SecondsBauble"
+                    Fill="#1E4FA3"
+                    StringLength="56">
+                    <StackPanel VerticalAlignment="Center">
+                        <controls:DigitText
+                            x:Name="SecondsBall"
+                            HorizontalAlignment="Center"
+                            Text="{x:Bind Sign.Seconds, Mode=OneWay}" />
+                        <TextBlock
+                            x:Name="SecondsBallLabel"
+                            HorizontalAlignment="Center"
+                            Foreground="White"
+                            Text="{x:Bind Sign.SecondsLabel, Mode=OneWay}" />
+                    </StackPanel>
+                </controls:Bauble>
+            </StackPanel>
+
+            <StackPanel x:Name="BaubleSleeps" Orientation="Horizontal">
+                <controls:Bauble
+                    x:Name="SleepsBauble"
+                    Fill="#B51F3A"
+                    StringLength="28">
+                    <StackPanel VerticalAlignment="Center">
+                        <controls:DigitText
+                            x:Name="SleepsBall"
+                            HorizontalAlignment="Center"
+                            Text="{x:Bind Sign.SleepsNumber, Mode=OneWay}" />
+                        <TextBlock
+                            x:Name="SleepsBallWord"
+                            HorizontalAlignment="Center"
+                            Foreground="White"
+                            Text="{x:Bind Sign.SleepsCaption, Mode=OneWay}" />
+                    </StackPanel>
+                </controls:Bauble>
+                <StackPanel>
+                    <StackPanel x:Name="ClockBalls" Orientation="Horizontal">
+                        <controls:Bauble
+                            x:Name="ClockHoursBauble"
+                            Fill="#FFC95C"
+                            StringLength="30">
+                            <controls:DigitText
+                                x:Name="ClockHoursBall"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Text="{x:Bind Sign.ClockHours, Mode=OneWay}" />
+                        </controls:Bauble>
+                        <controls:Bauble
+                            x:Name="ClockMinutesBauble"
+                            Fill="#176A4E"
+                            StringLength="44">
+                            <controls:DigitText
+                                x:Name="ClockMinutesBall"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Text="{x:Bind Sign.ClockMinutes, Mode=OneWay}" />
+                        </controls:Bauble>
+                        <controls:Bauble
+                            x:Name="ClockSecondsBauble"
+                            Fill="#1E4FA3"
+                            StringLength="24">
+                            <controls:DigitText
+                                x:Name="ClockSecondsBall"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Text="{x:Bind Sign.ClockSeconds, Mode=OneWay}" />
+                        </controls:Bauble>
+                    </StackPanel>
+                    <Border
+                        Margin="0,12,0,0"
+                        Padding="12,2"
+                        HorizontalAlignment="Center"
+                        Background="{StaticResource SceneGlassStrongBrush}"
+                        CornerRadius="14">
+                        <TextBlock
+                            x:Name="BallNextChange"
+                            Foreground="White"
+                            Text="{x:Bind Sign.NextChangeCaption, Mode=OneWay}" />
+                    </Border>
+                </StackPanel>
+            </StackPanel>
+
+            <controls:Bauble
+                x:Name="MerryBauble"
+                HorizontalAlignment="Center"
+                Fill="#FFC95C"
+                StringLength="30">
+                <TextBlock
+                    x:Name="MerryBallText"
+                    Margin="12,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Foreground="#2A2F55"
+                    Text="{x:Bind Sign.CelebrationText, Mode=OneWay}"
+                    TextAlignment="Center"
+                    TextWrapping="Wrap" />
+            </controls:Bauble>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -18,126 +18,94 @@
             ShowForeground="{x:Bind ViewModel.Backdrop.ShowForeground, Mode=OneWay}"
             Snow="{x:Bind ViewModel.Snow, Mode=OneWay}" />
 
+        <controls:Garland VerticalAlignment="Top" Visibility="{x:Bind controls:Stickers.WhenBaubles(ViewModel.Sign.Design), Mode=OneWay}" />
+
         <!--  Clicks pass through to the scene everywhere except on the actual controls.  -->
-        <Grid x:Name="Overlay" Padding="16,16,16,24">
-            <Border
-                Padding="24,8,24,16"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Top"
-                Background="{x:Bind controls:Stickers.TextBacking(ViewModel.Backdrop.IsActive), Mode=OneWay}"
-                CornerRadius="24">
-                <StackPanel x:Name="Hero" Spacing="4">
+        <Grid x:Name="Overlay">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top">
+                <controls:CountdownSign
+                    x:Name="SignControl"
+                    CalmMotion="{x:Bind ViewModel.CalmMotion, Mode=OneWay}"
+                    Sign="{x:Bind ViewModel.Sign}" />
+
+                <!--  Birthdays and other family countdowns (full version)  -->
+                <ItemsRepeater
+                    Margin="0,12,0,0"
+                    HorizontalAlignment="Center"
+                    ItemsSource="{x:Bind ViewModel.Events}"
+                    Visibility="{x:Bind ViewModel.HasEvents, Mode=OneWay}">
+                    <ItemsRepeater.Layout>
+                        <StackLayout Orientation="Vertical" Spacing="4" />
+                    </ItemsRepeater.Layout>
+                    <ItemsRepeater.ItemTemplate>
+                        <DataTemplate x:DataType="vm:UpcomingEventViewModel">
+                            <Border Padding="12,4" Style="{StaticResource ClockCardStyle}">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <Image
+                                        Width="24"
+                                        Height="24"
+                                        Source="{x:Bind controls:Stickers.Image(Sticker)}" />
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        Foreground="{StaticResource SceneTextBrush}"
+                                        Text="{x:Bind Name}" />
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        Foreground="{StaticResource GoldBrush}"
+                                        Text="{x:Bind When}" />
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsRepeater.ItemTemplate>
+                </ItemsRepeater>
+            </StackPanel>
+
+            <!--  Today's door, small and quiet on the ground. Before December the wish letter is the thing to do.  -->
+            <StackPanel
+                x:Name="DoorSpot"
+                VerticalAlignment="Bottom"
+                Spacing="8">
+                <controls:HomeDoor
+                    x:Name="Door"
+                    HorizontalAlignment="Center"
+                    Caption="{x:Bind ViewModel.DoorCaption, Mode=OneWay}"
+                    Command="{x:Bind ViewModel.OpenTodaysDoorCommand}"
+                    DoorWidth="104"
+                    Number="{x:Bind ViewModel.DoorNumber, Mode=OneWay}"
+                    Stage="{x:Bind ViewModel.DoorStage, Mode=OneWay}" />
+                <Border
+                    Padding="12,2"
+                    HorizontalAlignment="Center"
+                    Background="{StaticResource SceneGlassStrongBrush}"
+                    CornerRadius="14"
+                    Visibility="{x:Bind ViewModel.HasDoorCaption, Mode=OneWay}">
                     <TextBlock
-                        AutomationProperties.AutomationId="Greeting"
+                        AutomationProperties.AutomationId="DoorCaption"
+                        FontSize="16"
+                        Foreground="{StaticResource SceneTextBrush}"
                         Style="{StaticResource SceneCaptionTextStyle}"
-                        Text="{x:Bind ViewModel.Greeting, Mode=OneWay}" />
-
-                    <!--  Counting down  -->
-                    <StackPanel Spacing="0" Visibility="{x:Bind ViewModel.IsCounting, Mode=OneWay}">
-                        <!--  Baloo has very tall line metrics, so the number gets a snug box to centre in.  -->
-                        <Grid x:Name="HeroNumberBox" Height="172">
-                            <TextBlock
-                                x:Name="HeroNumber"
-                                VerticalAlignment="Center"
-                                AutomationProperties.AutomationId="SleepsNumber"
-                                Style="{StaticResource HeroNumberTextStyle}"
-                                Text="{x:Bind ViewModel.SleepsNumber, Mode=OneWay}" />
-                        </Grid>
-                        <TextBlock
-                            x:Name="HeroCaption"
-                            Style="{StaticResource SceneTitleTextStyle}"
-                            Text="{x:Bind ViewModel.SleepsCaption, Mode=OneWay}" />
-                        <TextBlock
-                            Margin="0,4,0,12"
-                            AutomationProperties.AutomationId="Headline"
-                            Style="{StaticResource SceneCaptionTextStyle}"
-                            Text="{x:Bind ViewModel.Headline, Mode=OneWay}" />
-
-                        <Grid HorizontalAlignment="Center" ColumnSpacing="8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="72" />
-                                <ColumnDefinition Width="72" />
-                                <ColumnDefinition Width="72" />
-                                <ColumnDefinition Width="72" />
-                            </Grid.ColumnDefinitions>
-                            <Border Style="{StaticResource ClockCardStyle}">
-                                <StackPanel>
-                                    <TextBlock Style="{StaticResource ClockNumberTextStyle}" Text="{x:Bind ViewModel.Days, Mode=OneWay}" />
-                                    <TextBlock Style="{StaticResource ClockLabelTextStyle}" Text="{markup:Localize Key=ClockDays}" />
-                                </StackPanel>
-                            </Border>
-                            <Border Grid.Column="1" Style="{StaticResource ClockCardStyle}">
-                                <StackPanel>
-                                    <TextBlock Style="{StaticResource ClockNumberTextStyle}" Text="{x:Bind ViewModel.Hours, Mode=OneWay}" />
-                                    <TextBlock Style="{StaticResource ClockLabelTextStyle}" Text="{markup:Localize Key=ClockHours}" />
-                                </StackPanel>
-                            </Border>
-                            <Border Grid.Column="2" Style="{StaticResource ClockCardStyle}">
-                                <StackPanel>
-                                    <TextBlock Style="{StaticResource ClockNumberTextStyle}" Text="{x:Bind ViewModel.Minutes, Mode=OneWay}" />
-                                    <TextBlock Style="{StaticResource ClockLabelTextStyle}" Text="{markup:Localize Key=ClockMinutes}" />
-                                </StackPanel>
-                            </Border>
-                            <Border Grid.Column="3" Style="{StaticResource ClockCardStyle}">
-                                <StackPanel>
-                                    <TextBlock Style="{StaticResource ClockNumberTextStyle}" Text="{x:Bind ViewModel.Seconds, Mode=OneWay}" />
-                                    <TextBlock Style="{StaticResource ClockLabelTextStyle}" Text="{markup:Localize Key=ClockSeconds}" />
-                                </StackPanel>
-                            </Border>
-                        </Grid>
+                        Text="{x:Bind ViewModel.DoorCaption, Mode=OneWay}" />
+                </Border>
+                <Button
+                    AutomationProperties.AutomationId="WriteWishLetterButton"
+                    Background="{StaticResource GoldBrush}"
+                    Command="{x:Bind ViewModel.WriteWishLetterCommand}"
+                    Foreground="{StaticResource GoldTextBrush}"
+                    Style="{StaticResource BigActionButtonStyle}"
+                    Visibility="{x:Bind ViewModel.CanWriteWishLetter, Mode=OneWay}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Image
+                            Width="32"
+                            Height="32"
+                            Source="ms-appx:///Assets/Stickers/letter.png" />
+                        <TextBlock VerticalAlignment="Center" Text="{markup:Localize Key=WriteWishLetter}" />
                     </StackPanel>
-
-                    <!--  The big day itself  -->
-                    <TextBlock
-                        Margin="0,24,0,0"
-                        FontSize="56"
-                        Style="{StaticResource SceneTitleTextStyle}"
-                        Text="{x:Bind ViewModel.Headline, Mode=OneWay}"
-                        Visibility="{x:Bind ViewModel.IsCelebrating, Mode=OneWay}" />
-
-                    <Button
-                        Margin="0,12,0,0"
-                        AutomationProperties.AutomationId="OpenTodaysDoorButton"
-                        Command="{x:Bind ViewModel.OpenTodaysDoorCommand}"
-                        Content="{x:Bind ViewModel.DoorButtonText, Mode=OneWay}"
-                        Style="{StaticResource BigActionButtonStyle}"
-                        Visibility="{x:Bind ViewModel.HasDoorWaiting, Mode=OneWay}" />
-
-                    <!--  Birthdays and other family countdowns (full version)  -->
-                    <ItemsRepeater
-                        Margin="0,12,0,0"
-                        HorizontalAlignment="Center"
-                        ItemsSource="{x:Bind ViewModel.Events}"
-                        Visibility="{x:Bind ViewModel.HasEvents, Mode=OneWay}">
-                        <ItemsRepeater.Layout>
-                            <StackLayout Orientation="Vertical" Spacing="4" />
-                        </ItemsRepeater.Layout>
-                        <ItemsRepeater.ItemTemplate>
-                            <DataTemplate x:DataType="vm:UpcomingEventViewModel">
-                                <Border Padding="12,4" Style="{StaticResource ClockCardStyle}">
-                                    <StackPanel Orientation="Horizontal" Spacing="8">
-                                        <Image
-                                            Width="24"
-                                            Height="24"
-                                            Source="{x:Bind controls:Stickers.Image(Sticker)}" />
-                                        <TextBlock
-                                            VerticalAlignment="Center"
-                                            Foreground="{StaticResource SceneTextBrush}"
-                                            Text="{x:Bind Name}" />
-                                        <TextBlock
-                                            VerticalAlignment="Center"
-                                            Foreground="{StaticResource GoldBrush}"
-                                            Text="{x:Bind When}" />
-                                    </StackPanel>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsRepeater.ItemTemplate>
-                    </ItemsRepeater>
-                </StackPanel>
-            </Border>
+                </Button>
+            </StackPanel>
 
             <!--  Scene controls  -->
             <StackPanel
+                Margin="16,16,16,24"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
                 Orientation="Horizontal"
@@ -150,36 +118,132 @@
                     <FontIcon FontSize="24" Glyph="&#xE790;" />
                     <Button.Flyout>
                         <Flyout x:Name="SceneFlyout" Placement="TopEdgeAlignedRight">
-                            <ItemsRepeater x:Name="SceneList" ItemsSource="{x:Bind ViewModel.Scenes}">
-                                <ItemsRepeater.Layout>
-                                    <StackLayout Orientation="Vertical" Spacing="4" />
-                                </ItemsRepeater.Layout>
-                                <ItemsRepeater.ItemTemplate>
-                                    <DataTemplate x:DataType="vm:SceneOptionViewModel">
-                                        <Button
-                                            MinWidth="240"
-                                            MinHeight="48"
-                                            HorizontalContentAlignment="Stretch"
-                                            AutomationProperties.AutomationId="{x:Bind Id}"
-                                            Click="SceneOption_Click"
-                                            Tag="{x:Bind}">
-                                            <Grid ColumnSpacing="12">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="Auto" />
-                                                </Grid.ColumnDefinitions>
-                                                <TextBlock VerticalAlignment="Center" Text="{x:Bind Name}" />
-                                                <Image
-                                                    Grid.Column="1"
-                                                    Width="20"
-                                                    Height="20"
-                                                    Source="ms-appx:///Assets/Stickers/lock.png"
-                                                    Visibility="{x:Bind IsLocked}" />
-                                            </Grid>
-                                        </Button>
-                                    </DataTemplate>
-                                </ItemsRepeater.ItemTemplate>
-                            </ItemsRepeater>
+                            <Flyout.FlyoutPresenterStyle>
+                                <Style TargetType="FlyoutPresenter">
+                                    <Setter Property="MaxWidth" Value="800" />
+                                </Style>
+                            </Flyout.FlyoutPresenterStyle>
+                            <StackPanel
+                                x:Name="LookBody"
+                                Orientation="Horizontal"
+                                Spacing="24">
+                                <StackPanel x:Name="LookOptions" Spacing="8">
+                                    <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="{markup:Localize Key=ChooseStyleHeader}" />
+                                    <ItemsRepeater ItemsSource="{x:Bind ViewModel.StyleOptions}">
+                                        <ItemsRepeater.Layout>
+                                            <UniformGridLayout
+                                                MaximumRowsOrColumns="3"
+                                                MinColumnSpacing="8"
+                                                MinItemHeight="112"
+                                                MinItemWidth="148"
+                                                MinRowSpacing="8"
+                                                Orientation="Horizontal" />
+                                        </ItemsRepeater.Layout>
+                                        <ItemsRepeater.ItemTemplate>
+                                            <DataTemplate x:DataType="vm:StyleOptionViewModel">
+                                                <Button
+                                                    Width="148"
+                                                    Height="112"
+                                                    Padding="4"
+                                                    AutomationProperties.AutomationId="{x:Bind Style}"
+                                                    AutomationProperties.Name="{x:Bind Name}"
+                                                    BorderBrush="{x:Bind controls:Stickers.SelectionBrush(IsSelected), Mode=OneWay}"
+                                                    BorderThickness="2"
+                                                    Click="StyleOption_Click"
+                                                    Tag="{x:Bind}">
+                                                    <StackPanel Spacing="4">
+                                                        <Viewbox Width="128" Height="56">
+                                                            <controls:CountdownSign IsPreview="True" Sign="{x:Bind Preview}" />
+                                                        </Viewbox>
+                                                        <TextBlock
+                                                            HorizontalAlignment="Center"
+                                                            Style="{StaticResource CaptionTextBlockStyle}"
+                                                            Text="{x:Bind Name}"
+                                                            TextAlignment="Center"
+                                                            TextWrapping="Wrap" />
+                                                    </StackPanel>
+                                                </Button>
+                                            </DataTemplate>
+                                        </ItemsRepeater.ItemTemplate>
+                                    </ItemsRepeater>
+
+                                    <TextBlock
+                                        Margin="0,8,0,0"
+                                        Style="{StaticResource BodyStrongTextBlockStyle}"
+                                        Text="{markup:Localize Key=ChooseSignHeader}" />
+                                    <ItemsRepeater ItemsSource="{x:Bind ViewModel.SignOptions}">
+                                        <ItemsRepeater.Layout>
+                                            <UniformGridLayout
+                                                MaximumRowsOrColumns="3"
+                                                MinColumnSpacing="8"
+                                                MinItemHeight="104"
+                                                MinItemWidth="148"
+                                                MinRowSpacing="8"
+                                                Orientation="Horizontal" />
+                                        </ItemsRepeater.Layout>
+                                        <ItemsRepeater.ItemTemplate>
+                                            <DataTemplate x:DataType="vm:SignOptionViewModel">
+                                                <Button
+                                                    Width="148"
+                                                    Height="104"
+                                                    Padding="4"
+                                                    AutomationProperties.AutomationId="{x:Bind Design}"
+                                                    AutomationProperties.Name="{x:Bind Name}"
+                                                    BorderBrush="{x:Bind controls:Stickers.SelectionBrush(IsSelected), Mode=OneWay}"
+                                                    BorderThickness="2"
+                                                    Click="SignOption_Click"
+                                                    Tag="{x:Bind}">
+                                                    <StackPanel Spacing="4">
+                                                        <Viewbox Width="128" Height="56">
+                                                            <controls:CountdownSign IsPreview="True" Sign="{x:Bind Preview}" />
+                                                        </Viewbox>
+                                                        <TextBlock
+                                                            HorizontalAlignment="Center"
+                                                            Style="{StaticResource CaptionTextBlockStyle}"
+                                                            Text="{x:Bind Name}" />
+                                                    </StackPanel>
+                                                </Button>
+                                            </DataTemplate>
+                                        </ItemsRepeater.ItemTemplate>
+                                    </ItemsRepeater>
+                                </StackPanel>
+
+                                <StackPanel Spacing="8">
+                                    <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="{markup:Localize Key=ChooseSceneHeader}" />
+                                    <ItemsRepeater x:Name="SceneList" ItemsSource="{x:Bind ViewModel.Scenes}">
+                                        <ItemsRepeater.Layout>
+                                            <StackLayout Orientation="Vertical" Spacing="4" />
+                                        </ItemsRepeater.Layout>
+                                        <ItemsRepeater.ItemTemplate>
+                                            <DataTemplate x:DataType="vm:SceneOptionViewModel">
+                                                <Button
+                                                    MinWidth="240"
+                                                    MinHeight="48"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    AutomationProperties.AutomationId="{x:Bind Id}"
+                                                    BorderBrush="{x:Bind controls:Stickers.SelectionBrush(IsSelected)}"
+                                                    BorderThickness="2"
+                                                    Click="SceneOption_Click"
+                                                    Tag="{x:Bind}">
+                                                    <Grid ColumnSpacing="12">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="Auto" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock VerticalAlignment="Center" Text="{x:Bind Name}" />
+                                                        <Image
+                                                            Grid.Column="1"
+                                                            Width="20"
+                                                            Height="20"
+                                                            Source="ms-appx:///Assets/Stickers/lock.png"
+                                                            Visibility="{x:Bind IsLocked}" />
+                                                    </Grid>
+                                                </Button>
+                                            </DataTemplate>
+                                        </ItemsRepeater.ItemTemplate>
+                                    </ItemsRepeater>
+                                </StackPanel>
+                            </StackPanel>
                         </Flyout>
                     </Button.Flyout>
                 </Button>
@@ -194,24 +258,5 @@
             </StackPanel>
         </Grid>
 
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup>
-                <VisualState>
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowHeight="0" MinWindowWidth="0" />
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="HeroNumber.FontSize" Value="112" />
-                        <Setter Target="HeroNumberBox.Height" Value="116" />
-                        <Setter Target="HeroCaption.FontSize" Value="24" />
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState>
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowHeight="720" MinWindowWidth="640" />
-                    </VisualState.StateTriggers>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
     </Grid>
 </local:CountdownViewBase>
