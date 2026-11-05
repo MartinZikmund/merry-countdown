@@ -295,7 +295,7 @@ public class PhotoFeatureViewModelTests
         FakeFullVersion full = new(isFull);
         FakeNavigation nav = new();
         FakeGate gate = new();
-        return (new CountdownViewModel(family, full, new FakeClock(new DateTime(2026, 11, 5)), ticker, new FakeStringLocalizer(), nav, new FakeDisplayMode(), new PhotoBackdrop(family, full, library, ticker), gate), family, nav, gate);
+        return (new CountdownViewModel(family, full, new FakeClock(new DateTime(2026, 11, 5)), ticker, new FakeStringLocalizer(), nav, new FakeDisplayMode(), new PhotoBackdrop(family, full, library, ticker), gate, new FakeSounds()), family, nav, gate);
     }
 
     private static SceneOptionViewModel PhotosOption(CountdownViewModel vm) => vm.Scenes.Single(s => s.Id == CountdownViewModel.PhotosOptionId);
@@ -354,7 +354,7 @@ public class PhotoFeatureViewModelTests
         family.Settings.UsesPhotos = true;
         FakeFullVersion full = new(true);
         PhotoBackdrop backdrop = new(family, full, library, ticker);
-        DisplayViewModel vm = new(family, full, new FakeClock(new DateTime(2026, 11, 5)), ticker, new FakeStringLocalizer(), new FakeDisplayMode(), backdrop);
+        DisplayViewModel vm = new(family, full, new FakeClock(new DateTime(2026, 11, 5)), ticker, new FakeStringLocalizer(), new FakeDisplayMode(), backdrop, new FakeSounds());
         var scene = vm.SceneId;
 
         vm.NextScene();
@@ -373,7 +373,7 @@ public class PhotoFeatureViewModelTests
         family.Settings.PhotoIds.Add("a");
         family.Settings.UsesPhotos = true;
         FakeFullVersion full = new(true);
-        DisplayViewModel vm = new(family, full, new FakeClock(new DateTime(2026, 11, 5)), ticker, new FakeStringLocalizer(), new FakeDisplayMode(), new PhotoBackdrop(family, full, library, ticker));
+        DisplayViewModel vm = new(family, full, new FakeClock(new DateTime(2026, 11, 5)), ticker, new FakeStringLocalizer(), new FakeDisplayMode(), new PhotoBackdrop(family, full, library, ticker), new FakeSounds());
         vm.Start();
         var scene = vm.SceneId;
 

@@ -18,6 +18,13 @@ internal sealed class FakeTicker : ITicker
     public void Fire() => Second?.Invoke(this, EventArgs.Empty);
 }
 
+internal sealed class FakeSounds : ISoundService, ISoundOutput
+{
+    public List<SoundEffect> Played { get; } = [];
+
+    public void Play(SoundEffect effect) => Played.Add(effect);
+}
+
 internal sealed class FakeFamilyStore : IFamilyStore
 {
     public FamilyData Data { get; set; } = new();

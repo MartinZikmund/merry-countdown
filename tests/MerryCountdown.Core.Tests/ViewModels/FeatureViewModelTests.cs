@@ -18,7 +18,7 @@ public class CountdownViewModelTests
         FakeNavigation nav = new();
         FakeDisplayMode display = new();
         FakeFullVersion full = new(isFull);
-        return (new CountdownViewModel(family, full, clock, ticker, new FakeStringLocalizer(), nav, display, new PhotoBackdrop(family, full, new FakePhotoLibrary(), ticker), new FakeGate()), family, clock, ticker, nav, display, full);
+        return (new CountdownViewModel(family, full, clock, ticker, new FakeStringLocalizer(), nav, display, new PhotoBackdrop(family, full, new FakePhotoLibrary(), ticker), new FakeGate(), new FakeSounds()), family, clock, ticker, nav, display, full);
     }
 
     [TestMethod]
@@ -114,7 +114,7 @@ public class CalendarViewModelTests
         FakeGate gate = new();
         FakeLauncher launcher = new();
         FakeStringLocalizer localizer = new();
-        return (new CalendarViewModel(family, clock, new FakeTicker(), localizer, gate, launcher, new KidPickerViewModel(family, localizer)), family, clock, gate, launcher);
+        return (new CalendarViewModel(family, clock, new FakeTicker(), localizer, gate, launcher, new KidPickerViewModel(family, localizer), new FakeSounds()), family, clock, gate, launcher);
     }
 
     private static DoorViewModel Door(CalendarViewModel vm, int number) => vm.Doors.Single(d => d.Number == number);
@@ -270,7 +270,7 @@ public class WishListViewModelTests
         FakeGate gate = new();
         FakeShare share = new();
         FakeStringLocalizer localizer = new();
-        return (new WishListViewModel(family, new FakeClock(new DateTime(2026, 11, 5)), localizer, gate, share, new KidPickerViewModel(family, localizer)), family, gate, share);
+        return (new WishListViewModel(family, new FakeClock(new DateTime(2026, 11, 5)), localizer, gate, share, new KidPickerViewModel(family, localizer), new FakeSounds()), family, gate, share);
     }
 
     [TestMethod]
@@ -386,7 +386,7 @@ public class DisplayViewModelTests
         FakeTicker ticker = new();
         FakeDisplayMode mode = new();
         FakeFullVersion full = new(isFull);
-        return (new DisplayViewModel(family, full, new FakeClock(now), ticker, new FakeStringLocalizer(), mode, new PhotoBackdrop(family, full, new FakePhotoLibrary(), ticker)), family, ticker, mode);
+        return (new DisplayViewModel(family, full, new FakeClock(now), ticker, new FakeStringLocalizer(), mode, new PhotoBackdrop(family, full, new FakePhotoLibrary(), ticker), new FakeSounds()), family, ticker, mode);
     }
 
     [TestMethod]
