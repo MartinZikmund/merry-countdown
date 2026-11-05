@@ -26,7 +26,7 @@ A joyful Christmas countdown for kids and families: a much improved, modern take
 | One non-consumable product, `full_version`, about €3.99 | No subscription for a seasonal family app. The price is set in the store consoles. |
 | Parent gate: multiplication in words | Purchases and anything leaving the app (videos, sharing) sit behind it, as kids' store policies expect. |
 | Videos open in the browser, no thumbnails | No network calls, no embedded player, no tracking inside the app. |
-| No sound | No licensed audio to ship yet. The obvious next feature. |
+| Sound effects on taps only, no music | See [sound-effects.md](../../sound-effects.md). A TV left on all advent stays silent, and every source is CC0. |
 | No notifications | Not requested, and they need platform permissions in a kids' app. |
 
 ## Product shape
