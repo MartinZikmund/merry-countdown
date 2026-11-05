@@ -22,10 +22,12 @@
             <SolidColorBrush x:Key="DoorTint2Brush" Color="#2A61B5" />
             <SolidColorBrush x:Key="DoorTint3Brush" Color="#7A3FB0" />
             <SolidColorBrush x:Key="DoorTint4Brush" Color="#B8602A" />
-            <SolidColorBrush x:Key="DoorOpenedBrush" Color="#FFF4DD" />
+            <SolidColorBrush x:Key="DoorOpenedBrush" Color="#E8A84C" />
             <SolidColorBrush x:Key="DoorBorderBrush" Color="#33000000" />
+            <SolidColorBrush x:Key="DoorFrameBrush" Color="#CDBF9F" />
+            <SolidColorBrush x:Key="DoorWreathBrush" Color="#1B5A45" />
             <SolidColorBrush x:Key="DoorTodayBorderBrush" Color="#F2A91E" />
-            <SolidColorBrush x:Key="DoorNumberBrush" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="DoorNumberBrush" Color="#FFC95C" />
             <SolidColorBrush x:Key="LetterPaperBrush" Color="#FFFDF4" />
             <SolidColorBrush x:Key="LetterInkBrush" Color="#2A2F55" />
             <SolidColorBrush x:Key="LetterLineBrush" Color="#D9E2F2" />
@@ -59,10 +61,12 @@
             <SolidColorBrush x:Key="DoorTint2Brush" Color="#285CAD" />
             <SolidColorBrush x:Key="DoorTint3Brush" Color="#6E3AA3" />
             <SolidColorBrush x:Key="DoorTint4Brush" Color="#A85724" />
-            <SolidColorBrush x:Key="DoorOpenedBrush" Color="#FFF4DD" />
+            <SolidColorBrush x:Key="DoorOpenedBrush" Color="#E8A84C" />
             <SolidColorBrush x:Key="DoorBorderBrush" Color="#33FFFFFF" />
+            <SolidColorBrush x:Key="DoorFrameBrush" Color="#CDBF9F" />
+            <SolidColorBrush x:Key="DoorWreathBrush" Color="#1B5A45" />
             <SolidColorBrush x:Key="DoorTodayBorderBrush" Color="#FFC95C" />
-            <SolidColorBrush x:Key="DoorNumberBrush" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="DoorNumberBrush" Color="#FFC95C" />
             <SolidColorBrush x:Key="LetterPaperBrush" Color="#FFFDF4" />
             <SolidColorBrush x:Key="LetterInkBrush" Color="#2A2F55" />
             <SolidColorBrush x:Key="LetterLineBrush" Color="#D9E2F2" />
@@ -87,6 +91,8 @@
             <StaticResource x:Key="DoorTint4Brush" ResourceKey="SystemColorButtonFaceColorBrush" />
             <StaticResource x:Key="DoorOpenedBrush" ResourceKey="SystemColorWindowColorBrush" />
             <StaticResource x:Key="DoorBorderBrush" ResourceKey="SystemColorButtonTextColorBrush" />
+            <StaticResource x:Key="DoorFrameBrush" ResourceKey="SystemColorButtonTextColorBrush" />
+            <StaticResource x:Key="DoorWreathBrush" ResourceKey="SystemColorButtonTextColorBrush" />
             <StaticResource x:Key="DoorTodayBorderBrush" ResourceKey="SystemColorHighlightColorBrush" />
             <StaticResource x:Key="DoorNumberBrush" ResourceKey="SystemColorButtonTextColorBrush" />
             <StaticResource x:Key="LetterPaperBrush" ResourceKey="SystemColorWindowColorBrush" />

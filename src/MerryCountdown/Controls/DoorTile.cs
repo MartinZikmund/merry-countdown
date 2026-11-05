@@ -1,35 +1,33 @@
 using System.ComponentModel;
-using System.Globalization;
 using MerryCountdown.Core.Season;
 using MerryCountdown.Core.ViewModels;
+using Microsoft.UI;
 using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
+using Windows.UI;
 using Windows.UI.ViewManagement;
 
 namespace MerryCountdown.Controls;
 
-/// <summary>One little door. Built in code because it animates a lot and is repeated 24 times.</summary>
+/// <summary>One door on the wall. Locked doors look faded and padlocked; opened ones stay ajar with their sticker showing.</summary>
 public sealed partial class DoorTile : Button
 {
     public static readonly DependencyProperty DoorProperty = DependencyProperty.Register(
         nameof(Door), typeof(DoorViewModel), typeof(DoorTile), new PropertyMetadata(null, (d, e) => ((DoorTile)d).OnDoorChanged((DoorViewModel?)e.OldValue, (DoorViewModel?)e.NewValue)));
 
-    private static readonly TimeSpan _flipHalf = TimeSpan.FromMilliseconds(160);
+    private static readonly Color _lockedTone = Color.FromArgb(0xFF, 0x5D, 0x4A, 0x55);
 
-    private readonly Border _face = new() { CornerRadius = new CornerRadius(12), BorderThickness = new Thickness(3) };
-    private readonly TextBlock _number = new() { HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
-    private readonly Image _sticker = new() { Margin = new Thickness(12), Stretch = Stretch.Uniform };
+    private readonly DoorArt _art = new();
     private readonly CompositeTransform _transform = new();
     private readonly AccessibilitySettings _accessibility = new();
     private Storyboard? _todayPulse;
-    private DoorState? _shownState;
+    private ImageSource? _sticker;
+    private string? _stickerKey;
 
     public DoorTile()
     {
-        Padding = new Thickness(0);
-        BorderThickness = new Thickness(0);
-        Background = new SolidColorBrush(Microsoft.UI.Colors.Transparent);
+        Style = (Style)Application.Current.Resources["DoorButtonStyle"];
         HorizontalAlignment = HorizontalAlignment.Stretch;
         VerticalAlignment = VerticalAlignment.Stretch;
         HorizontalContentAlignment = HorizontalAlignment.Stretch;
@@ -37,14 +35,10 @@ public sealed partial class DoorTile : Button
         RenderTransformOrigin = new Windows.Foundation.Point(0.5, 0.5);
         RenderTransform = _transform;
 
-        _number.Style = (Style)Application.Current.Resources["DoorNumberTextStyle"];
+        _art.UseBigLockAndSticker();
+        Content = _art;
 
-        Grid content = new();
-        content.Children.Add(_number);
-        content.Children.Add(_sticker);
-        _face.Child = content;
-        Content = _face;
-
+        Click += OnClick;
         Unloaded += (_, _) => StopPulse();
         ActualThemeChanged += (_, _) =>
         {
@@ -55,10 +49,32 @@ public sealed partial class DoorTile : Button
         };
     }
 
+    /// <summary>Raised once a tapped door has finished swinging, or straight away if it doesn't swing.</summary>
+    public event EventHandler<DoorViewModel>? DoorChosen;
+
     public DoorViewModel? Door
     {
         get => (DoorViewModel?)GetValue(DoorProperty);
         set => SetValue(DoorProperty, value);
+    }
+
+    private void OnClick(object sender, RoutedEventArgs e)
+    {
+        if (Door is not { } door || _art.IsSwinging)
+        {
+            return;
+        }
+
+        if (door.ShouldSwingOpen)
+        {
+            StopPulse();
+            Canvas.SetZIndex(this, 1);
+            _art.SwingOpen(() => DoorChosen?.Invoke(this, door));
+        }
+        else
+        {
+            DoorChosen?.Invoke(this, door);
+        }
     }
 
     private void OnDoorChanged(DoorViewModel? old, DoorViewModel? door)
@@ -69,28 +85,17 @@ public sealed partial class DoorTile : Button
             old.Jiggled -= OnJiggled;
         }
 
-        _shownState = null;
         if (door is not null)
         {
             door.PropertyChanged += OnDoorPropertyChanged;
             door.Jiggled += OnJiggled;
-            _number.Text = door.Number.ToString(CultureInfo.CurrentCulture);
             Render(door);
         }
     }
 
     private void OnDoorPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (sender is not DoorViewModel door)
-        {
-            return;
-        }
-
-        if (e.PropertyName == nameof(DoorViewModel.State) && _shownState is { } previous && previous != DoorState.Opened && door.State == DoorState.Opened)
-        {
-            Flip(door);
-        }
-        else
+        if (sender is DoorViewModel door)
         {
             Render(door);
         }
@@ -98,21 +103,28 @@ public sealed partial class DoorTile : Button
 
     private void Render(DoorViewModel door)
     {
-        _shownState = door.State;
         AutomationProperties.SetName(this, door.AccessibleName);
         AutomationProperties.SetAutomationId(this, $"Door{door.Number}");
 
+        var isLocked = door.State == DoorState.Locked;
         var isOpened = door.State == DoorState.Opened;
-        _sticker.Visibility = isOpened ? Visibility.Visible : Visibility.Collapsed;
-        _number.Visibility = isOpened ? Visibility.Collapsed : Visibility.Visible;
-        _sticker.Source = isOpened ? Stickers.Image(door.Sticker) : null;
+        var showFrameAsToday = door.IsToday && !isOpened;
 
-        _face.Background = isOpened ? Brush("DoorOpenedBrush") : Brush($"DoorTint{door.Tint}Brush");
-        _face.BorderBrush = door.IsToday && !isOpened ? Brush("DoorTodayBorderBrush") : Brush("DoorBorderBrush");
-        _number.Foreground = Brush("DoorNumberBrush");
-        _face.Opacity = door.State == DoorState.Locked ? 0.82 : 1;
+        DoorPaint paint = new(
+            Leaf: Tone(Brush($"DoorTint{door.Tint}Brush"), isLocked),
+            Panel: Brush("DoorBorderBrush"),
+            Wreath: Tone(Brush("DoorWreathBrush"), isLocked),
+            Number: Brush("DoorNumberBrush"),
+            Frame: Brush(showFrameAsToday ? "DoorTodayBorderBrush" : "DoorFrameBrush"),
+            Inside: Brush("DoorOpenedBrush"));
 
-        if (door.IsToday && door.State == DoorState.Ready)
+        // A locked door has nothing behind it yet, so its surprise can't peek out.
+        _art.Show(door.Number, isLocked, isOpened, isLocked ? null : StickerFor(door), paint);
+
+        // An open door sticks out of its cell, so it goes over its neighbours.
+        Canvas.SetZIndex(this, isOpened || _art.IsSwinging ? 1 : 0);
+
+        if (door.IsToday && door.State == DoorState.Ready && !door.CalmMotion && !_art.IsSwinging)
         {
             StartPulse();
         }
@@ -120,6 +132,30 @@ public sealed partial class DoorTile : Button
         {
             StopPulse();
         }
+    }
+
+    private ImageSource StickerFor(DoorViewModel door)
+    {
+        if (_sticker is null || _stickerKey != door.Sticker)
+        {
+            _stickerKey = door.Sticker;
+            _sticker = Stickers.Image(door.Sticker);
+        }
+
+        return _sticker;
+    }
+
+    // Locked doors keep their colour variety, just faded towards one quiet tone. High contrast has its own system colours.
+    private Brush Tone(Brush brush, bool isLocked)
+    {
+        if (!isLocked || _accessibility.HighContrast || brush is not SolidColorBrush { Color: var color })
+        {
+            return brush;
+        }
+
+        return new SolidColorBrush(ColorHelper.FromArgb(0xFF, Halfway(color.R, _lockedTone.R), Halfway(color.G, _lockedTone.G), Halfway(color.B, _lockedTone.B)));
+
+        static byte Halfway(byte a, byte b) => (byte)((a + b) / 2);
     }
 
     // ThemeResource lookups from code follow the app theme, but the user's choice sits on the root element.
@@ -139,37 +175,12 @@ public sealed partial class DoorTile : Button
         return (Brush)Application.Current.Resources[key];
     }
 
-    private void Flip(DoorViewModel door)
-    {
-        StopPulse();
-
-        var shut = Animate(nameof(CompositeTransform.ScaleX), 1, 0, _flipHalf, EasingMode.EaseIn);
-        shut.Completed += (_, _) =>
-        {
-            Render(door);
-            Animate(nameof(CompositeTransform.ScaleX), 0, 1, _flipHalf, EasingMode.EaseOut).Begin();
-        };
-        shut.Begin();
-    }
-
     private void OnJiggled(object? sender, EventArgs e)
     {
-        Storyboard storyboard = new();
-        DoubleAnimationUsingKeyFrames shake = new();
-        double[] angles = [0, -7, 6, -4, 3, 0];
-        for (var i = 0; i < angles.Length; i++)
+        if (Door?.CalmMotion == false)
         {
-            shake.KeyFrames.Add(new LinearDoubleKeyFrame
-            {
-                KeyTime = KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(i * 70)),
-                Value = angles[i],
-            });
+            _art.Shake();
         }
-
-        Storyboard.SetTarget(shake, _transform);
-        Storyboard.SetTargetProperty(shake, nameof(CompositeTransform.Rotation));
-        storyboard.Children.Add(shake);
-        storyboard.Begin();
     }
 
     private void StartPulse()
@@ -201,21 +212,5 @@ public sealed partial class DoorTile : Button
         _todayPulse = null;
         _transform.ScaleX = 1;
         _transform.ScaleY = 1;
-    }
-
-    private Storyboard Animate(string property, double from, double to, TimeSpan duration, EasingMode mode)
-    {
-        DoubleAnimation animation = new()
-        {
-            From = from,
-            To = to,
-            Duration = new Duration(duration),
-            EasingFunction = new QuadraticEase { EasingMode = mode },
-        };
-        Storyboard.SetTarget(animation, _transform);
-        Storyboard.SetTargetProperty(animation, property);
-        Storyboard storyboard = new();
-        storyboard.Children.Add(animation);
-        return storyboard;
     }
 }
