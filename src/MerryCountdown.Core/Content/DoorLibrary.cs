@@ -85,7 +85,7 @@ public sealed class DoorLibrary
     private static DoorFile? TryRead(string language)
     {
         var assembly = typeof(DoorLibrary).GetTypeInfo().Assembly;
-        var name = assembly.GetManifestResourceNames().FirstOrDefault(n => n.EndsWith($"doors.{language}.json", StringComparison.Ordinal));
+        var name = assembly.GetManifestResourceNames().FirstOrDefault(n => n.EndsWith($"doors-{language}.json", StringComparison.Ordinal));
         if (name is null)
         {
             return null;

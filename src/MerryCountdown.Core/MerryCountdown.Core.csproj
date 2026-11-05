@@ -19,7 +19,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="Content\doors.*.json" />
+        <EmbeddedResource Include="Content\doors-*.json" />
     </ItemGroup>
 
 </Project>
