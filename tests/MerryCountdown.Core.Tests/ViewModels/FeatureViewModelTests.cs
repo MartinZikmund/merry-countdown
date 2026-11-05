@@ -26,11 +26,11 @@ public class CountdownViewModelTests
     {
         var (vm, _, _, _, _, _, _) = Create(new DateTime(2026, 12, 23, 22, 30, 15));
 
-        vm.SleepsNumber.Should().Be("2");
-        vm.Days.Should().Be("1");
-        vm.Hours.Should().Be("01");
-        vm.Minutes.Should().Be("29");
-        vm.Seconds.Should().Be("45");
+        vm.Sign.SleepsNumber.Should().Be("2");
+        vm.Sign.Days.Should().Be("01");
+        vm.Sign.Hours.Should().Be("01");
+        vm.Sign.Minutes.Should().Be("29");
+        vm.Sign.Seconds.Should().Be("45");
     }
 
     [TestMethod]
@@ -41,32 +41,12 @@ public class CountdownViewModelTests
 
         clock.Now = clock.Now.AddSeconds(1);
         ticker.Fire();
-        vm.Seconds.Should().Be("59");
+        vm.Sign.Seconds.Should().Be("59");
 
         vm.ViewUnloaded();
         clock.Now = clock.Now.AddSeconds(1);
         ticker.Fire();
-        vm.Seconds.Should().Be("59");
-    }
-
-    [TestMethod]
-    public void DoorButton_ShowsInDecemberUntilThisKidOpensIt()
-    {
-        var (vm, family, _, _, _, _, _) = Create(new DateTime(2026, 12, 5));
-        vm.HasDoorWaiting.Should().BeTrue();
-
-        family.OpenDoor(family.ActiveKid, 2026, 5);
-        vm.Refresh();
-
-        vm.HasDoorWaiting.Should().BeFalse();
-    }
-
-    [TestMethod]
-    public void DoorButton_HiddenInNovember()
-    {
-        var (vm, _, _, _, _, _, _) = Create(new DateTime(2026, 11, 5));
-
-        vm.HasDoorWaiting.Should().BeFalse();
+        vm.Sign.Seconds.Should().Be("59");
     }
 
     [TestMethod]
@@ -74,8 +54,8 @@ public class CountdownViewModelTests
     {
         var (vm, _, _, _, _, _, _) = Create(new DateTime(2026, 12, 25, 8, 0, 0));
 
-        vm.IsCelebrating.Should().BeTrue();
-        vm.IsCounting.Should().BeFalse();
+        vm.Sign.IsCelebrating.Should().BeTrue();
+        vm.Sign.IsCounting.Should().BeFalse();
     }
 
     [TestMethod]
@@ -138,6 +118,27 @@ public class CalendarViewModelTests
     }
 
     private static DoorViewModel Door(CalendarViewModel vm, int number) => vm.Doors.Single(d => d.Number == number);
+
+    [TestMethod]
+    public void OnNavigatedTo_WithTodaysDoor_OpensItAndRevealsIt()
+    {
+        var (vm, family, _, _, _) = Create(new DateTime(2026, 12, 5));
+
+        vm.OnNavigatedTo(5);
+
+        vm.Reveal.Should().NotBeNull();
+        family.IsDoorOpened(family.ActiveKid, 2026, 5).Should().BeTrue();
+    }
+
+    [TestMethod]
+    public void OnNavigatedTo_WithoutADoor_JustShowsTheWall()
+    {
+        var (vm, _, _, _, _) = Create(new DateTime(2026, 12, 5));
+
+        vm.OnNavigatedTo(null);
+
+        vm.Reveal.Should().BeNull();
+    }
 
     [TestMethod]
     public void Doors_AreAllTwentyFour()
