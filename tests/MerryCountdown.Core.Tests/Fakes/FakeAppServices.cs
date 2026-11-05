@@ -108,6 +108,27 @@ internal sealed class FakeDisplayMode : IDisplayModeService
     }
 }
 
+internal sealed class FakeCompactOverlay(bool isSupported = true) : ICompactOverlayService
+{
+    public bool IsSupported { get; } = isSupported;
+
+    public bool IsActive { get; private set; }
+
+    public event EventHandler? Changed;
+
+    public void Enter()
+    {
+        IsActive = true;
+        Changed?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void Exit()
+    {
+        IsActive = false;
+        Changed?.Invoke(this, EventArgs.Empty);
+    }
+}
+
 internal sealed class FakeGate(bool passes = true) : IParentGateService
 {
     public int Asked { get; private set; }

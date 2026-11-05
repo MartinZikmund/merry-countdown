@@ -33,7 +33,7 @@ public class SoundEffectTests
         FakeClock clock = new(FifthOfDecember);
         FakeTicker ticker = new();
         FakeFullVersion full = new();
-        return new CountdownViewModel(_family, full, clock, ticker, new FakeStringLocalizer(), new FakeNavigation(), new FakeDisplayMode(), new PhotoBackdrop(_family, full, new FakePhotoLibrary(), ticker), new FakeGate(), _sounds);
+        return new CountdownViewModel(_family, full, clock, ticker, new FakeStringLocalizer(), new FakeNavigation(), new FakeDisplayMode(), new PhotoBackdrop(_family, full, new FakePhotoLibrary(), ticker), new FakeGate(), _sounds, new FakeCompactOverlay());
     }
 
     private DisplayViewModel Display()

@@ -18,7 +18,7 @@ public class CountdownViewModelTests
         FakeNavigation nav = new();
         FakeDisplayMode display = new();
         FakeFullVersion full = new(isFull);
-        return (new CountdownViewModel(family, full, clock, ticker, new FakeStringLocalizer(), nav, display, new PhotoBackdrop(family, full, new FakePhotoLibrary(), ticker), new FakeGate(), new FakeSounds()), family, clock, ticker, nav, display, full);
+        return (new CountdownViewModel(family, full, clock, ticker, new FakeStringLocalizer(), nav, display, new PhotoBackdrop(family, full, new FakePhotoLibrary(), ticker), new FakeGate(), new FakeSounds(), new FakeCompactOverlay()), family, clock, ticker, nav, display, full);
     }
 
     [TestMethod]
