@@ -31,7 +31,7 @@ public sealed partial class SceneCanvas : Grid
         nameof(Snow), typeof(SnowLevel), typeof(SceneCanvas), new PropertyMetadata(SnowLevel.Gentle, (d, _) => ((SceneCanvas)d).ApplySnow()));
 
     public static readonly DependencyProperty CalmMotionProperty = DependencyProperty.Register(
-        nameof(CalmMotion), typeof(bool), typeof(SceneCanvas), new PropertyMetadata(false));
+        nameof(CalmMotion), typeof(bool), typeof(SceneCanvas), new PropertyMetadata(false, (d, _) => ((SceneCanvas)d).ApplyCalmMotion()));
 
     public static readonly DependencyProperty PhotoProperty = DependencyProperty.Register(
         nameof(Photo), typeof(byte[]), typeof(SceneCanvas), new PropertyMetadata(null, (d, _) => ((SceneCanvas)d).DecodePhoto()));
@@ -171,7 +171,12 @@ public sealed partial class SceneCanvas : Grid
     private void OnTapped(object sender, TappedRoutedEventArgs e)
     {
         var point = e.GetPosition(this);
-        _scene?.Tap((float)point.X * _pixelsPerDip, (float)point.Y * _pixelsPerDip, _sceneTime);
+        _scene?.Tap(
+            (float)point.X * _pixelsPerDip,
+            (float)point.Y * _pixelsPerDip,
+            (int)(ActualWidth * _pixelsPerDip),
+            (int)(ActualHeight * _pixelsPerDip),
+            _sceneTime);
     }
 
     private void ReplaceScene()
@@ -179,6 +184,7 @@ public sealed partial class SceneCanvas : Grid
         // Not disposed here: a frame may still be painting it on another thread. The GC gets its images.
         _scene = SceneId == "confetti" ? new ConfettiScene() : Scene.Create(SceneId);
         ApplySnow();
+        ApplyCalmMotion();
         ApplyPhoto();
         _invalidate();
     }
@@ -187,6 +193,14 @@ public sealed partial class SceneCanvas : Grid
     {
         _photoImage = Photo is { } bytes ? SKImage.FromEncodedData(bytes) : null;
         ApplyPhoto();
+    }
+
+    private void ApplyCalmMotion()
+    {
+        if (_scene is not null)
+        {
+            _scene.CalmMotion = CalmMotion;
+        }
     }
 
     private void ApplyPhoto() => _scene?.SetPhoto(_photoImage, ShowForeground);

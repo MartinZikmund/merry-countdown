@@ -5,6 +5,9 @@ namespace MerryCountdown.Scenes;
 public sealed class ToyTrainScene : Scene
 {
     private const float LapSeconds = 26f;
+    private const float WhistleSeconds = 2f;
+
+    private float _trainTapped = float.NegativeInfinity;
 
     public override string Id => "train";
 
@@ -41,20 +44,43 @@ public sealed class ToyTrainScene : Scene
 
     protected override void PaintForegroundLife(SKCanvas canvas, int width, int height, float time)
     {
-        var unit = Math.Min(width, height);
-        var carLength = unit * 0.17f;
-        var trainLength = carLength * 4.4f;
-        var progress = (time % LapSeconds) / LapSeconds;
-        var head = (-trainLength * 0.4f) + (progress * (width + (trainLength * 1.4f)));
-        var rail = height * 0.875f;
+        var (head, rail, carLength) = Train(width, height, time);
+        var whistle = Remaining(_trainTapped, time, WhistleSeconds);
+        var age = (1 - whistle) * WhistleSeconds;
+
+        // The engine's lamp flashes either way. Only without Calm motion do the cars bounce and the steam billow.
+        if (whistle > 0)
+        {
+            var lampX = head + (carLength * 0.85f);
+            Painter.Glow(canvas, lampX, rail - (carLength * 0.4f), carLength * 1.4f, Palette.Candle, (byte)((CalmMotion ? 110 : 220) * whistle));
+        }
+
+        var bounce = CalmMotion ? 0 : whistle;
 
         SKColor[] cars = [Palette.Cranberry, new(0x2F, 0x6B, 0xC4), new(0x1F, 0x7A, 0x5A)];
         for (var i = cars.Length - 1; i >= 0; i--)
         {
-            Carriage(canvas, head - ((i + 1) * carLength * 1.08f), rail, carLength, cars[i], time, i);
+            var hop = MathF.Abs(MathF.Sin((age * 8) - ((i + 1) * 0.8f))) * carLength * 0.14f * bounce;
+            Carriage(canvas, head - ((i + 1) * carLength * 1.08f), rail - hop, carLength, cars[i], time, i);
         }
 
-        Engine(canvas, head, rail, carLength * 1.15f, time);
+        Engine(canvas, head, rail - (MathF.Abs(MathF.Sin(age * 8)) * carLength * 0.14f * bounce), carLength * 1.15f, time, bounce);
+    }
+
+    protected override IEnumerable<SceneElement> ForegroundElements(int width, int height, float time)
+    {
+        var (head, rail, carLength) = Train(width, height, time);
+        var left = head - (3 * carLength * 1.08f);
+        var right = head + (carLength * 1.15f);
+        yield return new SceneElement(new SKRect(left, rail - (carLength * 0.95f), right, rail), tappedAt => _trainTapped = tappedAt);
+    }
+
+    private static (float Head, float Rail, float CarLength) Train(int width, int height, float time)
+    {
+        var carLength = Math.Min(width, height) * 0.17f;
+        var trainLength = carLength * 4.4f;
+        var progress = (time % LapSeconds) / LapSeconds;
+        return ((-trainLength * 0.4f) + (progress * (width + (trainLength * 1.4f))), height * 0.875f, carLength);
     }
 
     private static void PaintTrack(SKCanvas canvas, int width, int height)
@@ -71,7 +97,7 @@ public sealed class ToyTrainScene : Scene
         canvas.DrawRect(0, rail - (unit * 0.004f), width, unit * 0.007f, paint);
     }
 
-    private static void Engine(SKCanvas canvas, float x, float rail, float length, float time)
+    private static void Engine(SKCanvas canvas, float x, float rail, float length, float time, float billow)
     {
         var h = length * 0.56f;
         var wheel = length * 0.11f;
@@ -98,7 +124,7 @@ public sealed class ToyTrainScene : Scene
         canvas.DrawRect(stackX, top + (h * 0.04f), length * 0.07f, h * 0.34f, paint);
         canvas.DrawRoundRect(stackX - (length * 0.025f), top - (h * 0.02f), length * 0.12f, h * 0.08f, h * 0.03f, h * 0.03f, paint);
 
-        Puffs(canvas, stackX + (length * 0.035f), top - (h * 0.02f), length, time);
+        Puffs(canvas, stackX + (length * 0.035f), top - (h * 0.02f), length, time, billow);
         Wheels(canvas, x + (length * 0.15f), rail, wheel, length * 0.42f, 2, time);
     }
 
@@ -143,13 +169,13 @@ public sealed class ToyTrainScene : Scene
         }
     }
 
-    private static void Puffs(SKCanvas canvas, float x, float y, float length, float time)
+    private static void Puffs(SKCanvas canvas, float x, float y, float length, float time, float billow)
     {
         using SKPaint paint = new() { IsAntialias = true };
         for (var i = 0; i < 6; i++)
         {
             var progress = ((time * 0.45f) + (i / 6f)) % 1f;
-            var size = length * (0.04f + (progress * 0.12f));
+            var size = length * (0.04f + (progress * 0.12f)) * (1 + (billow * 1.5f));
             paint.Color = SKColors.White.WithAlpha((byte)(190 * (1 - progress)));
             canvas.DrawCircle(x - (progress * length * 0.7f), y - (progress * length * 0.6f) + (MathF.Sin(progress * 9) * length * 0.02f), size, paint);
         }

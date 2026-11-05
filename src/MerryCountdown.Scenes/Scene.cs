@@ -2,6 +2,9 @@ using SkiaSharp;
 
 namespace MerryCountdown.Scenes;
 
+/// <summary>Something in a scene that answers a tap. The area is what's painted; <see cref="Scene"/> adds the margin for small fingers.</summary>
+public sealed record SceneElement(SKRect Area, Action<float> React, bool IsRound = false);
+
 public enum SnowAmount
 {
     None,
@@ -18,6 +21,7 @@ public abstract class Scene : IDisposable
     private const float CrossfadeSeconds = 1.2f;
     private const float ShadedPart = 0.6f;
     private const byte ShadeAlpha = 140;
+    private const float TapMargin = 0.025f;
 
     private SKImage? _backdrop;
     private SKSizeI _backdropSize;
@@ -32,6 +36,11 @@ public abstract class Scene : IDisposable
     public abstract string Id { get; }
 
     public SnowAmount Snow { get; set; } = SnowAmount.Gentle;
+
+    /// <summary>Reactions light things up instead of moving them.</summary>
+    public bool CalmMotion { get; set; }
+
+    internal int SparkleCount => _sparkles.Count;
 
     /// <summary>
     /// Shows a family photo instead of the painted sky, optionally with the scene's foreground still in front.
@@ -52,6 +61,19 @@ public abstract class Scene : IDisposable
 
     protected virtual void PaintForegroundLife(SKCanvas canvas, int width, int height, float time)
     {
+    }
+
+    /// <summary>What can be tapped in the foreground, front to back, worked out from the same layout that paints it.</summary>
+    protected virtual IEnumerable<SceneElement> ForegroundElements(int width, int height, float time) => [];
+
+    /// <summary>What can be tapped in the sky, which a photo replaces.</summary>
+    protected virtual IEnumerable<SceneElement> SkyElements(int width, int height, float time) => [];
+
+    /// <summary>How much of a reaction is left: 1 at the tap, down to 0 after the given time.</summary>
+    protected static float Remaining(float tappedAt, float time, float seconds)
+    {
+        var age = time - tappedAt;
+        return age >= 0 && age < seconds ? 1 - (age / seconds) : 0;
     }
 
     public void Render(SKCanvas canvas, int width, int height, float time)
@@ -89,8 +111,48 @@ public abstract class Scene : IDisposable
         PaintSparkles(canvas, width, height, time);
     }
 
-    /// <summary>A tap anywhere makes the picture answer back.</summary>
-    public virtual void Tap(float x, float y, float time)
+    /// <summary>A tap anywhere makes the picture answer back: the element under it reacts, otherwise a burst of stars.</summary>
+    /// <returns>Whether an element reacted.</returns>
+    public bool Tap(float x, float y, int width, int height, float time)
+    {
+        if (ElementAt(x, y, width, height, time) is { } element)
+        {
+            element.React(time);
+            return true;
+        }
+
+        ThrowSparkles(x, y, time);
+        return false;
+    }
+
+    internal SceneElement? ElementAt(float x, float y, int width, int height, float time)
+    {
+        var margin = Math.Min(width, height) * TapMargin;
+        return VisibleElements(width, height, time).FirstOrDefault(e => Contains(e, x, y, margin));
+    }
+
+    internal IEnumerable<SceneElement> VisibleElements(int width, int height, float time)
+    {
+        // A photo set a moment ago counts already, even if no frame has picked it up yet.
+        var (photo, showForeground) = Volatile.Read(ref _pendingPhotoSlot) is { } change
+            ? (change.Photo, change.ShowForeground)
+            : (_photo, _showForeground);
+
+        var foreground = photo is null || showForeground ? ForegroundElements(width, height, time) : [];
+        var sky = photo is null ? SkyElements(width, height, time) : [];
+        SKRect screen = SKRect.Create(width, height);
+        return foreground.Concat(sky).Where(e => e.Area.IntersectsWith(screen));
+    }
+
+    private static bool Contains(SceneElement element, float x, float y, float margin)
+    {
+        var area = element.Area;
+        var (halfWidth, halfHeight) = ((area.Width / 2) + margin, (area.Height / 2) + margin);
+        var (dx, dy) = ((x - area.MidX) / halfWidth, (y - area.MidY) / halfHeight);
+        return element.IsRound ? (dx * dx) + (dy * dy) <= 1 : MathF.Abs(dx) <= 1 && MathF.Abs(dy) <= 1;
+    }
+
+    private void ThrowSparkles(float x, float y, float time)
     {
         Random random = new(HashCode.Combine(x, y, time));
         for (var i = 0; i < 26; i++)
