@@ -129,7 +129,7 @@ public class HomeChoicesAndDoorTests
         FakeTicker ticker = new();
         FakeNavigation nav = new();
         FakeFullVersion full = new();
-        return (new CountdownViewModel(family, full, new FakeClock(now), ticker, localizer ?? new FakeStringLocalizer(), nav, new FakeDisplayMode(), new PhotoBackdrop(family, full, new FakePhotoLibrary(), ticker), new FakeGate()), family, nav);
+        return (new CountdownViewModel(family, full, new FakeClock(now), ticker, localizer ?? new FakeStringLocalizer(), nav, new FakeDisplayMode(), new PhotoBackdrop(family, full, new FakePhotoLibrary(), ticker), new FakeGate(), new FakeSounds()), family, nav);
     }
 
     [TestMethod]
@@ -271,7 +271,7 @@ public class HomeChoicesAndDoorTests
         family.Settings.Sign = SignDesign.Station;
         family.Settings.CountdownStyle = CountdownStyle.SleepsAndClock;
 
-        DisplayViewModel vm = new(family, full, new FakeClock(new DateTime(2026, 12, 9)), ticker, new FakeStringLocalizer(), new FakeDisplayMode(), new PhotoBackdrop(family, full, new FakePhotoLibrary(), ticker));
+        DisplayViewModel vm = new(family, full, new FakeClock(new DateTime(2026, 12, 9)), ticker, new FakeStringLocalizer(), new FakeDisplayMode(), new PhotoBackdrop(family, full, new FakePhotoLibrary(), ticker), new FakeSounds());
 
         vm.Sign.Design.Should().Be(SignDesign.Station);
         vm.Sign.Style.Should().Be(CountdownStyle.SleepsAndClock);
