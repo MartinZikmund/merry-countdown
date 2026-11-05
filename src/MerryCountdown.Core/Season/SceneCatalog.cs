@@ -11,7 +11,7 @@ public static class SceneCatalog
         new("globe", false),
         new("aurora", true),
         new("fireplace", true),
-        new("sleigh", true),
+        new("train", true),
     ];
 
     public static IReadOnlyList<SceneInfo> Available(bool isFull) =>
