@@ -9,7 +9,7 @@ Both are saved in `FamilySettings.Sign` and `FamilySettings.CountdownStyle`. Num
 - `CountdownSignViewModel` holds everything the sign shows. `CountdownViewModel` and `DisplayViewModel` each own one and call `Update` every second.
 - `CountdownSign` draws it. All four board designs share one layout and only swap their surface and colours; the bauble garland has its own layout, and `Garland` draws the pine band across the top of the page.
 - `DigitText` draws numbers in fixed cells, because Baloo's "1" is much narrower than its "0" and plain centred text would shuffle sideways on every tick.
-- `HomeDoor` is today's door on the ground. It swings open in place, then `CalendarViewModel.OnNavigatedTo` receives the door number and shows its reveal.
+- `HomeDoor` is today's door on the ground, drawn by the same `DoorArt` as [the door wall](./door-wall.md). It swings open in place, then `CalendarViewModel.OnNavigatedTo` receives the door number and shows its reveal.
 
 ## Sleeps and the clock
 

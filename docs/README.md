@@ -11,6 +11,7 @@ One page per topic. Keep it that way — see [`.claude/rules/docs.md`](../.claud
 ## Architecture
 
 - [countdown-sign.md](./countdown-sign.md) — the choosable signs and countdown styles on Home and Family Display, and how to add a sign.
+- [door-wall.md](./door-wall.md) — how the 24 doors are drawn, opened and fitted to the screen.
 - [json-aot-serialization.md](./json-aot-serialization.md) — `JsonSerializerContext` conventions for AOT-safe, trim-safe JSON serialization.
 - [views.md](./views.md) — `ViewBase<TViewModel>`, `IViewBase`, and how views resolve their view models.
 
