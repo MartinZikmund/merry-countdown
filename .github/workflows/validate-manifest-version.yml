@@ -4,14 +4,10 @@ name: Validate Manifest Version
 # Nerdbank.GitVersioning can stamp the real version at build time. The version
 # itself is governed by version.json + branch (see docs/versioning.md).
 
+# Not run on pull requests for now, to save Actions minutes.
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    types: [opened, synchronize, reopened]
-    branches:
-      - main
-      - release/**
 
 jobs:
   check_version:
