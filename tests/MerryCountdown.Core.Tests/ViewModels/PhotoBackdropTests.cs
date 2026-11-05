@@ -295,7 +295,7 @@ public class PhotoFeatureViewModelTests
         FakeFullVersion full = new(isFull);
         FakeNavigation nav = new();
         FakeGate gate = new();
-        return (new CountdownViewModel(family, full, new FakeClock(new DateTime(2026, 11, 5)), ticker, new FakeStringLocalizer(), nav, new FakeDisplayMode(), new PhotoBackdrop(family, full, library, ticker), gate, new FakeSounds()), family, nav, gate);
+        return (new CountdownViewModel(family, full, new FakeClock(new DateTime(2026, 11, 5)), ticker, new FakeStringLocalizer(), nav, new FakeDisplayMode(), new PhotoBackdrop(family, full, library, ticker), gate, new FakeSounds(), new FakeCompactOverlay()), family, nav, gate);
     }
 
     private static SceneOptionViewModel PhotosOption(CountdownViewModel vm) => vm.Scenes.Single(s => s.Id == CountdownViewModel.PhotosOptionId);
