@@ -1,13 +1,10 @@
 name: CI
 
+# Not run on pull requests for now, to save Actions minutes. Run it by hand if a PR needs it.
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    types: [opened, synchronize, reopened]
-    branches:
-      - main
-      - release/**
+  workflow_dispatch:
 
 env:
   # App Configuration
