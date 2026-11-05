@@ -54,21 +54,25 @@
             <ScrollViewer
                 x:Name="DoorScroller"
                 Grid.Row="3"
-                Padding="0,4,0,16"
-                SizeChanged="DoorScroller_SizeChanged">
-                <ItemsRepeater x:Name="DoorWall" ItemsSource="{x:Bind ViewModel.Doors}">
+                SizeChanged="DoorScroller_SizeChanged"
+                VerticalScrollBarVisibility="Auto">
+                <!--  A margin, not the scroller's padding: the scroller clips to the inside of its padding, and pulsing or open doors overhang.  -->
+                <ItemsRepeater
+                    x:Name="DoorWall"
+                    Margin="8,24,8,24"
+                    ItemsSource="{x:Bind ViewModel.Doors}">
                     <ItemsRepeater.Layout>
                         <UniformGridLayout
                             x:Name="DoorLayout"
                             ItemsStretch="Fill"
                             MinColumnSpacing="8"
-                            MinItemHeight="88"
+                            MinItemHeight="127"
                             MinItemWidth="88"
                             MinRowSpacing="8" />
                     </ItemsRepeater.Layout>
                     <ItemsRepeater.ItemTemplate>
                         <DataTemplate x:DataType="vm:DoorViewModel">
-                            <controls:DoorTile Click="Door_Click" Door="{x:Bind}" />
+                            <controls:DoorTile Door="{x:Bind}" DoorChosen="Door_Chosen" />
                         </DataTemplate>
                     </ItemsRepeater.ItemTemplate>
                 </ItemsRepeater>

@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using MerryCountdown.Controls;
 using MerryCountdown.Core.Navigation;
+using MerryCountdown.Core.Season;
 using MerryCountdown.Core.ViewModels;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
@@ -33,40 +34,19 @@ public sealed partial class CalendarView : CalendarViewBase
         };
     }
 
-    // The wall picks whichever arrangement of 24 gives the biggest doors on this screen.
     private void DoorScroller_SizeChanged(object sender, SizeChangedEventArgs e)
     {
-        const double Spacing = 8;
-        const double SmallestDoor = 72;
-        const double LargestDoor = 200;
-        const double VerticalPadding = 24;
+        const double WallMarginHeight = 48;
+        const double WallMarginWidth = 16;
+        const double ScrollBarGutter = 20;
 
-        var columns = 6;
-        var door = 0d;
-        foreach (var candidate in new[] { 3, 4, 6, 8, 12 })
-        {
-            var rows = 24 / candidate;
-            var fitWidth = (e.NewSize.Width - ((candidate - 1) * Spacing)) / candidate;
-            var fitHeight = (e.NewSize.Height - VerticalPadding - ((rows - 1) * Spacing)) / rows;
-            if (Math.Min(fitWidth, fitHeight) > door)
-            {
-                door = Math.Min(fitWidth, fitHeight);
-                columns = candidate;
-            }
-        }
-
-        DoorLayout.MaximumRowsOrColumns = columns;
-        DoorLayout.MinItemWidth = Math.Clamp(door, SmallestDoor, LargestDoor);
-        DoorLayout.MinItemHeight = Math.Clamp(door, SmallestDoor, LargestDoor);
+        var layout = DoorWallLayout.Fit(e.NewSize.Width - WallMarginWidth - ScrollBarGutter, e.NewSize.Height - WallMarginHeight);
+        DoorLayout.MaximumRowsOrColumns = layout.Columns;
+        DoorLayout.MinItemWidth = layout.DoorWidth;
+        DoorLayout.MinItemHeight = layout.DoorHeight;
     }
 
-    private void Door_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is DoorTile { Door: { } door })
-        {
-            ViewModel?.TapDoor(door);
-        }
-    }
+    private void Door_Chosen(object? sender, DoorViewModel door) => ViewModel?.TapDoor(door);
 
     private void CloseReveal_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
     {

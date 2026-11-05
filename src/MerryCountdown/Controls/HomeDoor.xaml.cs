@@ -1,7 +1,7 @@
 using System.Windows.Input;
 using MerryCountdown.Core.ViewModels;
 using Microsoft.UI.Xaml.Automation;
-using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Media;
 
 namespace MerryCountdown.Controls;
 
@@ -17,14 +17,20 @@ public sealed partial class HomeDoor : UserControl
     public static readonly DependencyProperty CaptionProperty = DependencyProperty.Register(
         nameof(Caption), typeof(string), typeof(HomeDoor), new PropertyMetadata("", (d, e) => AutomationProperties.SetName(((HomeDoor)d).DoorButton, (string)e.NewValue)));
 
-    private const double OpenedLeafScale = 0.12;
-
-    private bool _isOpening;
+    private readonly ImageSource _gift = Stickers.Image("gift");
+    private readonly DoorPaint _lockedPaint;
+    private readonly DoorPaint _openablePaint;
 
     public HomeDoor()
     {
         InitializeComponent();
         AutomationProperties.SetAutomationId(DoorButton, "TodaysDoor");
+
+        var gold = (Brush)Application.Current.Resources["GoldBrush"];
+        var frame = SignColors.Brush(0xCDBF9F);
+        var inside = SignColors.Brush(0xE8A84C);
+        _lockedPaint = new(SignColors.Brush(0x5D4A55), SignColors.Brush(0x4B3A45), SignColors.Brush(0x4E6155), gold, frame, inside);
+        _openablePaint = new(SignColors.Brush(0x94283F), SignColors.Brush(0x7B1F33), SignColors.Brush(0x1B5A45), gold, frame, inside);
         Apply();
     }
 
@@ -54,27 +60,15 @@ public sealed partial class HomeDoor : UserControl
     {
         set
         {
-            DoorScale.Width = value;
-            DoorScale.Height = value * 312 / 216;
+            Art.Width = value;
+            Art.Height = value * 312 / 216;
         }
     }
 
     private void Apply()
     {
         var locked = Stage == HomeDoorStage.Locked;
-
-        LeafFace.Background = SignColors.Brush(locked ? 0x5D4A55u : 0x94283Fu);
-        UpperPanel.BorderBrush = SignColors.Brush(locked ? 0x4B3A45u : 0x7B1F33u);
-        LowerPanel.BorderBrush = UpperPanel.BorderBrush;
-        Wreath.Stroke = SignColors.Brush(locked ? 0x4E6155u : 0x1B5A45u);
-        NumberText.Text = Number.ToString(System.Globalization.CultureInfo.CurrentCulture);
-        Knob.Visibility = locked ? Visibility.Collapsed : Visibility.Visible;
-        Padlock.Visibility = locked ? Visibility.Visible : Visibility.Collapsed;
-
-        if (!_isOpening)
-        {
-            LeafScale.ScaleX = Stage == HomeDoorStage.Opened ? OpenedLeafScale : 1;
-        }
+        Art.Show(Number, locked, Stage == HomeDoorStage.Opened, _gift, locked ? _lockedPaint : _openablePaint);
     }
 
     private void OnClick(object sender, RoutedEventArgs e)
@@ -82,56 +76,14 @@ public sealed partial class HomeDoor : UserControl
         switch (Stage)
         {
             case HomeDoorStage.Waiting when !CalmMotion:
-                PlayOpening();
+                Art.SwingOpen(() => Command?.Execute(null));
                 break;
             case HomeDoorStage.Waiting or HomeDoorStage.Opened:
                 Command?.Execute(null);
                 break;
             case HomeDoorStage.Locked when !CalmMotion:
-                PlayJiggle();
+                Art.Shake();
                 break;
         }
-    }
-
-    private void PlayOpening()
-    {
-        if (_isOpening)
-        {
-            return;
-        }
-
-        _isOpening = true;
-        DoubleAnimation swing = new()
-        {
-            To = OpenedLeafScale,
-            Duration = new Duration(TimeSpan.FromMilliseconds(600)),
-            EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut },
-        };
-        Storyboard.SetTarget(swing, LeafScale);
-        Storyboard.SetTargetProperty(swing, nameof(LeafScale.ScaleX));
-
-        Storyboard storyboard = new();
-        storyboard.Children.Add(swing);
-        storyboard.Completed += (_, _) =>
-        {
-            _isOpening = false;
-            Command?.Execute(null);
-        };
-        storyboard.Begin();
-    }
-
-    private void PlayJiggle()
-    {
-        DoubleAnimationUsingKeyFrames shake = new();
-        foreach (var (ms, x) in new (double Ms, double X)[] { (0, 0), (70, -8), (140, 8), (210, -5), (280, 0) })
-        {
-            shake.KeyFrames.Add(new LinearDoubleKeyFrame { KeyTime = KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(ms)), Value = x });
-        }
-
-        Storyboard.SetTarget(shake, Jiggle);
-        Storyboard.SetTargetProperty(shake, nameof(Jiggle.X));
-        Storyboard storyboard = new();
-        storyboard.Children.Add(shake);
-        storyboard.Begin();
     }
 }
