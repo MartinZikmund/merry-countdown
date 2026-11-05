@@ -16,7 +16,8 @@
             Photo="{x:Bind ViewModel.Backdrop.Photo, Mode=OneWay}"
             SceneId="{x:Bind ViewModel.SceneId, Mode=OneWay}"
             ShowForeground="{x:Bind ViewModel.Backdrop.ShowForeground, Mode=OneWay}"
-            Snow="{x:Bind ViewModel.Snow, Mode=OneWay}" />
+            Snow="{x:Bind ViewModel.Snow, Mode=OneWay}"
+            Tapped="Scene_Tapped" />
 
         <controls:Garland VerticalAlignment="Top" Visibility="{x:Bind controls:Stickers.WhenBaubles(ViewModel.Sign.Design), Mode=OneWay}" />
 
@@ -71,8 +72,10 @@
                     Caption="{x:Bind ViewModel.DoorCaption, Mode=OneWay}"
                     Command="{x:Bind ViewModel.OpenTodaysDoorCommand}"
                     DoorWidth="104"
+                    LockedTapped="Door_LockedTapped"
                     Number="{x:Bind ViewModel.DoorNumber, Mode=OneWay}"
-                    Stage="{x:Bind ViewModel.DoorStage, Mode=OneWay}" />
+                    Stage="{x:Bind ViewModel.DoorStage, Mode=OneWay}"
+                    Swinging="Door_Swinging" />
                 <Border
                     Padding="12,2"
                     HorizontalAlignment="Center"

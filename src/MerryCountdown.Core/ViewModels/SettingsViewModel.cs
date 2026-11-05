@@ -59,6 +59,7 @@ public partial class SettingsViewModel : ViewModelBase
             IsJezisek = settings.GiftBringer == GiftBringer.Jezisek;
             SnowIndex = (int)settings.Snow;
             CalmMotion = settings.CalmMotion;
+            SoundEnabled = settings.SoundEnabled;
             DisplayRotatesScenes = settings.DisplayRotatesScenes;
             StartInFamilyDisplay = settings.StartInFamilyDisplay;
         }
@@ -118,6 +119,9 @@ public partial class SettingsViewModel : ViewModelBase
     public partial bool CalmMotion { get; set; }
 
     [ObservableProperty]
+    public partial bool SoundEnabled { get; set; }
+
+    [ObservableProperty]
     public partial bool DisplayRotatesScenes { get; set; }
 
     [ObservableProperty]
@@ -149,6 +153,8 @@ public partial class SettingsViewModel : ViewModelBase
     }
 
     partial void OnCalmMotionChanged(bool value) => UpdateSettings(s => s.CalmMotion = value);
+
+    partial void OnSoundEnabledChanged(bool value) => UpdateSettings(s => s.SoundEnabled = value);
 
     partial void OnDisplayRotatesScenesChanged(bool value) => UpdateSettings(s => s.DisplayRotatesScenes = value);
 

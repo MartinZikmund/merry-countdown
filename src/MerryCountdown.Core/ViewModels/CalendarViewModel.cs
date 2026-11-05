@@ -16,6 +16,7 @@ public partial class CalendarViewModel : ViewModelBase
     private readonly IStringLocalizer _localizer;
     private readonly IParentGateService _gate;
     private readonly ILauncherService _launcher;
+    private readonly ISoundService _sounds;
     private readonly DoorLibrary _library;
     private DateTime _builtFor;
     private Kid? _builtForKid;
@@ -27,7 +28,8 @@ public partial class CalendarViewModel : ViewModelBase
         IStringLocalizer localizer,
         IParentGateService gate,
         ILauncherService launcher,
-        KidPickerViewModel kidPicker)
+        KidPickerViewModel kidPicker,
+        ISoundService sounds)
     {
         _family = family;
         _clock = clock;
@@ -35,6 +37,7 @@ public partial class CalendarViewModel : ViewModelBase
         _localizer = localizer;
         _gate = gate;
         _launcher = launcher;
+        _sounds = sounds;
         _library = DoorLibrary.Load(CultureInfo.CurrentUICulture.Name);
         KidPicker = kidPicker;
         PageTitle = localizer["NavCalendar"];
@@ -81,6 +84,8 @@ public partial class CalendarViewModel : ViewModelBase
         _family.Changed -= OnFamilyChanged;
     }
 
+    public void DoorStartedSwinging() => _sounds.Play(SoundEffect.DoorOpen);
+
     [RelayCommand]
     public void TapDoor(DoorViewModel door)
     {
@@ -93,12 +98,20 @@ public partial class CalendarViewModel : ViewModelBase
             case DoorState.Locked:
                 Hint = _localizer.Plural("DoorLockedHint", AdventCalendar.SleepsUntil(door.Number, now));
                 door.Jiggle();
+                _sounds.Play(SoundEffect.DoorLocked);
                 break;
             case DoorState.Ready:
+                // A swinging door has already creaked. With Calm motion it doesn't swing, so it creaks now.
+                if (!door.ShouldSwingOpen)
+                {
+                    _sounds.Play(SoundEffect.DoorOpen);
+                }
+
                 _family.OpenDoor(kid, year, door.Number);
                 ShowReveal(door, year, kid);
                 break;
             default:
+                _sounds.Play(SoundEffect.Reveal);
                 ShowReveal(door, year, kid);
                 break;
         }
@@ -125,7 +138,7 @@ public partial class CalendarViewModel : ViewModelBase
         door.Refresh(_library, _clock.Now, year, _family, kid);
         UpdateProgress(year, kid);
         Hint = "";
-        Reveal = new DoorRevealViewModel(door.Number, content.Title, content.Body.Replace("{bringer}", bringer), content.Sticker, content.Punchline, content.VideoUrl, message, content.Kind == DoorKind.Finale);
+        Reveal = new DoorRevealViewModel(door.Number, content.Title, content.Body.Replace("{bringer}", bringer), content.Sticker, content.Punchline, content.VideoUrl, message, content.Kind == DoorKind.Finale, _sounds);
     }
 
     private void OnSecond(object? sender, EventArgs e)
@@ -220,7 +233,7 @@ public partial class DoorViewModel(int number, IStringLocalizer localizer) : Obs
     }
 }
 
-public partial class DoorRevealViewModel(int number, string title, string body, string sticker, string? punchline, string? videoUrl, string? personalMessage, bool isFinale) : ObservableObject
+public partial class DoorRevealViewModel(int number, string title, string body, string sticker, string? punchline, string? videoUrl, string? personalMessage, bool isFinale, ISoundService sounds) : ObservableObject
 {
     public int Number { get; } = number;
 
@@ -249,5 +262,9 @@ public partial class DoorRevealViewModel(int number, string title, string body, 
     public partial bool IsPunchlineShown { get; set; }
 
     [RelayCommand]
-    private void ShowPunchline() => IsPunchlineShown = true;
+    private void ShowPunchline()
+    {
+        IsPunchlineShown = true;
+        sounds.Play(SoundEffect.Punchline);
+    }
 }

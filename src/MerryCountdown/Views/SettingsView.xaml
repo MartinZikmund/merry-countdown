@@ -85,6 +85,16 @@
                     IsOn="{x:Bind ViewModel.CalmMotion, Mode=TwoWay}" />
             </toolkit:SettingsCard>
 
+            <toolkit:SettingsCard Description="{markup:Localize Key=SoundDescription}" Header="{markup:Localize Key=SoundHeader}">
+                <toolkit:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE767;" />
+                </toolkit:SettingsCard.HeaderIcon>
+                <ToggleSwitch
+                    AutomationProperties.AutomationId="SoundToggle"
+                    AutomationProperties.Name="{markup:Localize Key=SoundHeader}"
+                    IsOn="{x:Bind ViewModel.SoundEnabled, Mode=TwoWay}" />
+            </toolkit:SettingsCard>
+
             <!--  Family Display  -->
             <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{markup:Localize Key=FamilyDisplay}" />
 
@@ -151,6 +161,12 @@
             <toolkit:SettingsCard Description="{markup:Localize Key=PrivacyDescription}" Header="{markup:Localize Key=PrivacyHeader}">
                 <toolkit:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE72E;" />
+                </toolkit:SettingsCard.HeaderIcon>
+            </toolkit:SettingsCard>
+
+            <toolkit:SettingsCard Description="{markup:Localize Key=SoundCreditsDescription}" Header="{markup:Localize Key=SoundCreditsHeader}">
+                <toolkit:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE8D6;" />
                 </toolkit:SettingsCard.HeaderIcon>
             </toolkit:SettingsCard>
 

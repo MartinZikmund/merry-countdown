@@ -72,7 +72,10 @@
                     </ItemsRepeater.Layout>
                     <ItemsRepeater.ItemTemplate>
                         <DataTemplate x:DataType="vm:DoorViewModel">
-                            <controls:DoorTile Door="{x:Bind}" DoorChosen="Door_Chosen" />
+                            <controls:DoorTile
+                                Door="{x:Bind}"
+                                DoorChosen="Door_Chosen"
+                                DoorSwinging="Door_Swinging" />
                         </DataTemplate>
                     </ItemsRepeater.ItemTemplate>
                 </ItemsRepeater>

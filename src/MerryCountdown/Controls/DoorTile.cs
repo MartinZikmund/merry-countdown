@@ -52,6 +52,8 @@ public sealed partial class DoorTile : Button
     /// <summary>Raised once a tapped door has finished swinging, or straight away if it doesn't swing.</summary>
     public event EventHandler<DoorViewModel>? DoorChosen;
 
+    public event EventHandler? DoorSwinging;
+
     public DoorViewModel? Door
     {
         get => (DoorViewModel?)GetValue(DoorProperty);
@@ -69,6 +71,7 @@ public sealed partial class DoorTile : Button
         {
             StopPulse();
             Canvas.SetZIndex(this, 1);
+            DoorSwinging?.Invoke(this, EventArgs.Empty);
             _art.SwingOpen(() => DoorChosen?.Invoke(this, door));
         }
         else

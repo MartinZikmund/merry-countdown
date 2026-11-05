@@ -14,7 +14,7 @@
         <!-- Application metadata -->
         <ApplicationPublisher>Martin Zikmund</ApplicationPublisher>
         <Description>A joyful Christmas countdown, advent calendar and wish list for kids and families.</Description>
-        <UnoFeatures>$(UnoFeatures);SkiaRenderer</UnoFeatures>
+        <UnoFeatures>$(UnoFeatures);SkiaRenderer;MediaPlayerElement</UnoFeatures>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
