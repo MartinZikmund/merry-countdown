@@ -39,6 +39,9 @@ public sealed partial class SceneCanvas : Grid
     public static readonly DependencyProperty ShowForegroundProperty = DependencyProperty.Register(
         nameof(ShowForeground), typeof(bool), typeof(SceneCanvas), new PropertyMetadata(true, (d, _) => ((SceneCanvas)d).ApplyPhoto()));
 
+    public static readonly DependencyProperty IsPausedProperty = DependencyProperty.Register(
+        nameof(IsPaused), typeof(bool), typeof(SceneCanvas), new PropertyMetadata(false));
+
     private readonly Stopwatch _clock = new();
     private readonly Action _invalidate;
     private Scene? _scene;
@@ -105,6 +108,13 @@ public sealed partial class SceneCanvas : Grid
         set => SetValue(CalmMotionProperty, value);
     }
 
+    /// <summary>Stops painting while nobody can see the scene. It picks up where it left off.</summary>
+    public bool IsPaused
+    {
+        get => (bool)GetValue(IsPausedProperty);
+        set => SetValue(IsPausedProperty, value);
+    }
+
     /// <summary>A prepared JPEG to show in place of the painted sky. Null shows the painted scene.</summary>
     public byte[]? Photo
     {
@@ -145,6 +155,12 @@ public sealed partial class SceneCanvas : Grid
     private void OnRendering(object? sender, object e)
     {
         var now = _clock.Elapsed;
+        if (IsPaused)
+        {
+            _lastFrame = now;
+            return;
+        }
+
         var budget = TimeSpan.FromSeconds(1 / (CalmMotion ? CalmFramesPerSecond : FramesPerSecond));
         var delta = now - _lastFrame;
         if (delta < budget)

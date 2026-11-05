@@ -586,6 +586,12 @@
   <data name="DisplayHint" xml:space="preserve">
     <value>Esc or Back to leave. Arrow keys change the picture.</value>
   </data>
+  <data name="CompactOverlay" xml:space="preserve">
+    <value>Mini window on top</value>
+  </data>
+  <data name="CompactOverlayExit" xml:space="preserve">
+    <value>Back to the big window</value>
+  </data>
   <data name="DisplayExit" xml:space="preserve">
     <value>Leave Family Display</value>
   </data>

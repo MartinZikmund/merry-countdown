@@ -136,6 +136,7 @@ public partial class App : Application, IApplication
         services.AddScoped<IPhotoLibrary, PhotoLibrary>();
         services.AddScoped<PhotoBackdrop>();
         services.AddScoped<IDisplayModeService, DisplayModeService>();
+        services.AddScoped<ICompactOverlayService, CompactOverlayService>();
         services.AddScoped<IParentGateService, ParentGateService>();
         services.AddScoped<ISnackService, SnackService>();
         services.AddScoped<IThemeManager, ThemeManager>();
@@ -168,6 +169,7 @@ public partial class App : Application, IApplication
         services.AddTransient<WishListViewModel>();
         services.AddTransient<ParentZoneViewModel>();
         services.AddTransient<DisplayViewModel>();
+        services.AddTransient<CompactOverlayViewModel>();
         services.AddTransient<SettingsViewModel>();
     }
 

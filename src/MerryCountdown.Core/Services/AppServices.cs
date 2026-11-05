@@ -23,6 +23,21 @@ public interface IDisplayModeService
     void Exit();
 }
 
+/// <summary>The countdown in a small always-on-top window, while the PC is used for other things.</summary>
+public interface ICompactOverlayService
+{
+    /// <summary>False on heads with no overlay window, where the option is hidden.</summary>
+    bool IsSupported { get; }
+
+    bool IsActive { get; }
+
+    event EventHandler? Changed;
+
+    void Enter();
+
+    void Exit();
+}
+
 public interface ILauncherService
 {
     Task<bool> LaunchUriAsync(Uri uri);
