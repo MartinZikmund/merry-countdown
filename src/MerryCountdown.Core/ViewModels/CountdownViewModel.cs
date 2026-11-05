@@ -12,7 +12,7 @@ public partial class CountdownViewModel : ViewModelBase
 {
     public const string PhotosOptionId = "photos";
 
-    private const int NearChristmasSleeps = 24;
+    private const string SceneWithTrainOnTheLeft = "train";
 
     private readonly IFamilyService _family;
     private readonly IFullVersionService _fullVersion;
@@ -43,54 +43,46 @@ public partial class CountdownViewModel : ViewModelBase
         _display = display;
         _gate = gate;
         Backdrop = backdrop;
+        Sign = new CountdownSignViewModel(localizer);
+        SignOptions = [.. Enum.GetValues<SignDesign>().Select(d => new SignOptionViewModel(d, localizer[$"Sign_{d}"], CountdownSignViewModel.Preview(d, CountdownStyle.Plates, localizer)))];
+        StyleOptions = [.. Enum.GetValues<CountdownStyle>().Select(k => new StyleOptionViewModel(k, localizer[$"Style_{k}"], CountdownSignViewModel.Preview(SignDesign.Plank, k, localizer)))];
         PageTitle = localizer["NavCountdown"];
         Reload();
     }
 
     public PhotoBackdrop Backdrop { get; }
 
+    public CountdownSignViewModel Sign { get; }
+
+    public IReadOnlyList<SignOptionViewModel> SignOptions { get; }
+
+    public IReadOnlyList<StyleOptionViewModel> StyleOptions { get; }
+
     public ObservableCollection<SceneOptionViewModel> Scenes { get; } = [];
 
     public ObservableCollection<UpcomingEventViewModel> Events { get; } = [];
 
     [ObservableProperty]
-    public partial string Greeting { get; set; } = "";
+    public partial HomeDoorStage DoorStage { get; set; }
 
     [ObservableProperty]
-    public partial string SleepsNumber { get; set; } = "";
+    public partial int DoorNumber { get; set; }
 
     [ObservableProperty]
-    public partial string SleepsCaption { get; set; } = "";
+    [NotifyPropertyChangedFor(nameof(HasDoorCaption))]
+    public partial string DoorCaption { get; set; } = "";
+
+    public bool HasDoorCaption => DoorCaption.Length > 0;
 
     [ObservableProperty]
-    public partial string Headline { get; set; } = "";
+    public partial bool CanWriteWishLetter { get; set; }
 
     [ObservableProperty]
-    public partial bool IsCounting { get; set; }
-
-    [ObservableProperty]
-    public partial bool IsCelebrating { get; set; }
-
-    [ObservableProperty]
-    public partial string Days { get; set; } = "";
-
-    [ObservableProperty]
-    public partial string Hours { get; set; } = "";
-
-    [ObservableProperty]
-    public partial string Minutes { get; set; } = "";
-
-    [ObservableProperty]
-    public partial string Seconds { get; set; } = "";
-
-    [ObservableProperty]
-    public partial bool HasDoorWaiting { get; set; }
-
-    [ObservableProperty]
-    public partial string DoorButtonText { get; set; } = "";
-
-    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsDoorOnRight))]
     public partial string SceneId { get; set; } = "";
+
+    /// <summary>The toy train runs along the left, so the door stands on the other side there.</summary>
+    public bool IsDoorOnRight => SceneId == SceneWithTrainOnTheLeft;
 
     [ObservableProperty]
     public partial SnowLevel Snow { get; set; }
@@ -119,28 +111,29 @@ public partial class CountdownViewModel : ViewModelBase
     public void Refresh()
     {
         var now = _clock.Now;
-        var settings = _family.Settings;
-        var state = CountdownClock.Compute(now, settings.BigDay, settings.ArrivalMinutes);
-
-        IsCelebrating = state.Phase == CountdownPhase.Celebrating;
-        IsCounting = !IsCelebrating;
-        SleepsNumber = state.Sleeps.ToString(CultureInfo.CurrentCulture);
-        SleepsCaption = _localizer.Plural("SleepsCaption", state.Sleeps);
-        Headline = BuildHeadline(state);
-
-        Days = ((int)state.Remaining.TotalDays).ToString(CultureInfo.CurrentCulture);
-        Hours = state.Remaining.Hours.ToString("00", CultureInfo.CurrentCulture);
-        Minutes = state.Remaining.Minutes.ToString("00", CultureInfo.CurrentCulture);
-        Seconds = state.Remaining.Seconds.ToString("00", CultureInfo.CurrentCulture);
-
-        var door = AdventCalendar.TodaysDoor(now);
-        var year = AdventCalendar.SeasonYear(now);
-        HasDoorWaiting = door is { } today && !_family.IsDoorOpened(_family.ActiveKid, year, today);
-        DoorButtonText = door is { } number ? _localizer["OpenDoorButton", number] : "";
+        Sign.Update(now, _family.Settings);
+        UpdateDoor(now);
     }
 
     [RelayCommand]
-    private void OpenTodaysDoor() => _navigation.Navigate<CalendarViewModel>();
+    private void OpenTodaysDoor() => _navigation.Navigate<CalendarViewModel>(DoorNumber);
+
+    [RelayCommand]
+    private void WriteWishLetter() => _navigation.Navigate<WishListViewModel>();
+
+    [RelayCommand]
+    private void SelectSign(SignOptionViewModel option)
+    {
+        _family.Settings.Sign = option.Design;
+        _family.SaveSettings();
+    }
+
+    [RelayCommand]
+    private void SelectStyle(StyleOptionViewModel option)
+    {
+        _family.Settings.CountdownStyle = option.Style;
+        _family.SaveSettings();
+    }
 
     [RelayCommand]
     private async Task SelectSceneAsync(SceneOptionViewModel option)
@@ -191,8 +184,15 @@ public partial class CountdownViewModel : ViewModelBase
         Snow = settings.Snow;
         CalmMotion = settings.CalmMotion;
 
-        var name = _family.ActiveKid.Name;
-        Greeting = name.Length > 0 ? _localizer["GreetingNamed", name] : _localizer["Greeting"];
+        foreach (var option in SignOptions)
+        {
+            option.IsSelected = option.Design == settings.Sign;
+        }
+
+        foreach (var option in StyleOptions)
+        {
+            option.IsSelected = option.Style == settings.CountdownStyle;
+        }
 
         Scenes.Clear();
         foreach (var scene in SceneCatalog.All)
@@ -220,19 +220,67 @@ public partial class CountdownViewModel : ViewModelBase
         Refresh();
     }
 
-    private string BuildHeadline(CountdownState state)
+    private void UpdateDoor(DateTime now)
     {
-        var bigDay = _localizer.BigDayName(_family.Settings.BigDay);
-        var bringer = _localizer.BringerName(_family.Settings.GiftBringer);
-        return state switch
+        var door = AdventCalendar.TodaysDoor(now);
+        if (door is { } today)
         {
-            { Phase: CountdownPhase.Celebrating } => _localizer["HeadlineCelebrating"],
-            { Sleeps: 0 } => _localizer["HeadlineToday", bringer],
-            { Sleeps: 1 } => _localizer["HeadlineOneSleep", bigDay],
-            { Sleeps: <= NearChristmasSleeps } => _localizer["HeadlineNear", bigDay],
-            _ => _localizer["HeadlineFar", bigDay],
-        };
+            var isOpened = _family.IsDoorOpened(_family.ActiveKid, AdventCalendar.SeasonYear(now), today);
+            DoorStage = isOpened ? HomeDoorStage.Opened : HomeDoorStage.Waiting;
+            DoorNumber = today;
+            DoorCaption = !isOpened
+                ? _localizer["OpenDoorButton", today]
+                : today < AdventCalendar.DoorCount ? _localizer["DoorSeeYouTomorrow"] : "";
+            CanWriteWishLetter = false;
+            return;
+        }
+
+        if (Sign.IsCelebrating)
+        {
+            DoorStage = HomeDoorStage.Hidden;
+            DoorCaption = "";
+            CanWriteWishLetter = false;
+            return;
+        }
+
+        var firstDoor = new DateTime(now.Month == 12 ? now.Year + 1 : now.Year, 12, 1);
+        DoorStage = HomeDoorStage.Locked;
+        DoorNumber = 1;
+        DoorCaption = _localizer.Plural("DoorOneOpensIn", (firstDoor - now.Date).Days);
+        CanWriteWishLetter = true;
     }
+}
+
+public enum HomeDoorStage
+{
+    Hidden,
+    Locked,
+    Waiting,
+    Opened,
+}
+
+public sealed partial class SignOptionViewModel(SignDesign design, string name, CountdownSignViewModel preview) : ObservableObject
+{
+    public SignDesign Design { get; } = design;
+
+    public string Name { get; } = name;
+
+    public CountdownSignViewModel Preview { get; } = preview;
+
+    [ObservableProperty]
+    public partial bool IsSelected { get; set; }
+}
+
+public sealed partial class StyleOptionViewModel(CountdownStyle style, string name, CountdownSignViewModel preview) : ObservableObject
+{
+    public CountdownStyle Style { get; } = style;
+
+    public string Name { get; } = name;
+
+    public CountdownSignViewModel Preview { get; } = preview;
+
+    [ObservableProperty]
+    public partial bool IsSelected { get; set; }
 }
 
 public sealed partial record SceneOptionViewModel(string Id, string Name, bool IsLocked, bool IsSelected);

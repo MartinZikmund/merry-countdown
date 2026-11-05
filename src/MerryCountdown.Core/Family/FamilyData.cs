@@ -19,6 +19,22 @@ public enum SnowLevel
     Blizzard,
 }
 
+/// <summary>The look of the countdown sign hanging over the scene.</summary>
+public enum SignDesign
+{
+    Plank,
+    Gingerbread,
+    ParcelTag,
+    Station,
+    Baubles,
+}
+
+public enum CountdownStyle
+{
+    Plates,
+    SleepsAndClock,
+}
+
 /// <summary>Everything the app remembers. Stored only on this device.</summary>
 public sealed class FamilyData
 {
@@ -110,6 +126,10 @@ public sealed class FamilySettings
     public int ArrivalMinutes { get; set; }
 
     public string? SceneId { get; set; }
+
+    public SignDesign Sign { get; set; } = SignDesign.Plank;
+
+    public CountdownStyle CountdownStyle { get; set; } = CountdownStyle.Plates;
 
     public SnowLevel Snow { get; set; } = SnowLevel.Gentle;
 

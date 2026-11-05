@@ -181,12 +181,6 @@
   <data name="NavWishes" xml:space="preserve">
     <value>Wishes</value>
   </data>
-  <data name="Greeting" xml:space="preserve">
-    <value>Hello there!</value>
-  </data>
-  <data name="GreetingNamed" xml:space="preserve">
-    <value>Hello, {0}!</value>
-  </data>
   <data name="SleepsCaption_One" xml:space="preserve">
     <value>sleep</value>
   </data>
@@ -195,18 +189,6 @@
   </data>
   <data name="SleepsCaption_Many" xml:space="preserve">
     <value>sleeps</value>
-  </data>
-  <data name="HeadlineFar" xml:space="preserve">
-    <value>until {0}. Better start being good!</value>
-  </data>
-  <data name="HeadlineNear" xml:space="preserve">
-    <value>until {0}. It is getting close!</value>
-  </data>
-  <data name="HeadlineOneSleep" xml:space="preserve">
-    <value>Just one more sleep until {0}!</value>
-  </data>
-  <data name="HeadlineToday" xml:space="preserve">
-    <value>It is today! Listen out for {0}!</value>
   </data>
   <data name="HeadlineCelebrating" xml:space="preserve">
     <value>Merry Christmas!</value>
@@ -223,23 +205,11 @@
   <data name="GiftBringer_Jezisek" xml:space="preserve">
     <value>Ježíšek</value>
   </data>
-  <data name="ClockDays" xml:space="preserve">
-    <value>days</value>
-  </data>
-  <data name="ClockHours" xml:space="preserve">
-    <value>hours</value>
-  </data>
-  <data name="ClockMinutes" xml:space="preserve">
-    <value>min</value>
-  </data>
-  <data name="ClockSeconds" xml:space="preserve">
-    <value>sec</value>
-  </data>
   <data name="OpenDoorButton" xml:space="preserve">
     <value>Open door {0}!</value>
   </data>
   <data name="ChooseScene" xml:space="preserve">
-    <value>Change the picture</value>
+    <value>Change the look</value>
   </data>
   <data name="FamilyDisplay" xml:space="preserve">
     <value>Family Display</value>
@@ -601,9 +571,6 @@
   <data name="EventName" xml:space="preserve">
     <value>Name of the event</value>
   </data>
-  <data name="DisplayCountdown" xml:space="preserve">
-    <value>{0} days  {1} hours  {2} min  {3} sec</value>
-  </data>
   <data name="DisplayHint" xml:space="preserve">
     <value>Esc or Back to leave. Arrow keys change the picture.</value>
   </data>
@@ -675,5 +642,101 @@
   </data>
   <data name="FullVersionPitch" xml:space="preserve">
     <value>One purchase, forever, no subscription. Unlocks three more animated scenes, your own photos as a slideshow, personal messages behind the doors, countdowns to birthdays and other family events, and an exact time for the big moment.</value>
+  </data>
+  <data name="UnitDays_One" xml:space="preserve">
+    <value>day</value>
+  </data>
+  <data name="UnitDays_Few" xml:space="preserve">
+    <value>days</value>
+  </data>
+  <data name="UnitDays_Many" xml:space="preserve">
+    <value>days</value>
+  </data>
+  <data name="UnitHours_One" xml:space="preserve">
+    <value>hour</value>
+  </data>
+  <data name="UnitHours_Few" xml:space="preserve">
+    <value>hours</value>
+  </data>
+  <data name="UnitHours_Many" xml:space="preserve">
+    <value>hours</value>
+  </data>
+  <data name="UnitMinutes_One" xml:space="preserve">
+    <value>minute</value>
+  </data>
+  <data name="UnitMinutes_Few" xml:space="preserve">
+    <value>minutes</value>
+  </data>
+  <data name="UnitMinutes_Many" xml:space="preserve">
+    <value>minutes</value>
+  </data>
+  <data name="UnitSeconds_One" xml:space="preserve">
+    <value>second</value>
+  </data>
+  <data name="UnitSeconds_Few" xml:space="preserve">
+    <value>seconds</value>
+  </data>
+  <data name="UnitSeconds_Many" xml:space="preserve">
+    <value>seconds</value>
+  </data>
+  <data name="SignNextChange" xml:space="preserve">
+    <value>until it says {0}</value>
+  </data>
+  <data name="SignNextChangeLastSleep" xml:space="preserve">
+    <value>until it's {0}!</value>
+  </data>
+  <data name="SignNextChangeBigDay" xml:space="preserve">
+    <value>until the presents!</value>
+  </data>
+  <data name="SignAccessible_Plates" xml:space="preserve">
+    <value>{0} {1}, {2} {3} and {4} {5} until {6}</value>
+  </data>
+  <data name="SignAccessible_Sleeps" xml:space="preserve">
+    <value>{0} {1} until {2}</value>
+  </data>
+  <data name="DoorOneOpensIn_One" xml:space="preserve">
+    <value>Door 1 opens in {0} sleep</value>
+  </data>
+  <data name="DoorOneOpensIn_Few" xml:space="preserve">
+    <value>Door 1 opens in {0} sleeps</value>
+  </data>
+  <data name="DoorOneOpensIn_Many" xml:space="preserve">
+    <value>Door 1 opens in {0} sleeps</value>
+  </data>
+  <data name="DoorSeeYouTomorrow" xml:space="preserve">
+    <value>See you tomorrow!</value>
+  </data>
+  <data name="WriteWishLetter" xml:space="preserve">
+    <value>Write your wish letter</value>
+  </data>
+  <data name="ChooseStyleHeader" xml:space="preserve">
+    <value>Countdown</value>
+  </data>
+  <data name="ChooseSignHeader" xml:space="preserve">
+    <value>Sign</value>
+  </data>
+  <data name="ChooseSceneHeader" xml:space="preserve">
+    <value>Scene</value>
+  </data>
+  <data name="Style_Plates" xml:space="preserve">
+    <value>Days, hours, minutes</value>
+  </data>
+  <data name="Style_SleepsAndClock" xml:space="preserve">
+    <value>Sleeps and a clock</value>
+  </data>
+  <data name="Sign_Plank" xml:space="preserve">
+    <value>Snowy plank</value>
+  </data>
+  <data name="Sign_Gingerbread" xml:space="preserve">
+    <value>Gingerbread</value>
+  </data>
+  <data name="Sign_ParcelTag" xml:space="preserve">
+    <value>Parcel tag</value>
+  </data>
+  <data name="Sign_Station" xml:space="preserve">
+    <value>Station sign</value>
+  </data>
+  <data name="Sign_Baubles" xml:space="preserve">
+    <value>Bauble garland</value>
   </data>
 </root>
