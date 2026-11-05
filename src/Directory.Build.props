@@ -11,6 +11,8 @@
 
         <!-- Uno.Sdk 7.0.0-dev.159 pins 5.0.0-dev.34 while its own Uno.UI adapter needs >= 5.0.0 (NU1605). -->
         <UnoCoreLoggingSingletonVersion>5.0.0</UnoCoreLoggingSingletonVersion>
+        <!-- Uno 7 packages are built against WinRT.Runtime 2.3.1, newer than the SDK default projection (CS1705). -->
+        <WindowsSdkPackageVersion Condition="$(TargetFramework.Contains('windows10.0.26100'))">10.0.26100.87</WindowsSdkPackageVersion>
 
         <UnoFeatures>
             Hosting;

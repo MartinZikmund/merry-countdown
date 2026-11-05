@@ -76,6 +76,20 @@ public class SceneRenderingTests
     }
 
     [TestMethod]
+    public void Confetti_LeavesTheBackgroundSeeThrough()
+    {
+        using ConfettiScene scene = new();
+        using SKBitmap bitmap = new(new SKImageInfo(300, 300, SKImageInfo.PlatformColorType, SKAlphaType.Premul));
+        using SKCanvas canvas = new(bitmap);
+        canvas.Clear(SKColors.Transparent);
+
+        scene.Render(canvas, 300, 300, 2);
+
+        Enumerable.Range(0, 300).Count(x => bitmap.GetPixel(x, 150).Alpha == 0).Should().BeGreaterThan(200);
+        ColorCount(bitmap).Should().BeGreaterThan(2);
+    }
+
+    [TestMethod]
     public void Create_UnknownId_FallsBackToTheVillage()
     {
         using var scene = Scene.Create("nope");

@@ -8,7 +8,7 @@
 
 
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="ms-appx:///CommunityToolkit.WinUI.Controls.SettingsControls/SettingsCard/SettingsCard.xaml" />
+        <ResourceDictionary Source="ms-appx:///SettingsControls/SettingsCard/SettingsCard.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
     <x:String x:Key="SettingsExpanderChevronToolTip">Show all settings</x:String>

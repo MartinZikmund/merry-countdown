@@ -41,15 +41,19 @@ public sealed partial class CalendarView : CalendarViewBase
         const double LargestDoor = 200;
         const double VerticalPadding = 24;
 
-        var (columns, door) = new[] { 3, 4, 6, 8, 12 }
-            .Select(c =>
+        var columns = 6;
+        var door = 0d;
+        foreach (var candidate in new[] { 3, 4, 6, 8, 12 })
+        {
+            var rows = 24 / candidate;
+            var fitWidth = (e.NewSize.Width - ((candidate - 1) * Spacing)) / candidate;
+            var fitHeight = (e.NewSize.Height - VerticalPadding - ((rows - 1) * Spacing)) / rows;
+            if (Math.Min(fitWidth, fitHeight) > door)
             {
-                var rows = 24 / c;
-                var fitWidth = (e.NewSize.Width - ((c - 1) * Spacing)) / c;
-                var fitHeight = (e.NewSize.Height - VerticalPadding - ((rows - 1) * Spacing)) / rows;
-                return (Columns: c, Size: Math.Min(fitWidth, fitHeight));
-            })
-            .MaxBy(option => option.Size);
+                door = Math.Min(fitWidth, fitHeight);
+                columns = candidate;
+            }
+        }
 
         DoorLayout.MaximumRowsOrColumns = columns;
         DoorLayout.MinItemWidth = Math.Clamp(door, SmallestDoor, LargestDoor);

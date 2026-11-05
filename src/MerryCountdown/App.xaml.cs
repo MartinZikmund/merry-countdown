@@ -35,6 +35,11 @@ public partial class App : Application, IApplication
 
     public App()
     {
+#if DEBUG
+        UnhandledException += (_, e) => File.WriteAllText(
+            Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "crash.txt"),
+            e.Message + Environment.NewLine + e.Exception);
+#endif
         this.InitializeComponent();
     }
 
@@ -69,6 +74,7 @@ public partial class App : Application, IApplication
         MainWindow.UseStudio();
 #endif
         MainWindow.SetWindowIcon();
+        SizeMainWindow(MainWindow);
 
         Host = builder.Build();
         IoC.SetProvider(Host.Services);
@@ -157,6 +163,22 @@ public partial class App : Application, IApplication
         services.AddTransient<DisplayViewModel>();
         services.AddTransient<SettingsViewModel>();
     }
+
+    private static void SizeMainWindow(Window window)
+    {
+#if WINAPPSDK
+        // WinUI has no SizeToContent, and its default is silly on an ultrawide. AppWindow takes physical pixels.
+        const int Width = 1180;
+        const int Height = 860;
+        var scale = GetDpiForWindow(WinRT.Interop.WindowNative.GetWindowHandle(window)) / 96.0;
+        window.AppWindow.Resize(new Windows.Graphics.SizeInt32((int)(Width * scale), (int)(Height * scale)));
+#endif
+    }
+
+#if WINAPPSDK
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    private static extern uint GetDpiForWindow(IntPtr hwnd);
+#endif
 
     private static void RegisterStore(IServiceCollection services)
     {

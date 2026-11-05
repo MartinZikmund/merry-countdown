@@ -1,7 +1,6 @@
 <Solution>
   <Folder Name="/App/">
     <Project Path="../tests/MerryCountdown.Core.Tests/MerryCountdown.Core.Tests.csproj" Id="c0de6d3e-8f3b-43c5-967a-d5aae7c80674" />
-    <Project Path="CommunityToolkit.WinUI.Controls.SettingsControls/CommunityToolkit.WinUI.Controls.SettingsControls.csproj" />
     <Project Path="MerryCountdown.Core/MerryCountdown.Core.csproj" />
     <Project Path="MerryCountdown.Scenes/MerryCountdown.Scenes.csproj" />
     <Project Path="../tests/MerryCountdown.Scenes.Tests/MerryCountdown.Scenes.Tests.csproj" />

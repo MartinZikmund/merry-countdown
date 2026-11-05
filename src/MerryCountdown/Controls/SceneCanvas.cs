@@ -57,7 +57,7 @@ public sealed partial class SceneCanvas : Grid
             canvas.PaintSurface += (_, e) =>
             {
                 e.Surface.Canvas.Clear(SKColors.Transparent);
-                Paint(e.Surface.Canvas, canvas.CanvasSize);
+                Paint(e.Surface.Canvas, canvas.CanvasSize.Width, canvas.CanvasSize.Height);
             };
             Children.Add(canvas);
             _invalidate = canvas.Invalidate;
@@ -65,7 +65,7 @@ public sealed partial class SceneCanvas : Grid
         else
         {
             SKSwapChainPanel panel = new() { EnableRenderLoop = false };
-            panel.PaintSurface += (_, e) => Paint(e.Surface.Canvas, panel.CanvasSize);
+            panel.PaintSurface += (_, e) => Paint(e.Surface.Canvas, panel.CanvasSize.Width, panel.CanvasSize.Height);
             Children.Add(panel);
             _invalidate = panel.Invalidate;
         }
@@ -137,14 +137,14 @@ public sealed partial class SceneCanvas : Grid
         _invalidate();
     }
 
-    private void Paint(SKCanvas canvas, Windows.Foundation.Size pixels)
+    private void Paint(SKCanvas canvas, double pixelWidth, double pixelHeight)
     {
         if (ActualWidth > 0)
         {
-            _pixelsPerDip = (float)(pixels.Width / ActualWidth);
+            _pixelsPerDip = (float)(pixelWidth / ActualWidth);
         }
 
-        _scene?.Render(canvas, (int)pixels.Width, (int)pixels.Height, _sceneTime);
+        _scene?.Render(canvas, (int)pixelWidth, (int)pixelHeight, _sceneTime);
         canvas.Flush();
     }
 
@@ -185,7 +185,7 @@ public sealed partial class SceneCanvas : Grid
 
             canvas.Save();
             canvas.Scale(1 / scale);
-            owner.Paint(canvas, new Windows.Foundation.Size(area.Width * scale, area.Height * scale));
+            owner.Paint(canvas, area.Width * scale, area.Height * scale);
             canvas.Restore();
         }
     }

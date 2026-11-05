@@ -23,8 +23,7 @@
             Title="{markup:Localize Key=ApplicationName}"
             BackRequested="AppTitleBar_BackRequested"
             IsBackButtonVisible="{x:Bind ViewModel.CanGoBack, Mode=OneWay}"
-            IsPaneToggleButtonVisible="False"
-            Subtitle="{x:Bind ViewModel.Title, Mode=OneWay}">
+            IsPaneToggleButtonVisible="False">
             <win:TitleBar.IconSource>
                 <ImageIconSource ImageSource="ms-appx:///Assets/Icons/icon_foreground.png" />
             </win:TitleBar.IconSource>

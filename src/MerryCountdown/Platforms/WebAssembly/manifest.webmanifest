@@ -1,10 +1,10 @@
 {
-  "background_color": "#ffffff",
-  "description": "MerryCountdown",
+  "background_color": "#101A3E",
+  "description": "A joyful Christmas countdown for kids and families",
   "display": "standalone",
-  "name": "MerryCountdown",
-  "short_name": "MerryCountdown",
+  "name": "Merry Countdown",
+  "short_name": "Merry Countdown",
   "start_url": "/index.html",
-  "theme_color": "#ffffff",
+  "theme_color": "#101A3E",
   "scope": "/"
 }

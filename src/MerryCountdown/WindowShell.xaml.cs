@@ -219,7 +219,9 @@ public sealed partial class WindowShell : Page, IWindowShell
             tag = NavigationSection.Settings.ToString();
         }
 
-        if (Enum.TryParse<NavigationSection>(tag, out var section))
+        // Selection also follows navigation that started elsewhere, which must not navigate a second time.
+        if (Enum.TryParse<NavigationSection>(tag, out var section)
+            && ServiceProvider.GetRequiredService<INavigationService>().CurrentSection != section)
         {
             NavigateToSection(section);
         }
@@ -248,6 +250,7 @@ public sealed partial class WindowShell : Page, IWindowShell
 
         // Tabs, not a journey: only pages opened from a section (the grown-ups corner) have a way back.
         nav.ClearBackStack();
+        ViewModel.NotifyCanGoBackChanged();
     }
 
     private void NavView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
@@ -268,9 +271,6 @@ public sealed partial class WindowShell : Page, IWindowShell
             UpdateNavigationViewSelection();
         }
     }
-
-    private void AppTitleBar_PaneToggleRequested(TitleBar sender, object args)
-        => NavView.IsPaneOpen = !NavView.IsPaneOpen;
 #endif
 
     private void UpdateNavigationViewSelection()

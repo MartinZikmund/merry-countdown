@@ -15,6 +15,7 @@ One page per topic. Keep it that way — see [`.claude/rules/docs.md`](../.claud
 
 ## Release
 
+- [store-setup.md](./store-setup.md) — what to create in each store before the full version can be sold, and how to test the paywall without one.
 - [versioning.md](./versioning.md) — the Dev/Prod channel model, git-height versions, side-by-side identity.
 - [versioning-migration.md](./versioning-migration.md) — applying that model to an existing app.
 
