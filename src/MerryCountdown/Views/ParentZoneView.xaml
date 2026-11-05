@@ -1,4 +1,4 @@
-﻿<local:ParentZoneViewBase
+<local:ParentZoneViewBase
     x:Class="MerryCountdown.Views.ParentZoneView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -74,9 +74,9 @@
                             <toolkit:SettingsCard.Header>
                                 <TextBox
                                     MinWidth="200"
-                                    AutomationProperties.Name="{markup:Localize Key=YourName}"
+                                    AutomationProperties.Name="{markup:Localize Key=KidNamePlaceholder}"
                                     MaxLength="24"
-                                    PlaceholderText="{markup:Localize Key=YourName}"
+                                    PlaceholderText="{markup:Localize Key=KidNamePlaceholder}"
                                     Text="{x:Bind Name, Mode=TwoWay}" />
                             </toolkit:SettingsCard.Header>
                             <toolkit:SettingsCard.HeaderIcon>
@@ -102,7 +102,7 @@
                         AutomationProperties.AutomationId="NewKidNameBox"
                         AutomationProperties.Name="{markup:Localize Key=AddKid}"
                         MaxLength="24"
-                        PlaceholderText="{markup:Localize Key=YourName}"
+                        PlaceholderText="{markup:Localize Key=KidNamePlaceholder}"
                         Text="{x:Bind ViewModel.NewKidName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <Button
                         AutomationProperties.AutomationId="AddKidButton"
@@ -146,7 +146,7 @@
                             MinWidth="120"
                             AutomationProperties.AutomationId="MessageKidCombo"
                             AutomationProperties.Name="{markup:Localize Key=MessageKid}"
-                            DisplayMemberPath="Name"
+                            DisplayMemberPath="DisplayName"
                             ItemsSource="{x:Bind ViewModel.Kids}"
                             PlaceholderText="{markup:Localize Key=MessageKid}"
                             SelectedItem="{x:Bind ViewModel.MessageKid, Mode=TwoWay}" />

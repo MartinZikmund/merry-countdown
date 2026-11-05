@@ -173,7 +173,7 @@
     <value>Vánoční odpočítávání, adventní kalendář a seznam přání pro děti a rodiny. Vyrobil v Praze Martin Zikmund.</value>
   </data>
   <data name="NavCountdown" xml:space="preserve">
-    <value>Odpočet</value>
+    <value>Domů</value>
   </data>
   <data name="NavCalendar" xml:space="preserve">
     <value>Okénka</value>
@@ -627,5 +627,8 @@
   </data>
   <data name="DisplayWishes_Many" xml:space="preserve">
     <value>{0} přání</value>
+  </data>
+  <data name="KidNamePlaceholder" xml:space="preserve">
+    <value>Jméno</value>
   </data>
 </root>

@@ -193,7 +193,7 @@ public partial class ParentZoneViewModel : ViewModelBase
         var canRemove = _family.Kids.Count > 1;
         foreach (var kid in _family.Kids)
         {
-            Kids.Add(new KidRowViewModel(kid, _family, canRemove));
+            Kids.Add(new KidRowViewModel(kid, _family, canRemove, _localizer["KidNoName"]));
         }
 
         MessageKid = Kids.FirstOrDefault(k => k.Kid == selectedKid) ?? Kids.FirstOrDefault();
@@ -219,7 +219,7 @@ public partial class ParentZoneViewModel : ViewModelBase
     }
 }
 
-public partial class KidRowViewModel(Kid kid, IFamilyService family, bool canRemove) : ObservableObject
+public partial class KidRowViewModel(Kid kid, IFamilyService family, bool canRemove, string unnamed) : ObservableObject
 {
     public Kid Kid { get; } = kid;
 
@@ -240,7 +240,9 @@ public partial class KidRowViewModel(Kid kid, IFamilyService family, bool canRem
         }
     }
 
-    public override string ToString() => Kid.Name;
+    public string DisplayName => Kid.Name.Length > 0 ? Kid.Name : unnamed;
+
+    public override string ToString() => DisplayName;
 }
 
 public sealed class FamilyEventRowViewModel(FamilyEvent familyEvent, string date)

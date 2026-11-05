@@ -1,6 +1,7 @@
 #if __ANDROID__ || __IOS__
 using MerryCountdown.Core.Store;
 using Uno.RevenueCat.Enums;
+using Uno.RevenueCat.Extensions;
 using Uno.RevenueCat.Models;
 using Uno.RevenueCat.Services;
 

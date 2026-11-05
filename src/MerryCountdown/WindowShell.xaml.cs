@@ -51,6 +51,9 @@ public sealed partial class WindowShell : Page, IWindowShell
 
     public IServiceProvider ServiceProvider => _windowScope.ServiceProvider;
 
+    public static NavigationViewBackButtonVisible BackVisibility(bool canGoBack) =>
+        canGoBack ? NavigationViewBackButtonVisible.Visible : NavigationViewBackButtonVisible.Collapsed;
+
     /// <summary>For a TV that should wake straight into the big screen.</summary>
     public void EnterFamilyDisplayOnLoad()
     {

@@ -51,6 +51,10 @@
         <PackageReference Include="MZikmund.Uno.RevenueCat" />
     </ItemGroup>
 
+    <ItemGroup Condition="'$(IsAndroid)' == 'true'">
+        <PackageReference Include="Xamarin.AndroidX.Fragment.Ktx" />
+    </ItemGroup>
+
     <ItemGroup>
         <ProjectReference Include="..\MerryCountdown.Scenes\MerryCountdown.Scenes.csproj" />
         <ProjectReference Include="..\MerryCountdown.Core\MerryCountdown.Core.csproj" />

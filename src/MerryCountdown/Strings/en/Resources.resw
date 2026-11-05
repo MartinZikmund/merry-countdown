@@ -173,7 +173,7 @@
     <value>A Christmas countdown, advent calendar and wish list for kids and families. Made in Prague by Martin Zikmund.</value>
   </data>
   <data name="NavCountdown" xml:space="preserve">
-    <value>Countdown</value>
+    <value>Home</value>
   </data>
   <data name="NavCalendar" xml:space="preserve">
     <value>Doors</value>
@@ -627,5 +627,8 @@
   </data>
   <data name="DisplayWishes_Many" xml:space="preserve">
     <value>{0} wishes</value>
+  </data>
+  <data name="KidNamePlaceholder" xml:space="preserve">
+    <value>Name</value>
   </data>
 </root>

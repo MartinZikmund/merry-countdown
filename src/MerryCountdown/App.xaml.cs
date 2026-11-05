@@ -76,6 +76,9 @@ public partial class App : Application, IApplication
         MainWindow.SetWindowIcon();
         SizeMainWindow(MainWindow);
 
+        // On the web the file system loads from IndexedDB asynchronously. Family data can't be read before this.
+        await Windows.Storage.ApplicationData.Current.LocalFolder.CreateFolderAsync("Family", Windows.Storage.CreationCollisionOption.OpenIfExists);
+
         Host = builder.Build();
         IoC.SetProvider(Host.Services);
 
