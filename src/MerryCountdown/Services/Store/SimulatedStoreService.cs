@@ -3,9 +3,9 @@ using MerryCountdown.Core.Store;
 namespace MerryCountdown.Services.Store;
 
 /// <summary>Debug only (MERRY_SIMULATE_STORE=1): lets the paywall be exercised where there's no billing at all.</summary>
-public sealed class SimulatedStoreService : IStoreService
+public sealed class SimulatedStoreService(bool startsOwned = false) : IStoreService
 {
-    private bool _owned;
+    private bool _owned = startsOwned;
 
     public bool HasBilling => true;
 

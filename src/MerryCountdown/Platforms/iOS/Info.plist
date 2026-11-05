@@ -49,5 +49,7 @@
 		<key>ITSAppUsesNonExemptEncryption</key>
 		<false/>
 		-->
-	</dict>
+		<key>NSPhotoLibraryUsageDescription</key>
+	<string>Choose family photos to show behind the Christmas countdown. They stay on this device.</string>
+</dict>
 </plist>

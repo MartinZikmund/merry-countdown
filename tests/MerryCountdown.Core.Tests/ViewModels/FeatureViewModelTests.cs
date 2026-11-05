@@ -18,7 +18,7 @@ public class CountdownViewModelTests
         FakeNavigation nav = new();
         FakeDisplayMode display = new();
         FakeFullVersion full = new(isFull);
-        return (new CountdownViewModel(family, full, clock, ticker, new FakeStringLocalizer(), nav, display), family, clock, ticker, nav, display, full);
+        return (new CountdownViewModel(family, full, clock, ticker, new FakeStringLocalizer(), nav, display, new PhotoBackdrop(family, full, new FakePhotoLibrary(), ticker), new FakeGate()), family, clock, ticker, nav, display, full);
     }
 
     [TestMethod]
@@ -84,7 +84,7 @@ public class CountdownViewModelTests
         var (vm, _, _, _, nav, _, _) = Create(new DateTime(2026, 11, 5));
         var before = vm.SceneId;
 
-        vm.SelectSceneCommand.Execute(vm.Scenes.First(s => s.IsLocked));
+        vm.SelectSceneCommand.Execute(vm.Scenes.First(s => s.IsLocked && s.Id != CountdownViewModel.PhotosOptionId));
 
         vm.SceneId.Should().Be(before);
         nav.Visited.Should().Contain(typeof(SettingsViewModel));
@@ -353,7 +353,8 @@ public class DisplayViewModelTests
         FamilyService family = new(new FakeFamilyStore(), "en-US");
         FakeTicker ticker = new();
         FakeDisplayMode mode = new();
-        return (new DisplayViewModel(family, new FakeFullVersion(isFull), new FakeClock(now), ticker, new FakeStringLocalizer(), mode), family, ticker, mode);
+        FakeFullVersion full = new(isFull);
+        return (new DisplayViewModel(family, full, new FakeClock(now), ticker, new FakeStringLocalizer(), mode, new PhotoBackdrop(family, full, new FakePhotoLibrary(), ticker)), family, ticker, mode);
     }
 
     [TestMethod]
@@ -469,7 +470,7 @@ public class ParentZoneViewModelTests
         FamilyService family = new(new FakeFamilyStore(), "en-US");
         FakeFullVersion full = new(isFull);
         FakeMessages messages = new();
-        return (new ParentZoneViewModel(family, full, new FakeStringLocalizer(), messages, new FakeClock(new DateTime(2026, 11, 5))), family, full, messages);
+        return (new ParentZoneViewModel(family, full, new FakeStringLocalizer(), messages, new FakeClock(new DateTime(2026, 11, 5)), new FakePhotoLibrary()), family, full, messages);
     }
 
     [TestMethod]

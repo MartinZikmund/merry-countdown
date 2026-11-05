@@ -37,6 +37,17 @@ A joyful Christmas countdown for kids and families: a much improved, modern take
 - **Family Display:** the current scene, huge number, date and clock, one card per kid and a fact of the day. Screen kept awake, content drifts slowly to protect panels, scenes rotate every 30 minutes. `--display` (desktop) or `?display=1` (web) starts straight in it.
 - **Grown-ups' corner:** behind the parent gate. Kids, the full version, messages behind doors, family events, exact time.
 
+## Custom photos
+
+Decided by Martin: photos fill the screen behind the countdown, the scene's foreground can optionally stay in front,
+it's part of the full version, and several photos run as a slideshow at a chosen interval.
+
+My calls: photos are added and deleted in the grown-ups' corner, while kids can only switch to them from the scene menu.
+The foreground is a choice of scene rather than an on/off switch. Intervals run from 30 seconds to an hour, 5 minutes by
+default, with a crossfade. In Family Display the album replaces scene rotation and the arrow keys move through photos.
+Each photo is copied into app storage upright, at most 2560 pixels on its long side, as JPEG. Refunding the full version
+hides the photos but doesn't delete them.
+
 ## Structure
 
 ```

@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using MerryCountdown.Core.Family;
 using MerryCountdown.Core.Infrastructure;
+using MerryCountdown.Core.Parents;
 using MerryCountdown.Core.Season;
 using MerryCountdown.Core.Store;
 
@@ -9,6 +10,8 @@ namespace MerryCountdown.Core.ViewModels;
 
 public partial class CountdownViewModel : ViewModelBase
 {
+    public const string PhotosOptionId = "photos";
+
     private const int NearChristmasSleeps = 24;
 
     private readonly IFamilyService _family;
@@ -18,6 +21,7 @@ public partial class CountdownViewModel : ViewModelBase
     private readonly IStringLocalizer _localizer;
     private readonly INavigationService _navigation;
     private readonly IDisplayModeService _display;
+    private readonly IParentGateService _gate;
 
     public CountdownViewModel(
         IFamilyService family,
@@ -26,7 +30,9 @@ public partial class CountdownViewModel : ViewModelBase
         ITicker ticker,
         IStringLocalizer localizer,
         INavigationService navigation,
-        IDisplayModeService display)
+        IDisplayModeService display,
+        PhotoBackdrop backdrop,
+        IParentGateService gate)
     {
         _family = family;
         _fullVersion = fullVersion;
@@ -35,9 +41,13 @@ public partial class CountdownViewModel : ViewModelBase
         _localizer = localizer;
         _navigation = navigation;
         _display = display;
+        _gate = gate;
+        Backdrop = backdrop;
         PageTitle = localizer["NavCountdown"];
         Reload();
     }
+
+    public PhotoBackdrop Backdrop { get; }
 
     public ObservableCollection<SceneOptionViewModel> Scenes { get; } = [];
 
@@ -133,23 +143,37 @@ public partial class CountdownViewModel : ViewModelBase
     private void OpenTodaysDoor() => _navigation.Navigate<CalendarViewModel>();
 
     [RelayCommand]
-    private void NextScene()
+    private async Task SelectSceneAsync(SceneOptionViewModel option)
     {
-        _family.Settings.SceneId = SceneCatalog.Next(SceneId, _fullVersion.IsFull).Id;
-        _family.SaveSettings();
-    }
+        if (option.Id == PhotosOptionId)
+        {
+            await SelectPhotosAsync();
+            return;
+        }
 
-    [RelayCommand]
-    private void SelectScene(SceneOptionViewModel option)
-    {
         if (option.IsLocked)
         {
             _navigation.Navigate<SettingsViewModel>();
             return;
         }
 
+        _family.Settings.UsesPhotos = false;
         _family.Settings.SceneId = option.Id;
         _family.SaveSettings();
+    }
+
+    private async Task SelectPhotosAsync()
+    {
+        if (_fullVersion.IsFull && _family.Settings.PhotoIds.Count > 0)
+        {
+            _family.Settings.UsesPhotos = true;
+            _family.SaveSettings();
+        }
+        else if (await _gate.PassAsync())
+        {
+            // Nothing to show yet, or not bought yet. Both are for a grown-up.
+            _navigation.Navigate<ParentZoneViewModel>();
+        }
     }
 
     [RelayCommand]
@@ -162,7 +186,8 @@ public partial class CountdownViewModel : ViewModelBase
     private void Reload()
     {
         var settings = _family.Settings;
-        SceneId = SceneCatalog.Resolve(settings.SceneId, _fullVersion.IsFull).Id;
+        var chosenScene = SceneCatalog.Resolve(settings.SceneId, _fullVersion.IsFull).Id;
+        SceneId = Backdrop.SceneFor(chosenScene);
         Snow = settings.Snow;
         CalmMotion = settings.CalmMotion;
 
@@ -174,6 +199,8 @@ public partial class CountdownViewModel : ViewModelBase
         {
             Scenes.Add(new SceneOptionViewModel(scene.Id, _localizer[$"Scene_{scene.Id}"], scene.RequiresFullVersion && !_fullVersion.IsFull, scene.Id == SceneId));
         }
+
+        Scenes.Add(new SceneOptionViewModel(PhotosOptionId, _localizer["Scene_photos"], !_fullVersion.IsFull, Backdrop.IsActive));
 
         Events.Clear();
         if (_fullVersion.IsFull)

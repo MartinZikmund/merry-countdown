@@ -41,3 +41,18 @@ public interface ISnackService
 
     Task<bool> ConfirmAsync(string title, string message);
 }
+
+/// <param name="Added">Ids of the photos now stored. Empty when the picker was cancelled.</param>
+/// <param name="Failed">How many picked files couldn't be read as pictures.</param>
+public sealed record PhotoPickResult(IReadOnlyList<string> Added, int Failed);
+
+/// <summary>Family photos, kept in the app's own storage so they never depend on the original file.</summary>
+public interface IPhotoLibrary
+{
+    Task<PhotoPickResult> PickAndStoreAsync();
+
+    /// <summary>Null when the photo is gone, for example after the browser cleared its storage.</summary>
+    byte[]? Load(string id);
+
+    void Delete(string id);
+}

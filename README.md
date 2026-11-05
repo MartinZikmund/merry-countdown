@@ -22,6 +22,7 @@ WebAssembly, Windows, macOS, Linux and WinUI**.
 | A wish list and doors for every kid | ✓ | ✓ |
 | Christmas Eve or Day, Santa or Ježíšek | ✓ | ✓ |
 | Scenes | 2 | 5 |
+| Your own photos as a slideshow, with an optional scene foreground | | ✓ |
 | Personal messages behind doors | | ✓ |
 | Countdowns to birthdays and family events | | ✓ |
 | Exact time of the big moment | | ✓ |

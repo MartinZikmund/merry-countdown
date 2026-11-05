@@ -1,4 +1,4 @@
-<local:ParentZoneViewBase
+﻿<local:ParentZoneViewBase
     x:Class="MerryCountdown.Views.ParentZoneView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -135,6 +135,81 @@
                         IsEnabled="{x:Bind ViewModel.IsFull, Mode=OneWay}"
                         Time="{x:Bind ViewModel.ArrivalTime, Mode=TwoWay}" />
                 </toolkit:SettingsCard>
+
+                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{markup:Localize Key=PhotosHeader}" />
+                <toolkit:SettingsCard Description="{markup:Localize Key=PhotosDescription}" Header="{markup:Localize Key=PhotosToggle}">
+                    <toolkit:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE8B9;" />
+                    </toolkit:SettingsCard.HeaderIcon>
+                    <StackPanel Orientation="Horizontal" Spacing="16">
+                        <Button
+                            AutomationProperties.AutomationId="AddPhotosButton"
+                            Command="{x:Bind ViewModel.AddPhotosCommand}"
+                            Content="{markup:Localize Key=PhotosAdd}"
+                            IsEnabled="{x:Bind ViewModel.IsFull, Mode=OneWay}"
+                            Style="{StaticResource AccentButtonStyle}" />
+                        <ToggleSwitch
+                            AutomationProperties.AutomationId="UsePhotosToggle"
+                            AutomationProperties.Name="{markup:Localize Key=PhotosToggle}"
+                            IsEnabled="{x:Bind ViewModel.HasPhotos, Mode=OneWay}"
+                            IsOn="{x:Bind ViewModel.UsesPhotos, Mode=TwoWay}" />
+                    </StackPanel>
+                </toolkit:SettingsCard>
+                <toolkit:SettingsCard Description="{markup:Localize Key=PhotoForegroundDescription}" Header="{markup:Localize Key=PhotoForegroundHeader}">
+                    <toolkit:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE81E;" />
+                    </toolkit:SettingsCard.HeaderIcon>
+                    <ComboBox
+                        AutomationProperties.AutomationId="PhotoForegroundCombo"
+                        AutomationProperties.Name="{markup:Localize Key=PhotoForegroundHeader}"
+                        IsEnabled="{x:Bind ViewModel.IsFull, Mode=OneWay}"
+                        ItemsSource="{x:Bind ViewModel.ForegroundOptions}"
+                        SelectedIndex="{x:Bind ViewModel.ForegroundIndex, Mode=TwoWay}" />
+                </toolkit:SettingsCard>
+                <toolkit:SettingsCard Header="{markup:Localize Key=PhotoIntervalHeader}">
+                    <toolkit:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE916;" />
+                    </toolkit:SettingsCard.HeaderIcon>
+                    <ComboBox
+                        AutomationProperties.AutomationId="PhotoIntervalCombo"
+                        AutomationProperties.Name="{markup:Localize Key=PhotoIntervalHeader}"
+                        IsEnabled="{x:Bind ViewModel.IsFull, Mode=OneWay}"
+                        ItemsSource="{x:Bind ViewModel.PhotoIntervalOptions}"
+                        SelectedIndex="{x:Bind ViewModel.PhotoIntervalIndex, Mode=TwoWay}" />
+                </toolkit:SettingsCard>
+                <ItemsRepeater ItemsSource="{x:Bind ViewModel.Photos}">
+                    <ItemsRepeater.Layout>
+                        <UniformGridLayout
+                            ItemsStretch="Fill"
+                            MinColumnSpacing="8"
+                            MinItemHeight="120"
+                            MinItemWidth="160"
+                            MinRowSpacing="8" />
+                    </ItemsRepeater.Layout>
+                    <ItemsRepeater.ItemTemplate>
+                        <DataTemplate x:DataType="vm:PhotoRowViewModel">
+                            <Grid CornerRadius="8">
+                                <Image Source="{x:Bind controls:Stickers.Photo(Bytes)}" Stretch="UniformToFill" />
+                                <Button
+                                    Width="44"
+                                    Height="44"
+                                    Margin="4"
+                                    Padding="0"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    AutomationProperties.Name="{markup:Localize Key=RemovePhotoTitle}"
+                                    Background="{StaticResource SceneGlassStrongBrush}"
+                                    Click="RemovePhoto_Click"
+                                    CornerRadius="22"
+                                    Foreground="{StaticResource SceneTextBrush}"
+                                    Tag="{x:Bind}"
+                                    ToolTipService.ToolTip="{markup:Localize Key=RemovePhotoTitle}">
+                                    <FontIcon FontSize="16" Glyph="&#xE74D;" />
+                                </Button>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsRepeater.ItemTemplate>
+                </ItemsRepeater>
 
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{markup:Localize Key=MessagesHeader}" />
                 <toolkit:SettingsCard Description="{markup:Localize Key=MessagesDescription}" Header="{markup:Localize Key=MessageChoose}">

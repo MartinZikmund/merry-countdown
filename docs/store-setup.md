@@ -34,6 +34,6 @@ The whole app knows one product: **`full_version`**, a one-time purchase (see
 ## Testing the paywall without a store
 
 Debug builds only: set `MERRY_SIMULATE_STORE=1`, or put an empty `simulate-store.txt` in the app's local folder. Web and
-desktop then behave like a store platform, and buying succeeds at once.
+desktop then behave like a store platform, and buying succeeds at once. Put `owned` in the file to start with the purchase already made.
 
 To test December in November, set `MERRY_FAKE_DATE=2026-12-05`, or put that date in `devdate.txt` in the same folder.

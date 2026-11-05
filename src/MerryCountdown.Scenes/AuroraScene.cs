@@ -6,20 +6,22 @@ public sealed class AuroraScene : Scene
 {
     public override string Id => "aurora";
 
-    protected override void PaintBackdrop(SKCanvas canvas, int width, int height)
+    protected override void PaintSky(SKCanvas canvas, int width, int height)
     {
         Painter.Sky(canvas, width, height, new SKColor(0x05, 0x0B, 0x24), new SKColor(0x0B, 0x1E, 0x46), new SKColor(0x16, 0x3B, 0x5C));
         Painter.Stars(canvas, width, height, 0.7f, 11, 230);
     }
 
-    protected override void PaintLife(SKCanvas canvas, int width, int height, float time)
+    protected override void PaintSkyLife(SKCanvas canvas, int width, int height, float time)
     {
         Painter.Twinkles(canvas, width, height, 0.5f, time, 8, 12);
         Ribbon(canvas, width, height, time, 0.24f, 0.17f, 0.22f, Palette.Mint, 0f);
         Ribbon(canvas, width, height, time, 0.32f, 0.13f, 0.17f, new SKColor(0x7A, 0x6B, 0xFF), 2.1f);
         Ribbon(canvas, width, height, time, 0.17f, 0.1f, 0.12f, new SKColor(0xFF, 0x7E, 0xC8), 4.2f);
-        PaintLand(canvas, width, height, time);
     }
+
+    protected override void PaintForegroundLife(SKCanvas canvas, int width, int height, float time) =>
+        PaintLand(canvas, width, height, time);
 
     private static void Ribbon(SKCanvas canvas, int width, int height, float time, float centre, float swing, float tall, SKColor color, float phase)
     {

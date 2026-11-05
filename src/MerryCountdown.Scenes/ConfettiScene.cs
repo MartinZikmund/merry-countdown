@@ -9,14 +9,14 @@ public sealed class ConfettiScene : Scene
 
     public override string Id => "confetti";
 
-    protected override void PaintBackdrop(SKCanvas canvas, int width, int height) =>
+    protected override void PaintSky(SKCanvas canvas, int width, int height) =>
         canvas.Clear(SKColors.Transparent);
 
     protected override void PaintSnow(SKCanvas canvas, int width, int height, float time)
     {
     }
 
-    protected override void PaintLife(SKCanvas canvas, int width, int height, float time)
+    protected override void PaintForegroundLife(SKCanvas canvas, int width, int height, float time)
     {
         var unit = Math.Min(width, height);
         Random random = new(2412);

@@ -98,6 +98,8 @@ public sealed class FamilyEvent
 
 public sealed class FamilySettings
 {
+    public const int DefaultPhotoIntervalSeconds = 300;
+
     private const int EveningArrival = 17 * 60;
 
     public BigDay BigDay { get; set; }
@@ -116,6 +118,15 @@ public sealed class FamilySettings
     public bool DisplayRotatesScenes { get; set; } = true;
 
     public bool StartInFamilyDisplay { get; set; }
+
+    public bool UsesPhotos { get; set; }
+
+    public List<string> PhotoIds { get; set; } = [];
+
+    public int PhotoIntervalSeconds { get; set; } = DefaultPhotoIntervalSeconds;
+
+    /// <summary>The scene whose foreground stays in front of the photos. Null shows just the photo.</summary>
+    public string? PhotoForegroundSceneId { get; set; }
 
     public static FamilySettings ForCulture(string cultureName)
     {

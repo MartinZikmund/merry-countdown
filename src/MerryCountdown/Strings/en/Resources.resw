@@ -508,9 +508,6 @@
   <data name="FullVersionTitle" xml:space="preserve">
     <value>Merry Countdown Full Version</value>
   </data>
-  <data name="FullVersionPitch" xml:space="preserve">
-    <value>One purchase, forever, no subscription. Unlocks three more animated scenes, personal messages behind the doors, countdowns to birthdays and other family events, and an exact time for the big moment.</value>
-  </data>
   <data name="BuyFullVersion" xml:space="preserve">
     <value>Get the full version</value>
   </data>
@@ -630,5 +627,53 @@
   </data>
   <data name="KidNamePlaceholder" xml:space="preserve">
     <value>Name</value>
+  </data>
+  <data name="Scene_photos" xml:space="preserve">
+    <value>My photos</value>
+  </data>
+  <data name="PhotosHeader" xml:space="preserve">
+    <value>Your own photos</value>
+  </data>
+  <data name="PhotosToggle" xml:space="preserve">
+    <value>Show our photos</value>
+  </data>
+  <data name="PhotosDescription" xml:space="preserve">
+    <value>Family, the tree, your snowy street: they fill the screen behind the countdown. They stay on this device.</value>
+  </data>
+  <data name="PhotosAdd" xml:space="preserve">
+    <value>Add photos</value>
+  </data>
+  <data name="PhotoForegroundHeader" xml:space="preserve">
+    <value>In front of the photos</value>
+  </data>
+  <data name="PhotoForegroundDescription" xml:space="preserve">
+    <value>Keep a scene’s houses, fireplace or train in front, or show just the photo.</value>
+  </data>
+  <data name="PhotoForegroundNone" xml:space="preserve">
+    <value>Just the photo</value>
+  </data>
+  <data name="PhotoIntervalHeader" xml:space="preserve">
+    <value>Change the photo every</value>
+  </data>
+  <data name="PhotoIntervalSeconds" xml:space="preserve">
+    <value>{0} seconds</value>
+  </data>
+  <data name="PhotoIntervalMinutes" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="RemovePhotoTitle" xml:space="preserve">
+    <value>Remove this photo</value>
+  </data>
+  <data name="RemovePhotoMessage" xml:space="preserve">
+    <value>It will be deleted from this app. The original stays where it was.</value>
+  </data>
+  <data name="PhotoFailedTitle" xml:space="preserve">
+    <value>Some photos could not be added</value>
+  </data>
+  <data name="PhotoFailedMessage" xml:space="preserve">
+    <value>They may be in a format this device can’t read. JPEG and PNG work everywhere.</value>
+  </data>
+  <data name="FullVersionPitch" xml:space="preserve">
+    <value>One purchase, forever, no subscription. Unlocks three more animated scenes, your own photos as a slideshow, personal messages behind the doors, countdowns to birthdays and other family events, and an exact time for the big moment.</value>
   </data>
 </root>

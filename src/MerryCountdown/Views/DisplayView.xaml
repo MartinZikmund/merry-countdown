@@ -14,7 +14,9 @@
             AutomationProperties.AutomationId="DisplayScene"
             AutomationProperties.Name="{markup:Localize Key=SceneAccessibleName}"
             CalmMotion="{x:Bind ViewModel.CalmMotion, Mode=OneWay}"
+            Photo="{x:Bind ViewModel.Backdrop.Photo, Mode=OneWay}"
             SceneId="{x:Bind ViewModel.SceneId, Mode=OneWay}"
+            ShowForeground="{x:Bind ViewModel.Backdrop.ShowForeground, Mode=OneWay}"
             Snow="{x:Bind ViewModel.Snow, Mode=OneWay}" />
 
         <!--  Designed once at 1920x1080 for reading from the sofa, then scaled to whatever screen this is.  -->
@@ -58,28 +60,33 @@
                 </Border>
 
                 <!--  The big number  -->
-                <StackPanel
+                <Border
+                    Padding="48,0,48,24"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Top"
+                    Background="{x:Bind controls:Stickers.TextBacking(ViewModel.Backdrop.IsActive), Mode=OneWay}"
+                    CornerRadius="32"
                     Visibility="{x:Bind ViewModel.IsCounting, Mode=OneWay}">
-                    <Grid Height="330">
+                    <StackPanel>
+                        <Grid Height="330">
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                AutomationProperties.AutomationId="DisplaySleeps"
+                                FontSize="320"
+                                Style="{StaticResource HeroNumberTextStyle}"
+                                Text="{x:Bind ViewModel.SleepsNumber, Mode=OneWay}" />
+                        </Grid>
                         <TextBlock
-                            VerticalAlignment="Center"
-                            AutomationProperties.AutomationId="DisplaySleeps"
-                            FontSize="320"
-                            Style="{StaticResource HeroNumberTextStyle}"
-                            Text="{x:Bind ViewModel.SleepsNumber, Mode=OneWay}" />
-                    </Grid>
-                    <TextBlock
-                        FontSize="72"
-                        Style="{StaticResource SceneTitleTextStyle}"
-                        Text="{x:Bind ViewModel.SleepsCaption, Mode=OneWay}" />
-                    <TextBlock
-                        Margin="0,8,0,0"
-                        FontSize="44"
-                        Style="{StaticResource SceneCaptionTextStyle}"
-                        Text="{x:Bind ViewModel.Countdown, Mode=OneWay}" />
-                </StackPanel>
+                            FontSize="72"
+                            Style="{StaticResource SceneTitleTextStyle}"
+                            Text="{x:Bind ViewModel.SleepsCaption, Mode=OneWay}" />
+                        <TextBlock
+                            Margin="0,8,0,0"
+                            FontSize="44"
+                            Style="{StaticResource SceneCaptionTextStyle}"
+                            Text="{x:Bind ViewModel.Countdown, Mode=OneWay}" />
+                    </StackPanel>
+                </Border>
                 <TextBlock
                     Margin="0,160,0,0"
                     VerticalAlignment="Top"

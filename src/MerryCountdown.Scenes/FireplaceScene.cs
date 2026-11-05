@@ -6,11 +6,14 @@ public sealed class FireplaceScene : Scene
 {
     public override string Id => "fireplace";
 
-    protected override void PaintBackdrop(SKCanvas canvas, int width, int height)
+    protected override void PaintSky(SKCanvas canvas, int width, int height)
     {
         Painter.Sky(canvas, width, height, new SKColor(0x2A, 0x0F, 0x24), new SKColor(0x4A, 0x18, 0x2C), new SKColor(0x6E, 0x26, 0x2C));
         PaintWallpaper(canvas, width, height);
+    }
 
+    protected override void PaintForeground(SKCanvas canvas, int width, int height)
+    {
         var (cx, floor, hearth) = Geometry(width, height);
         using SKPaint paint = new() { IsAntialias = true };
 
@@ -40,7 +43,7 @@ public sealed class FireplaceScene : Scene
         PaintPresents(canvas, width, floor, hearth);
     }
 
-    protected override void PaintLife(SKCanvas canvas, int width, int height, float time)
+    protected override void PaintForegroundLife(SKCanvas canvas, int width, int height, float time)
     {
         var (cx, floor, hearth) = Geometry(width, height);
         var opening = hearth * 0.92f;

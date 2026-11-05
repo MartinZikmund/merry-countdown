@@ -10,11 +10,15 @@ public partial class ParentZoneViewModel : ViewModelBase
 {
     private const string DefaultEventSticker = "cake";
 
+    /// <summary>How long each photo stays up.</summary>
+    public static readonly IReadOnlyList<int> PhotoIntervals = [30, 60, 300, 900, 1800, 3600];
+
     private readonly IFamilyService _family;
     private readonly IFullVersionService _fullVersion;
     private readonly IStringLocalizer _localizer;
     private readonly ISnackService _messages;
     private readonly IAppClock _clock;
+    private readonly IPhotoLibrary _photos;
     private bool _isLoading;
 
     public ParentZoneViewModel(
@@ -22,13 +26,17 @@ public partial class ParentZoneViewModel : ViewModelBase
         IFullVersionService fullVersion,
         IStringLocalizer localizer,
         ISnackService messages,
-        IAppClock clock)
+        IAppClock clock,
+        IPhotoLibrary photos)
     {
         _family = family;
         _fullVersion = fullVersion;
         _localizer = localizer;
         _messages = messages;
         _clock = clock;
+        _photos = photos;
+        ForegroundOptions = [localizer["PhotoForegroundNone"], .. SceneCatalog.All.Select(scene => localizer[$"Scene_{scene.Id}"].Value)];
+        PhotoIntervalOptions = [.. PhotoIntervals.Select(seconds => seconds < 60 ? localizer["PhotoIntervalSeconds", seconds].Value : localizer["PhotoIntervalMinutes", seconds / 60].Value)];
         PageTitle = localizer["ParentZoneTitle"];
         NewEventDate = new DateTimeOffset(clock.Now.Date);
         Load();
@@ -37,6 +45,12 @@ public partial class ParentZoneViewModel : ViewModelBase
     public ObservableCollection<KidRowViewModel> Kids { get; } = [];
 
     public ObservableCollection<FamilyEventRowViewModel> Events { get; } = [];
+
+    public ObservableCollection<PhotoRowViewModel> Photos { get; } = [];
+
+    public IReadOnlyList<string> ForegroundOptions { get; }
+
+    public IReadOnlyList<string> PhotoIntervalOptions { get; }
 
     public IReadOnlyList<int> DoorNumbers { get; } = Enumerable.Range(1, AdventCalendar.DoorCount).ToList();
 
@@ -75,6 +89,18 @@ public partial class ParentZoneViewModel : ViewModelBase
     [ObservableProperty]
     public partial TimeSpan ArrivalTime { get; set; }
 
+    [ObservableProperty]
+    public partial bool UsesPhotos { get; set; }
+
+    [ObservableProperty]
+    public partial bool HasPhotos { get; set; }
+
+    [ObservableProperty]
+    public partial int ForegroundIndex { get; set; }
+
+    [ObservableProperty]
+    public partial int PhotoIntervalIndex { get; set; }
+
     public override async void ViewLoaded()
     {
         _fullVersion.Changed += OnFullVersionChanged;
@@ -90,6 +116,24 @@ public partial class ParentZoneViewModel : ViewModelBase
         {
             _family.Settings.ArrivalMinutes = (int)value.TotalMinutes;
             _family.SaveSettings();
+        }
+    }
+
+    partial void OnUsesPhotosChanged(bool value) => SavePhotoSetting(s => s.UsesPhotos = value);
+
+    partial void OnForegroundIndexChanged(int value)
+    {
+        if (value >= 0)
+        {
+            SavePhotoSetting(s => s.PhotoForegroundSceneId = value == 0 ? null : SceneCatalog.All[value - 1].Id);
+        }
+    }
+
+    partial void OnPhotoIntervalIndexChanged(int value)
+    {
+        if (value >= 0)
+        {
+            SavePhotoSetting(s => s.PhotoIntervalSeconds = PhotoIntervals[value]);
         }
     }
 
@@ -125,6 +169,40 @@ public partial class ParentZoneViewModel : ViewModelBase
         {
             await _messages.ShowMessageAsync(_localizer["RestoreNothingTitle"], _localizer["RestoreNothingMessage"]);
         }
+    }
+
+    [RelayCommand]
+    private async Task AddPhotosAsync()
+    {
+        var result = await _photos.PickAndStoreAsync();
+        if (result.Added.Count > 0)
+        {
+            _family.Settings.PhotoIds.AddRange(result.Added);
+            _family.Settings.UsesPhotos = true;
+            _family.SaveSettings();
+            Load();
+        }
+
+        if (result.Failed > 0)
+        {
+            await _messages.ShowMessageAsync(_localizer["PhotoFailedTitle"], _localizer["PhotoFailedMessage"]);
+        }
+    }
+
+    [RelayCommand]
+    private async Task RemovePhotoAsync(PhotoRowViewModel row)
+    {
+        if (!await _messages.ConfirmAsync(_localizer["RemovePhotoTitle"], _localizer["RemovePhotoMessage"]))
+        {
+            return;
+        }
+
+        var settings = _family.Settings;
+        settings.PhotoIds.Remove(row.Id);
+        settings.UsesPhotos = settings.UsesPhotos && settings.PhotoIds.Count > 0;
+        _family.SaveSettings();
+        _photos.Delete(row.Id);
+        Load();
     }
 
     [RelayCommand(CanExecute = nameof(CanAddKid))]
@@ -198,6 +276,18 @@ public partial class ParentZoneViewModel : ViewModelBase
 
         MessageKid = Kids.FirstOrDefault(k => k.Kid == selectedKid) ?? Kids.FirstOrDefault();
 
+        var settings = _family.Settings;
+        UsesPhotos = settings.UsesPhotos;
+        ForegroundIndex = SceneCatalog.All.ToList().FindIndex(scene => scene.Id == settings.PhotoForegroundSceneId) + 1;
+        PhotoIntervalIndex = Math.Max(0, PhotoIntervals.ToList().IndexOf(settings.PhotoIntervalSeconds));
+        Photos.Clear();
+        foreach (var id in settings.PhotoIds)
+        {
+            Photos.Add(new PhotoRowViewModel(id, _photos.Load(id)));
+        }
+
+        HasPhotos = Photos.Count > 0;
+
         Events.Clear();
         foreach (var familyEvent in _family.Events)
         {
@@ -205,6 +295,15 @@ public partial class ParentZoneViewModel : ViewModelBase
         }
 
         _isLoading = false;
+    }
+
+    private void SavePhotoSetting(Action<FamilySettings> change)
+    {
+        if (!_isLoading)
+        {
+            change(_family.Settings);
+            _family.SaveSettings();
+        }
     }
 
     private void LoadMessage()
@@ -243,6 +342,13 @@ public partial class KidRowViewModel(Kid kid, IFamilyService family, bool canRem
     public string DisplayName => Kid.Name.Length > 0 ? Kid.Name : unnamed;
 
     public override string ToString() => DisplayName;
+}
+
+public sealed class PhotoRowViewModel(string id, byte[]? bytes)
+{
+    public string Id { get; } = id;
+
+    public byte[]? Bytes { get; } = bytes;
 }
 
 public sealed class FamilyEventRowViewModel(FamilyEvent familyEvent, string date)

@@ -508,9 +508,6 @@
   <data name="FullVersionTitle" xml:space="preserve">
     <value>Plná verze Veselého odpočítávání</value>
   </data>
-  <data name="FullVersionPitch" xml:space="preserve">
-    <value>Jeden nákup navždy, žádné předplatné. Odemkne tři další animované obrázky, osobní vzkazy za okénky, odpočet do narozenin a dalších rodinných událostí a přesný čas velkého okamžiku.</value>
-  </data>
   <data name="BuyFullVersion" xml:space="preserve">
     <value>Získat plnou verzi</value>
   </data>
@@ -630,5 +627,53 @@
   </data>
   <data name="KidNamePlaceholder" xml:space="preserve">
     <value>Jméno</value>
+  </data>
+  <data name="Scene_photos" xml:space="preserve">
+    <value>Moje fotky</value>
+  </data>
+  <data name="PhotosHeader" xml:space="preserve">
+    <value>Vaše vlastní fotky</value>
+  </data>
+  <data name="PhotosToggle" xml:space="preserve">
+    <value>Zobrazovat naše fotky</value>
+  </data>
+  <data name="PhotosDescription" xml:space="preserve">
+    <value>Rodina, stromeček, zasněžená ulice: vyplní obrazovku za odpočtem. Zůstávají jen v tomto zařízení.</value>
+  </data>
+  <data name="PhotosAdd" xml:space="preserve">
+    <value>Přidat fotky</value>
+  </data>
+  <data name="PhotoForegroundHeader" xml:space="preserve">
+    <value>Před fotkami</value>
+  </data>
+  <data name="PhotoForegroundDescription" xml:space="preserve">
+    <value>Nechte vpředu domky, krb nebo vláček z obrázku, nebo zobrazte jen fotku.</value>
+  </data>
+  <data name="PhotoForegroundNone" xml:space="preserve">
+    <value>Jen fotka</value>
+  </data>
+  <data name="PhotoIntervalHeader" xml:space="preserve">
+    <value>Měnit fotku každých</value>
+  </data>
+  <data name="PhotoIntervalSeconds" xml:space="preserve">
+    <value>{0} sekund</value>
+  </data>
+  <data name="PhotoIntervalMinutes" xml:space="preserve">
+    <value>{0} minut</value>
+  </data>
+  <data name="RemovePhotoTitle" xml:space="preserve">
+    <value>Odebrat tuto fotku</value>
+  </data>
+  <data name="RemovePhotoMessage" xml:space="preserve">
+    <value>Smaže se z aplikace. Originál zůstane, kde byl.</value>
+  </data>
+  <data name="PhotoFailedTitle" xml:space="preserve">
+    <value>Některé fotky se nepodařilo přidat</value>
+  </data>
+  <data name="PhotoFailedMessage" xml:space="preserve">
+    <value>Možná jsou ve formátu, který toto zařízení neumí přečíst. JPEG a PNG fungují všude.</value>
+  </data>
+  <data name="FullVersionPitch" xml:space="preserve">
+    <value>Jeden nákup navždy, žádné předplatné. Odemkne tři další animované obrázky, vlastní fotky jako prezentaci, osobní vzkazy za okénky, odpočet do narozenin a dalších rodinných událostí a přesný čas velkého okamžiku.</value>
   </data>
 </root>

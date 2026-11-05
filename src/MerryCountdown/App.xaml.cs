@@ -131,6 +131,8 @@ public partial class App : Application, IApplication
 
         // Per-window scoped services
         services.AddScoped<KidPickerViewModel>();
+        services.AddScoped<IPhotoLibrary, PhotoLibrary>();
+        services.AddScoped<PhotoBackdrop>();
         services.AddScoped<IDisplayModeService, DisplayModeService>();
         services.AddScoped<IParentGateService, ParentGateService>();
         services.AddScoped<ISnackService, SnackService>();
@@ -187,10 +189,12 @@ public partial class App : Application, IApplication
     {
 #if DEBUG
         // MERRY_SIMULATE_STORE=1, or a simulate-store.txt in LocalFolder for hosts that do not pass the environment on.
-        if (Environment.GetEnvironmentVariable("MERRY_SIMULATE_STORE") == "1"
-            || File.Exists(Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "simulate-store.txt")))
+        var simulation = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "simulate-store.txt");
+        if (Environment.GetEnvironmentVariable("MERRY_SIMULATE_STORE") == "1" || File.Exists(simulation))
         {
-            services.AddSingleton<IStoreService, SimulatedStoreService>();
+            // A file containing "owned" starts with the purchase already made.
+            var startsOwned = File.Exists(simulation) && File.ReadAllText(simulation).Contains("owned", StringComparison.Ordinal);
+            services.AddSingleton<IStoreService>(new SimulatedStoreService(startsOwned));
             return;
         }
 #endif

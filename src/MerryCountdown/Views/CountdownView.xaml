@@ -1,4 +1,4 @@
-<local:CountdownViewBase
+﻿<local:CountdownViewBase
     x:Class="MerryCountdown.Views.CountdownView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -13,123 +13,128 @@
             AutomationProperties.AutomationId="CountdownScene"
             AutomationProperties.Name="{markup:Localize Key=SceneAccessibleName}"
             CalmMotion="{x:Bind ViewModel.CalmMotion, Mode=OneWay}"
+            Photo="{x:Bind ViewModel.Backdrop.Photo, Mode=OneWay}"
             SceneId="{x:Bind ViewModel.SceneId, Mode=OneWay}"
+            ShowForeground="{x:Bind ViewModel.Backdrop.ShowForeground, Mode=OneWay}"
             Snow="{x:Bind ViewModel.Snow, Mode=OneWay}" />
 
         <!--  Clicks pass through to the scene everywhere except on the actual controls.  -->
         <Grid x:Name="Overlay" Padding="16,16,16,24">
-            <StackPanel
-                x:Name="Hero"
+            <Border
+                Padding="24,8,24,16"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Top"
-                Spacing="4">
-                <TextBlock
-                    AutomationProperties.AutomationId="Greeting"
-                    Style="{StaticResource SceneCaptionTextStyle}"
-                    Text="{x:Bind ViewModel.Greeting, Mode=OneWay}" />
-
-                <!--  Counting down  -->
-                <StackPanel Spacing="0" Visibility="{x:Bind ViewModel.IsCounting, Mode=OneWay}">
-                    <!--  Baloo has very tall line metrics, so the number gets a snug box to centre in.  -->
-                    <Grid x:Name="HeroNumberBox" Height="172">
-                        <TextBlock
-                            x:Name="HeroNumber"
-                            VerticalAlignment="Center"
-                            AutomationProperties.AutomationId="SleepsNumber"
-                            Style="{StaticResource HeroNumberTextStyle}"
-                            Text="{x:Bind ViewModel.SleepsNumber, Mode=OneWay}" />
-                    </Grid>
+                Background="{x:Bind controls:Stickers.TextBacking(ViewModel.Backdrop.IsActive), Mode=OneWay}"
+                CornerRadius="24">
+                <StackPanel x:Name="Hero" Spacing="4">
                     <TextBlock
-                        x:Name="HeroCaption"
-                        Style="{StaticResource SceneTitleTextStyle}"
-                        Text="{x:Bind ViewModel.SleepsCaption, Mode=OneWay}" />
-                    <TextBlock
-                        Margin="0,4,0,12"
-                        AutomationProperties.AutomationId="Headline"
+                        AutomationProperties.AutomationId="Greeting"
                         Style="{StaticResource SceneCaptionTextStyle}"
-                        Text="{x:Bind ViewModel.Headline, Mode=OneWay}" />
+                        Text="{x:Bind ViewModel.Greeting, Mode=OneWay}" />
 
-                    <Grid HorizontalAlignment="Center" ColumnSpacing="8">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="72" />
-                            <ColumnDefinition Width="72" />
-                            <ColumnDefinition Width="72" />
-                            <ColumnDefinition Width="72" />
-                        </Grid.ColumnDefinitions>
-                        <Border Style="{StaticResource ClockCardStyle}">
-                            <StackPanel>
-                                <TextBlock Style="{StaticResource ClockNumberTextStyle}" Text="{x:Bind ViewModel.Days, Mode=OneWay}" />
-                                <TextBlock Style="{StaticResource ClockLabelTextStyle}" Text="{markup:Localize Key=ClockDays}" />
-                            </StackPanel>
-                        </Border>
-                        <Border Grid.Column="1" Style="{StaticResource ClockCardStyle}">
-                            <StackPanel>
-                                <TextBlock Style="{StaticResource ClockNumberTextStyle}" Text="{x:Bind ViewModel.Hours, Mode=OneWay}" />
-                                <TextBlock Style="{StaticResource ClockLabelTextStyle}" Text="{markup:Localize Key=ClockHours}" />
-                            </StackPanel>
-                        </Border>
-                        <Border Grid.Column="2" Style="{StaticResource ClockCardStyle}">
-                            <StackPanel>
-                                <TextBlock Style="{StaticResource ClockNumberTextStyle}" Text="{x:Bind ViewModel.Minutes, Mode=OneWay}" />
-                                <TextBlock Style="{StaticResource ClockLabelTextStyle}" Text="{markup:Localize Key=ClockMinutes}" />
-                            </StackPanel>
-                        </Border>
-                        <Border Grid.Column="3" Style="{StaticResource ClockCardStyle}">
-                            <StackPanel>
-                                <TextBlock Style="{StaticResource ClockNumberTextStyle}" Text="{x:Bind ViewModel.Seconds, Mode=OneWay}" />
-                                <TextBlock Style="{StaticResource ClockLabelTextStyle}" Text="{markup:Localize Key=ClockSeconds}" />
-                            </StackPanel>
-                        </Border>
-                    </Grid>
-                </StackPanel>
+                    <!--  Counting down  -->
+                    <StackPanel Spacing="0" Visibility="{x:Bind ViewModel.IsCounting, Mode=OneWay}">
+                        <!--  Baloo has very tall line metrics, so the number gets a snug box to centre in.  -->
+                        <Grid x:Name="HeroNumberBox" Height="172">
+                            <TextBlock
+                                x:Name="HeroNumber"
+                                VerticalAlignment="Center"
+                                AutomationProperties.AutomationId="SleepsNumber"
+                                Style="{StaticResource HeroNumberTextStyle}"
+                                Text="{x:Bind ViewModel.SleepsNumber, Mode=OneWay}" />
+                        </Grid>
+                        <TextBlock
+                            x:Name="HeroCaption"
+                            Style="{StaticResource SceneTitleTextStyle}"
+                            Text="{x:Bind ViewModel.SleepsCaption, Mode=OneWay}" />
+                        <TextBlock
+                            Margin="0,4,0,12"
+                            AutomationProperties.AutomationId="Headline"
+                            Style="{StaticResource SceneCaptionTextStyle}"
+                            Text="{x:Bind ViewModel.Headline, Mode=OneWay}" />
 
-                <!--  The big day itself  -->
-                <TextBlock
-                    Margin="0,24,0,0"
-                    FontSize="56"
-                    Style="{StaticResource SceneTitleTextStyle}"
-                    Text="{x:Bind ViewModel.Headline, Mode=OneWay}"
-                    Visibility="{x:Bind ViewModel.IsCelebrating, Mode=OneWay}" />
-
-                <Button
-                    Margin="0,12,0,0"
-                    AutomationProperties.AutomationId="OpenTodaysDoorButton"
-                    Command="{x:Bind ViewModel.OpenTodaysDoorCommand}"
-                    Content="{x:Bind ViewModel.DoorButtonText, Mode=OneWay}"
-                    Style="{StaticResource BigActionButtonStyle}"
-                    Visibility="{x:Bind ViewModel.HasDoorWaiting, Mode=OneWay}" />
-
-                <!--  Birthdays and other family countdowns (full version)  -->
-                <ItemsRepeater
-                    Margin="0,12,0,0"
-                    HorizontalAlignment="Center"
-                    ItemsSource="{x:Bind ViewModel.Events}"
-                    Visibility="{x:Bind ViewModel.HasEvents, Mode=OneWay}">
-                    <ItemsRepeater.Layout>
-                        <StackLayout Orientation="Vertical" Spacing="4" />
-                    </ItemsRepeater.Layout>
-                    <ItemsRepeater.ItemTemplate>
-                        <DataTemplate x:DataType="vm:UpcomingEventViewModel">
-                            <Border Padding="12,4" Style="{StaticResource ClockCardStyle}">
-                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <Image
-                                        Width="24"
-                                        Height="24"
-                                        Source="{x:Bind controls:Stickers.Image(Sticker)}" />
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        Foreground="{StaticResource SceneTextBrush}"
-                                        Text="{x:Bind Name}" />
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        Foreground="{StaticResource GoldBrush}"
-                                        Text="{x:Bind When}" />
+                        <Grid HorizontalAlignment="Center" ColumnSpacing="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="72" />
+                                <ColumnDefinition Width="72" />
+                                <ColumnDefinition Width="72" />
+                                <ColumnDefinition Width="72" />
+                            </Grid.ColumnDefinitions>
+                            <Border Style="{StaticResource ClockCardStyle}">
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource ClockNumberTextStyle}" Text="{x:Bind ViewModel.Days, Mode=OneWay}" />
+                                    <TextBlock Style="{StaticResource ClockLabelTextStyle}" Text="{markup:Localize Key=ClockDays}" />
                                 </StackPanel>
                             </Border>
-                        </DataTemplate>
-                    </ItemsRepeater.ItemTemplate>
-                </ItemsRepeater>
-            </StackPanel>
+                            <Border Grid.Column="1" Style="{StaticResource ClockCardStyle}">
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource ClockNumberTextStyle}" Text="{x:Bind ViewModel.Hours, Mode=OneWay}" />
+                                    <TextBlock Style="{StaticResource ClockLabelTextStyle}" Text="{markup:Localize Key=ClockHours}" />
+                                </StackPanel>
+                            </Border>
+                            <Border Grid.Column="2" Style="{StaticResource ClockCardStyle}">
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource ClockNumberTextStyle}" Text="{x:Bind ViewModel.Minutes, Mode=OneWay}" />
+                                    <TextBlock Style="{StaticResource ClockLabelTextStyle}" Text="{markup:Localize Key=ClockMinutes}" />
+                                </StackPanel>
+                            </Border>
+                            <Border Grid.Column="3" Style="{StaticResource ClockCardStyle}">
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource ClockNumberTextStyle}" Text="{x:Bind ViewModel.Seconds, Mode=OneWay}" />
+                                    <TextBlock Style="{StaticResource ClockLabelTextStyle}" Text="{markup:Localize Key=ClockSeconds}" />
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </StackPanel>
+
+                    <!--  The big day itself  -->
+                    <TextBlock
+                        Margin="0,24,0,0"
+                        FontSize="56"
+                        Style="{StaticResource SceneTitleTextStyle}"
+                        Text="{x:Bind ViewModel.Headline, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.IsCelebrating, Mode=OneWay}" />
+
+                    <Button
+                        Margin="0,12,0,0"
+                        AutomationProperties.AutomationId="OpenTodaysDoorButton"
+                        Command="{x:Bind ViewModel.OpenTodaysDoorCommand}"
+                        Content="{x:Bind ViewModel.DoorButtonText, Mode=OneWay}"
+                        Style="{StaticResource BigActionButtonStyle}"
+                        Visibility="{x:Bind ViewModel.HasDoorWaiting, Mode=OneWay}" />
+
+                    <!--  Birthdays and other family countdowns (full version)  -->
+                    <ItemsRepeater
+                        Margin="0,12,0,0"
+                        HorizontalAlignment="Center"
+                        ItemsSource="{x:Bind ViewModel.Events}"
+                        Visibility="{x:Bind ViewModel.HasEvents, Mode=OneWay}">
+                        <ItemsRepeater.Layout>
+                            <StackLayout Orientation="Vertical" Spacing="4" />
+                        </ItemsRepeater.Layout>
+                        <ItemsRepeater.ItemTemplate>
+                            <DataTemplate x:DataType="vm:UpcomingEventViewModel">
+                                <Border Padding="12,4" Style="{StaticResource ClockCardStyle}">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <Image
+                                            Width="24"
+                                            Height="24"
+                                            Source="{x:Bind controls:Stickers.Image(Sticker)}" />
+                                        <TextBlock
+                                            VerticalAlignment="Center"
+                                            Foreground="{StaticResource SceneTextBrush}"
+                                            Text="{x:Bind Name}" />
+                                        <TextBlock
+                                            VerticalAlignment="Center"
+                                            Foreground="{StaticResource GoldBrush}"
+                                            Text="{x:Bind When}" />
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsRepeater.ItemTemplate>
+                    </ItemsRepeater>
+                </StackPanel>
+            </Border>
 
             <!--  Scene controls  -->
             <StackPanel

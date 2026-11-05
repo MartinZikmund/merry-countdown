@@ -33,9 +33,16 @@ public sealed partial class SceneCanvas : Grid
     public static readonly DependencyProperty CalmMotionProperty = DependencyProperty.Register(
         nameof(CalmMotion), typeof(bool), typeof(SceneCanvas), new PropertyMetadata(false));
 
+    public static readonly DependencyProperty PhotoProperty = DependencyProperty.Register(
+        nameof(Photo), typeof(byte[]), typeof(SceneCanvas), new PropertyMetadata(null, (d, _) => ((SceneCanvas)d).DecodePhoto()));
+
+    public static readonly DependencyProperty ShowForegroundProperty = DependencyProperty.Register(
+        nameof(ShowForeground), typeof(bool), typeof(SceneCanvas), new PropertyMetadata(true, (d, _) => ((SceneCanvas)d).ApplyPhoto()));
+
     private readonly Stopwatch _clock = new();
     private readonly Action _invalidate;
     private Scene? _scene;
+    private SKImage? _photoImage;
     private TimeSpan _lastFrame;
     private float _sceneTime;
     private float _pixelsPerDip = 1;
@@ -98,6 +105,19 @@ public sealed partial class SceneCanvas : Grid
         set => SetValue(CalmMotionProperty, value);
     }
 
+    /// <summary>A prepared JPEG to show in place of the painted sky. Null shows the painted scene.</summary>
+    public byte[]? Photo
+    {
+        get => (byte[]?)GetValue(PhotoProperty);
+        set => SetValue(PhotoProperty, value);
+    }
+
+    public bool ShowForeground
+    {
+        get => (bool)GetValue(ShowForegroundProperty);
+        set => SetValue(ShowForegroundProperty, value);
+    }
+
     public static SceneCanvas CreateConfetti() =>
         new(isTransparent: true) { IsHitTestVisible = false, SceneId = "confetti" };
 
@@ -156,11 +176,20 @@ public sealed partial class SceneCanvas : Grid
 
     private void ReplaceScene()
     {
-        _scene?.Dispose();
+        // Not disposed here: a frame may still be painting it on another thread. The GC gets its images.
         _scene = SceneId == "confetti" ? new ConfettiScene() : Scene.Create(SceneId);
         ApplySnow();
+        ApplyPhoto();
         _invalidate();
     }
+
+    private void DecodePhoto()
+    {
+        _photoImage = Photo is { } bytes ? SKImage.FromEncodedData(bytes) : null;
+        ApplyPhoto();
+    }
+
+    private void ApplyPhoto() => _scene?.SetPhoto(_photoImage, ShowForeground);
 
     private void ApplySnow()
     {

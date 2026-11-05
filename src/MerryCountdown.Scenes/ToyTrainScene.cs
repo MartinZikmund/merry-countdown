@@ -8,13 +8,17 @@ public sealed class ToyTrainScene : Scene
 
     public override string Id => "train";
 
-    protected override void PaintBackdrop(SKCanvas canvas, int width, int height)
+    protected override void PaintSky(SKCanvas canvas, int width, int height)
     {
         var unit = Math.Min(width, height);
         Painter.Sky(canvas, width, height, new SKColor(0x10, 0x10, 0x3A), new SKColor(0x37, 0x2B, 0x7A), new SKColor(0xB0, 0x5E, 0x8F));
         Painter.Stars(canvas, width, height, 0.55f, 27, 140);
         Painter.Moon(canvas, width * 0.16f, height * 0.16f, unit * 0.06f);
+    }
 
+    protected override void PaintForeground(SKCanvas canvas, int width, int height)
+    {
+        var unit = Math.Min(width, height);
         Painter.Hill(canvas, width, height, height * 0.6f, height * 0.06f, 1.1f, 1f, new SKColor(0xB7, 0x9B, 0xD8), new SKColor(0x7A, 0x6A, 0xB8));
 
         Random random = new(8);
@@ -32,10 +36,11 @@ public sealed class ToyTrainScene : Scene
         Painter.Hill(canvas, width, height, height * 0.93f, height * 0.015f, 2f, 2f, SKColors.White, Palette.Snow);
     }
 
-    protected override void PaintLife(SKCanvas canvas, int width, int height, float time)
-    {
+    protected override void PaintSkyLife(SKCanvas canvas, int width, int height, float time) =>
         Painter.Twinkles(canvas, width, height, 0.45f, time, 6, 12);
 
+    protected override void PaintForegroundLife(SKCanvas canvas, int width, int height, float time)
+    {
         var unit = Math.Min(width, height);
         var carLength = unit * 0.17f;
         var trainLength = carLength * 4.4f;

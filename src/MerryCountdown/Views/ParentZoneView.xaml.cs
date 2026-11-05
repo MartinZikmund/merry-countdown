@@ -32,6 +32,14 @@ public sealed partial class ParentZoneView : ParentZoneViewBase
         }
     }
 
+    private void RemovePhoto_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button { Tag: PhotoRowViewModel photo })
+        {
+            ViewModel?.RemovePhotoCommand.Execute(photo);
+        }
+    }
+
     private void RemoveEvent_Click(object sender, RoutedEventArgs e)
     {
         if (sender is Button { Tag: FamilyEventRowViewModel familyEvent })

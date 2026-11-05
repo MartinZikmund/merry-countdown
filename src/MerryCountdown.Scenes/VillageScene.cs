@@ -6,13 +6,17 @@ public sealed class VillageScene : Scene
 {
     public override string Id => "village";
 
-    protected override void PaintBackdrop(SKCanvas canvas, int width, int height)
+    protected override void PaintSky(SKCanvas canvas, int width, int height)
     {
         var unit = Math.Min(width, height);
         Painter.Sky(canvas, width, height, Palette.Night, Palette.Dusk, Palette.Haze);
         Painter.Stars(canvas, width, height, 0.65f, 7, 170);
         Painter.Moon(canvas, width * 0.82f, height * 0.17f, unit * 0.075f);
+    }
 
+    protected override void PaintForeground(SKCanvas canvas, int width, int height)
+    {
+        var unit = Math.Min(width, height);
         Painter.Hill(canvas, width, height, height * 0.62f, height * 0.05f, 1.4f, 0.6f, Palette.SnowDeep, Palette.Haze);
         ForestLine(canvas, width, height, height * 0.62f, 1.4f, 0.6f, height * 0.05f);
 
@@ -25,11 +29,11 @@ public sealed class VillageScene : Scene
         Painter.Pine(canvas, width * 0.95f, height * 0.91f, unit * 0.28f, Palette.PineDark, Palette.Snow);
     }
 
-    protected override void PaintLife(SKCanvas canvas, int width, int height, float time)
-    {
+    protected override void PaintSkyLife(SKCanvas canvas, int width, int height, float time) =>
         Painter.Twinkles(canvas, width, height, 0.55f, time, 19, 14);
+
+    protected override void PaintForegroundLife(SKCanvas canvas, int width, int height, float time) =>
         PaintTreeLights(canvas, width, height, time);
-    }
 
     private static void ForestLine(SKCanvas canvas, int width, int height, float baseline, float waves, float phase, float swell)
     {

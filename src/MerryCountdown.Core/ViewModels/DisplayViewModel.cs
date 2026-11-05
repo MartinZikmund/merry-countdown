@@ -36,7 +36,8 @@ public partial class DisplayViewModel : ViewModelBase
         IAppClock clock,
         ITicker ticker,
         IStringLocalizer localizer,
-        IDisplayModeService display)
+        IDisplayModeService display,
+        PhotoBackdrop backdrop)
     {
         _family = family;
         _fullVersion = fullVersion;
@@ -44,10 +45,13 @@ public partial class DisplayViewModel : ViewModelBase
         _ticker = ticker;
         _localizer = localizer;
         _display = display;
+        Backdrop = backdrop;
         _library = DoorLibrary.Load(CultureInfo.CurrentUICulture.Name);
-        SceneId = SceneCatalog.Resolve(family.Settings.SceneId, fullVersion.IsFull).Id;
+        SceneId = backdrop.SceneFor(SceneCatalog.Resolve(family.Settings.SceneId, fullVersion.IsFull).Id);
         Tick();
     }
+
+    public PhotoBackdrop Backdrop { get; }
 
     public ObservableCollection<DisplayKidViewModel> Kids { get; } = [];
 
@@ -107,6 +111,12 @@ public partial class DisplayViewModel : ViewModelBase
     [RelayCommand]
     public void NextScene()
     {
+        if (Backdrop.IsActive)
+        {
+            Backdrop.Next();
+            return;
+        }
+
         SceneId = SceneCatalog.Next(SceneId, _fullVersion.IsFull).Id;
         _secondsOnScene = 0;
     }
@@ -128,7 +138,7 @@ public partial class DisplayViewModel : ViewModelBase
         SleepsCaption = _localizer.Plural("SleepsCaption", state.Sleeps);
         Countdown = _localizer["DisplayCountdown", (int)state.Remaining.TotalDays, state.Remaining.Hours, state.Remaining.Minutes.ToString("00", CultureInfo.CurrentCulture), state.Remaining.Seconds.ToString("00", CultureInfo.CurrentCulture)];
         Clock = now.ToString("t", CultureInfo.CurrentCulture);
-        Today = now.ToString("D", CultureInfo.CurrentCulture);
+        Today = now.ToString("M", CultureInfo.CurrentCulture);
         DailyFact = _library.DailyFact(now);
 
         var angle = (_secondsRunning % DriftPeriodSeconds) * Math.Tau / DriftPeriodSeconds;
@@ -143,7 +153,7 @@ public partial class DisplayViewModel : ViewModelBase
         _secondsRunning++;
         _secondsOnScene++;
 
-        if (_family.Settings.DisplayRotatesScenes && _secondsOnScene >= SecondsPerScene)
+        if (_family.Settings.DisplayRotatesScenes && !Backdrop.IsActive && _secondsOnScene >= SecondsPerScene)
         {
             NextScene();
         }

@@ -39,6 +39,12 @@ internal sealed class FakeFullVersion(bool isFull = false) : IFullVersionService
 
     public Task RefreshAsync(CancellationToken ct = default) => Task.CompletedTask;
 
+    public void Revoke()
+    {
+        IsFull = false;
+        Changed?.Invoke(this, EventArgs.Empty);
+    }
+
     public Task<PurchaseResult> PurchaseAsync(CancellationToken ct = default)
     {
         IsFull = true;

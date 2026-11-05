@@ -18,11 +18,14 @@ public sealed class SnowGlobeScene : Scene
         base.Tap(x, y, time);
     }
 
-    protected override void PaintBackdrop(SKCanvas canvas, int width, int height)
+    protected override void PaintSky(SKCanvas canvas, int width, int height)
     {
         Painter.Sky(canvas, width, height, new SKColor(0x16, 0x10, 0x2E), new SKColor(0x3A, 0x14, 0x3C), new SKColor(0x6A, 0x1C, 0x3C));
         Painter.Stars(canvas, width, height, 0.7f, 21, 90);
+    }
 
+    protected override void PaintForeground(SKCanvas canvas, int width, int height)
+    {
         var (cx, cy, radius) = Geometry(width, height);
         Painter.Glow(canvas, cx, cy, radius * 1.9f, Palette.Candle, 75);
 
@@ -35,10 +38,12 @@ public sealed class SnowGlobeScene : Scene
         PaintBase(canvas, cx, cy, radius);
     }
 
-    protected override void PaintLife(SKCanvas canvas, int width, int height, float time)
+    protected override void PaintSkyLife(SKCanvas canvas, int width, int height, float time) =>
+        Painter.Twinkles(canvas, width, height, 0.4f, time, 3, 10);
+
+    protected override void PaintForegroundLife(SKCanvas canvas, int width, int height, float time)
     {
         var (cx, cy, radius) = Geometry(width, height);
-        Painter.Twinkles(canvas, width, height, 0.4f, time, 3, 10);
         PaintGlobeSnow(canvas, cx, cy, radius, time);
         PaintGlass(canvas, cx, cy, radius);
     }
