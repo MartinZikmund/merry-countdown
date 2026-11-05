@@ -2,21 +2,16 @@ using SkiaSharp;
 
 namespace MerryCountdown.Scenes;
 
-/// <summary>Tap to shake: the snow inside whirls up, then slowly settles again.</summary>
+/// <summary>Tap the glass to shake it: the snow inside whirls up, then slowly settles again.</summary>
 public sealed class SnowGlobeScene : Scene
 {
     private const int Flakes = 180;
     private const float ShakeDecay = 0.45f;
+    private const float CalmShake = 0.4f;
 
     private float _lastShake = -100;
 
     public override string Id => "globe";
-
-    public override void Tap(float x, float y, float time)
-    {
-        _lastShake = time;
-        base.Tap(x, y, time);
-    }
 
     protected override void PaintSky(SKCanvas canvas, int width, int height)
     {
@@ -46,6 +41,12 @@ public sealed class SnowGlobeScene : Scene
         var (cx, cy, radius) = Geometry(width, height);
         PaintGlobeSnow(canvas, cx, cy, radius, time);
         PaintGlass(canvas, cx, cy, radius);
+    }
+
+    protected override IEnumerable<SceneElement> ForegroundElements(int width, int height, float time)
+    {
+        var (cx, cy, radius) = Geometry(width, height);
+        yield return new SceneElement(new SKRect(cx - radius, cy - radius, cx + radius, cy + radius), tappedAt => _lastShake = tappedAt, IsRound: true);
     }
 
     // The globe has its own snow, and a blizzard around a glass ball would look like a bug.
@@ -124,7 +125,7 @@ public sealed class SnowGlobeScene : Scene
 
     private void PaintGlobeSnow(SKCanvas canvas, float cx, float cy, float radius, float time)
     {
-        var shake = MathF.Exp(-Math.Max(0, time - _lastShake) * ShakeDecay);
+        var shake = MathF.Exp(-Math.Max(0, time - _lastShake) * ShakeDecay) * (CalmMotion ? CalmShake : 1);
 
         canvas.Save();
         using SKPath clip = new();

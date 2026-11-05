@@ -4,6 +4,12 @@ namespace MerryCountdown.Scenes;
 
 public sealed class AuroraScene : Scene
 {
+    private const float LightsReaction = 4f;
+    private const float CabinReaction = 2f;
+
+    private float _lightsTapped = float.NegativeInfinity;
+    private float _cabinTapped = float.NegativeInfinity;
+
     public override string Id => "aurora";
 
     protected override void PaintSky(SKCanvas canvas, int width, int height)
@@ -15,15 +21,33 @@ public sealed class AuroraScene : Scene
     protected override void PaintSkyLife(SKCanvas canvas, int width, int height, float time)
     {
         Painter.Twinkles(canvas, width, height, 0.5f, time, 8, 12);
-        Ribbon(canvas, width, height, time, 0.24f, 0.17f, 0.22f, Palette.Mint, 0f);
-        Ribbon(canvas, width, height, time, 0.32f, 0.13f, 0.17f, new SKColor(0x7A, 0x6B, 0xFF), 2.1f);
-        Ribbon(canvas, width, height, time, 0.17f, 0.1f, 0.12f, new SKColor(0xFF, 0x7E, 0xC8), 4.2f);
+        var flare = Remaining(_lightsTapped, time, LightsReaction);
+        var reach = CalmMotion ? 0 : flare;
+        var glow = flare * (CalmMotion ? 0.35f : 1f);
+        Ribbon(canvas, width, height, time, 0.24f, 0.17f, 0.22f, Palette.Mint, 0f, reach, glow);
+        Ribbon(canvas, width, height, time, 0.32f, 0.13f, 0.17f, new SKColor(0x7A, 0x6B, 0xFF), 2.1f, reach, glow);
+        Ribbon(canvas, width, height, time, 0.17f, 0.1f, 0.12f, new SKColor(0xFF, 0x7E, 0xC8), 4.2f, reach, glow);
     }
 
     protected override void PaintForegroundLife(SKCanvas canvas, int width, int height, float time) =>
         PaintLand(canvas, width, height, time);
 
-    private static void Ribbon(SKCanvas canvas, int width, int height, float time, float centre, float swing, float tall, SKColor color, float phase)
+    protected override IEnumerable<SceneElement> ForegroundElements(int width, int height, float time)
+    {
+        var (x, ground, cabin) = Cabin(width, height);
+        var halfRoof = cabin * 0.64f;
+        yield return new SceneElement(new SKRect(x - halfRoof, ground - (cabin * 1.01f), x + halfRoof, ground), tappedAt => _cabinTapped = tappedAt);
+    }
+
+    protected override IEnumerable<SceneElement> SkyElements(int width, int height, float time)
+    {
+        yield return new SceneElement(new SKRect(0, height * 0.04f, width, height * 0.48f), tappedAt => _lightsTapped = tappedAt);
+    }
+
+    private static (float X, float Ground, float Size) Cabin(int width, int height) =>
+        (width * 0.5f, height * 0.875f, Math.Min(width, height) * 0.3f);
+
+    private static void Ribbon(SKCanvas canvas, int width, int height, float time, float centre, float swing, float tall, SKColor color, float phase, float reach, float glow)
     {
         const int Step = 12;
         using SKPaint paint = new() { IsAntialias = false, BlendMode = SKBlendMode.Plus };
@@ -32,9 +56,9 @@ public sealed class AuroraScene : Scene
             var t = x / (float)width;
             var wave = MathF.Sin((t * 5f) + (time * 0.18f) + phase) + (0.5f * MathF.Sin((t * 11f) - (time * 0.13f) + (phase * 1.7f)));
             var y = height * (centre + (wave * swing * 0.5f));
-            var column = height * tall * (0.75f + (0.25f * MathF.Sin((t * 23f) + (time * 0.4f) + phase)));
-            var strength = 0.6f + (0.4f * MathF.Sin((t * 7f) + (time * 0.25f) + phase));
-            using var shader = SKShader.CreateLinearGradient(new SKPoint(0, y - column), new SKPoint(0, y + (column * 0.25f)), [color.WithAlpha(0), color.WithAlpha((byte)(115 * strength)), color.WithAlpha(0)], [0f, 0.75f, 1f], SKShaderTileMode.Clamp);
+            var column = height * tall * (0.75f + (0.25f * MathF.Sin((t * 23f) + (time * 0.4f) + phase))) * (1 + (reach * 0.7f));
+            var strength = (0.6f + (0.4f * MathF.Sin((t * 7f) + (time * 0.25f) + phase))) * (1 + (glow * 1.1f));
+            using var shader = SKShader.CreateLinearGradient(new SKPoint(0, y - column), new SKPoint(0, y + (column * 0.25f)), [color.WithAlpha(0), color.WithAlpha((byte)Math.Min(255, 115 * strength)), color.WithAlpha(0)], [0f, 0.75f, 1f], SKShaderTileMode.Clamp);
             paint.Shader = shader;
             canvas.DrawRect(x, y - column, Step, column * 1.25f, paint);
         }
@@ -42,7 +66,7 @@ public sealed class AuroraScene : Scene
         paint.Shader = null;
     }
 
-    private static void PaintLand(SKCanvas canvas, int width, int height, float time)
+    private void PaintLand(SKCanvas canvas, int width, int height, float time)
     {
         var unit = Math.Min(width, height);
         Painter.Hill(canvas, width, height, height * 0.72f, height * 0.05f, 0.9f, 1.3f, new SKColor(0x5A, 0x7A, 0xA8), new SKColor(0x2A, 0x46, 0x72));
@@ -56,14 +80,21 @@ public sealed class AuroraScene : Scene
 
         Painter.Hill(canvas, width, height, height * 0.86f, height * 0.02f, 1.2f, 0.2f, Palette.SnowShade, Palette.SnowDeep);
 
-        var cabinX = width * 0.5f;
-        var cabinGround = height * 0.875f;
-        var cabin = unit * 0.3f;
+        var (cabinX, cabinGround, cabin) = Cabin(width, height);
         Painter.House(canvas, cabinX, cabinGround, cabin, cabin * 0.55f, Palette.WoodDark, Palette.Snow);
         var flicker = 0.92f + (0.08f * MathF.Sin(time * 5.3f));
         var light = new SKColor(Palette.Candle.Red, (byte)(Palette.Candle.Green * flicker), Palette.Candle.Blue);
         Painter.Window(canvas, cabinX - (cabin * 0.28f), cabinGround - (cabin * 0.38f), cabin * 0.17f, cabin * 0.2f, light);
         Painter.Window(canvas, cabinX + (cabin * 0.11f), cabinGround - (cabin * 0.38f), cabin * 0.17f, cabin * 0.2f, light);
+
+        // Someone inside turns the lamps up.
+        var lamps = Remaining(_cabinTapped, time, CabinReaction);
+        if (lamps > 0)
+        {
+            var alpha = (byte)((CalmMotion ? 110 : 235) * lamps);
+            Painter.Glow(canvas, cabinX - (cabin * 0.195f), cabinGround - (cabin * 0.28f), cabin * 0.42f, Palette.Candle, alpha);
+            Painter.Glow(canvas, cabinX + (cabin * 0.195f), cabinGround - (cabin * 0.28f), cabin * 0.42f, Palette.Candle, alpha);
+        }
 
         Painter.Pine(canvas, width * 0.13f, height * 0.93f, unit * 0.36f, Palette.Pine, Palette.Snow);
         Painter.Pine(canvas, width * 0.88f, height * 0.94f, unit * 0.31f, Palette.Pine, Palette.Snow);

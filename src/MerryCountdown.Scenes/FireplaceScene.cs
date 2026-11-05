@@ -4,6 +4,15 @@ namespace MerryCountdown.Scenes;
 
 public sealed class FireplaceScene : Scene
 {
+    private const float FlamesReaction = 2.5f;
+    private const float StockingReaction = 1.6f;
+    private const float PresentReaction = 1.1f;
+    private const float StockingSwingDegrees = 16;
+
+    private readonly float[] _stockingTapped = [float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity];
+    private readonly float[] _presentTapped = [float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity];
+    private float _flamesTapped = float.NegativeInfinity;
+
     public override string Id => "fireplace";
 
     protected override void PaintSky(SKCanvas canvas, int width, int height)
@@ -38,9 +47,7 @@ public sealed class FireplaceScene : Scene
         canvas.DrawRoundRect(cx - (hearth * 0.86f), floor - outerHeight - (hearth * 0.07f), hearth * 1.72f, hearth * 0.09f, hearth * 0.015f, hearth * 0.015f, paint);
 
         PaintLogs(canvas, cx, floor, opening);
-        PaintStockings(canvas, cx, floor - outerHeight + (hearth * 0.02f), hearth);
         PaintGarland(canvas, cx, floor - outerHeight - (hearth * 0.07f), hearth);
-        PaintPresents(canvas, width, floor, hearth);
     }
 
     protected override void PaintForegroundLife(SKCanvas canvas, int width, int height, float time)
@@ -48,9 +55,39 @@ public sealed class FireplaceScene : Scene
         var (cx, floor, hearth) = Geometry(width, height);
         var opening = hearth * 0.92f;
         var flicker = 0.85f + (0.15f * MathF.Sin(time * 7.3f) * MathF.Sin(time * 3.1f));
-        Painter.Glow(canvas, cx, floor - (opening * 0.2f), hearth * 1.5f * flicker, Palette.Ember, 95);
-        PaintFlames(canvas, cx, floor - (opening * 0.07f), opening, time);
+
+        // These two can move when tapped, so unlike the rest of the room they're painted fresh every frame.
+        PaintStockings(canvas, width, height, time);
+        PaintPresents(canvas, width, height, time);
+
+        var roar = Remaining(_flamesTapped, time, FlamesReaction);
+        var glow = (byte)(95 + (roar * (CalmMotion ? 45 : 90)));
+        Painter.Glow(canvas, cx, floor - (opening * 0.2f), hearth * 1.5f * flicker, Palette.Ember, glow);
+        PaintFlames(canvas, cx, floor - (opening * 0.07f), opening, time, CalmMotion ? 0 : roar);
         PaintEmbers(canvas, cx, floor, opening, time);
+    }
+
+    protected override IEnumerable<SceneElement> ForegroundElements(int width, int height, float time)
+    {
+        var (cx, floor, hearth) = Geometry(width, height);
+        var halfOpening = hearth * 0.46f;
+        yield return new SceneElement(new SKRect(cx - halfOpening, floor - (hearth * 0.64f), cx + halfOpening, floor), tappedAt => _flamesTapped = tappedAt);
+
+        var stockings = Stockings(width, height);
+        for (var i = 0; i < stockings.Length; i++)
+        {
+            var index = i;
+            var (x, y, w, h, _) = stockings[i];
+            yield return new SceneElement(new SKRect(x - (w * 0.62f), y, x + (w * 1.45f), y + (h * 1.08f)), tappedAt => _stockingTapped[index] = tappedAt);
+        }
+
+        var presents = Presents(width, height);
+        for (var i = 0; i < presents.Length; i++)
+        {
+            var index = i;
+            var (x, bottom, size, _) = presents[i];
+            yield return new SceneElement(new SKRect(x - (size / 2), bottom - (size * 1.1f), x + (size / 2), bottom), tappedAt => _presentTapped[index] = tappedAt);
+        }
     }
 
     // Indoors, so no snow on the carpet.
@@ -110,7 +147,7 @@ public sealed class FireplaceScene : Scene
         canvas.Restore();
     }
 
-    private static void PaintFlames(SKCanvas canvas, float cx, float baseY, float opening, float time)
+    private static void PaintFlames(SKCanvas canvas, float cx, float baseY, float opening, float time, float roar)
     {
         SKColor[] colors = [Palette.Cranberry, Palette.Ember, Palette.Candle];
         float[] scales = [1f, 0.72f, 0.42f];
@@ -118,8 +155,8 @@ public sealed class FireplaceScene : Scene
 
         for (var layer = 0; layer < colors.Length; layer++)
         {
-            var height = opening * 0.46f * scales[layer];
-            var width = opening * 0.62f * scales[layer];
+            var height = opening * 0.46f * scales[layer] * (1 + (roar * 0.55f));
+            var width = opening * 0.62f * scales[layer] * (1 + (roar * 0.15f));
             using SKPath path = new();
             path.MoveTo(cx - (width / 2), baseY);
 
@@ -159,15 +196,33 @@ public sealed class FireplaceScene : Scene
         }
     }
 
-    private static void PaintStockings(SKCanvas canvas, float cx, float y, float hearth)
+    private static (float X, float Y, float Width, float Height, SKColor Color)[] Stockings(int width, int height)
     {
+        var (cx, floor, hearth) = Geometry(width, height);
+        var y = floor - (hearth * 1.02f) + (hearth * 0.02f);
         SKColor[] colors = [Palette.Cranberry, new(0x1F, 0x7A, 0x5A), new(0x2F, 0x6B, 0xC4)];
+        return [.. colors.Select((color, i) => (cx + ((i - 1) * hearth * 0.4f), y, hearth * 0.095f, hearth * 0.2f, color))];
+    }
+
+    private void PaintStockings(SKCanvas canvas, int width, int height, float time)
+    {
+        var stockings = Stockings(width, height);
         using SKPaint paint = new() { IsAntialias = true };
-        for (var i = 0; i < colors.Length; i++)
+        for (var i = 0; i < stockings.Length; i++)
         {
-            var x = cx + ((i - 1) * hearth * 0.4f);
-            var w = hearth * 0.095f;
-            var h = hearth * 0.2f;
+            var (x, y, w, h, color) = stockings[i];
+            var left = Remaining(_stockingTapped[i], time, StockingReaction);
+
+            canvas.Save();
+            if (left > 0 && CalmMotion)
+            {
+                Painter.Glow(canvas, x, y + (h / 2), h * 0.7f, Palette.Candle, (byte)(90 * left));
+            }
+            else if (left > 0)
+            {
+                var age = (1 - left) * StockingReaction;
+                canvas.RotateDegrees(StockingSwingDegrees * left * MathF.Sin(age * 7f), x, y);
+            }
 
             using SKPath sock = new();
             sock.MoveTo(x - (w / 2), y);
@@ -176,11 +231,12 @@ public sealed class FireplaceScene : Scene
             sock.QuadTo(x + (w * 1.45f), y + (h * 0.78f), x + (w * 1.3f), y + (h * 0.98f));
             sock.QuadTo(x + (w * 0.4f), y + (h * 1.08f), x - (w / 2), y + (h * 0.82f));
             sock.Close();
-            paint.Color = colors[i];
+            paint.Color = color;
             canvas.DrawPath(sock, paint);
 
             paint.Color = Palette.Snow;
             canvas.DrawRoundRect(x - (w * 0.62f), y, w * 1.24f, h * 0.2f, w * 0.1f, w * 0.1f, paint);
+            canvas.Restore();
         }
     }
 
@@ -202,15 +258,39 @@ public sealed class FireplaceScene : Scene
         }
     }
 
-    private static void PaintPresents(SKCanvas canvas, int width, float floor, float hearth)
+    private static (float X, float Bottom, float Size, SKColor Color)[] Presents(int width, int height)
     {
-        SKColor[] boxes = [new(0x2F, 0x6B, 0xC4), Palette.Cranberry, new(0x1F, 0x7A, 0x5A)];
-        var left = (width / 2f) - (hearth * 0.75f);
-        var right = (width / 2f) + (hearth * 0.75f);
+        var (cx, floor, hearth) = Geometry(width, height);
+        var left = cx - (hearth * 0.75f);
+        var right = cx + (hearth * 0.75f);
+        return
+        [
+            (left - (hearth * 0.18f), floor + (hearth * 0.05f), hearth * 0.24f, new SKColor(0x2F, 0x6B, 0xC4)),
+            (left, floor + (hearth * 0.08f), hearth * 0.15f, Palette.Cranberry),
+            (right + (hearth * 0.15f), floor + (hearth * 0.06f), hearth * 0.2f, new SKColor(0x1F, 0x7A, 0x5A)),
+        ];
+    }
 
-        Box(canvas, left - (hearth * 0.18f), floor + (hearth * 0.05f), hearth * 0.24f, boxes[0]);
-        Box(canvas, left + (hearth * 0.0f), floor + (hearth * 0.08f), hearth * 0.15f, boxes[1]);
-        Box(canvas, right + (hearth * 0.15f), floor + (hearth * 0.06f), hearth * 0.2f, boxes[2]);
+    private void PaintPresents(SKCanvas canvas, int width, int height, float time)
+    {
+        var presents = Presents(width, height);
+        for (var i = 0; i < presents.Length; i++)
+        {
+            var (x, bottom, size, color) = presents[i];
+            var left = Remaining(_presentTapped[i], time, PresentReaction);
+            var hop = 0f;
+            if (left > 0 && CalmMotion)
+            {
+                Painter.Glow(canvas, x, bottom - (size / 2), size * 0.75f, Palette.Candle, (byte)(90 * left));
+            }
+            else if (left > 0)
+            {
+                var age = (1 - left) * PresentReaction;
+                hop = MathF.Abs(MathF.Sin(age * 6f)) * size * 0.4f * left;
+            }
+
+            Box(canvas, x, bottom - hop, size, color);
+        }
     }
 
     private static void Box(SKCanvas canvas, float x, float bottom, float size, SKColor color)
