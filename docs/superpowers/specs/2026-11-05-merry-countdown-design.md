@@ -35,6 +35,7 @@ A joyful Christmas countdown for kids and families: a much improved, modern take
 - **Doors:** 24 shuffled doors that lay themselves out to fill any screen. Locked doors jiggle and say how many sleeps are left; missed days stay open. Behind them: jokes with hidden punchlines, facts, missions, kind deeds and videos, rotating each year.
 - **Wishes:** a letter on paper in a handwritten font. Write a wish or pick a picture (for kids who can't write yet), sign it, send it, watch it fly. "I forgot something!" reopens it.
 - **Family Display:** the current scene, huge number, date and clock, one card per kid and a fact of the day. Screen kept awake, content drifts slowly to protect panels, scenes rotate every 30 minutes. `--display` (desktop) or `?display=1` (web) starts straight in it.
+- **Compact overlay:** the sign on the scene in a small always-on-top window, on the WinUI head. See [compact-overlay.md](../../compact-overlay.md).
 - **Grown-ups' corner:** behind the parent gate. Kids, the full version, messages behind doors, family events, exact time.
 
 ## Custom photos
