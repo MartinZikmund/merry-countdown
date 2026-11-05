@@ -203,10 +203,16 @@ public partial class DoorViewModel(int number, IStringLocalizer localizer) : Obs
 
     public bool IsOpened => State == DoorState.Opened;
 
+    [ObservableProperty]
+    public partial bool CalmMotion { get; set; }
+
+    public bool ShouldSwingOpen => State == DoorState.Ready && !CalmMotion;
+
     public void Jiggle() => Jiggled?.Invoke(this, EventArgs.Empty);
 
     internal void Refresh(DoorLibrary library, DateTime now, int year, IFamilyService family, Kid kid)
     {
+        CalmMotion = family.Settings.CalmMotion;
         State = AdventCalendar.StateOf(Number, now, family.IsDoorOpened(kid, year, Number));
         IsToday = AdventCalendar.TodaysDoor(now) == Number;
         Sticker = library.For(Number, year).Sticker;
