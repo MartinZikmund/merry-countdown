@@ -109,5 +109,13 @@
             HorizontalContentAlignment="Stretch"
             VerticalContentAlignment="Stretch"
             Visibility="Collapsed" />
+
+        <!--  So does the compact overlay. The title bar underneath still drags the window.  -->
+        <ContentControl
+            x:Name="CompactOverlayHost"
+            Grid.RowSpan="2"
+            HorizontalContentAlignment="Stretch"
+            VerticalContentAlignment="Stretch"
+            Visibility="Collapsed" />
     </Grid>
 </Page>

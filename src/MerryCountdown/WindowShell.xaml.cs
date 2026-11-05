@@ -17,6 +17,7 @@ public sealed partial class WindowShell : Page, IWindowShell
     private bool _isWindowClosed;
     private ViewModelBase? _currentPageViewModel;
     private readonly IDisplayModeService _display;
+    private readonly ICompactOverlayService _compactOverlay;
 
     public WindowShell(IServiceProvider serviceProvider, Window associatedWindow)
     {
@@ -44,6 +45,8 @@ public sealed partial class WindowShell : Page, IWindowShell
         InnerFrame.Navigated += InnerFrame_Navigated;
         _display = ServiceProvider.GetRequiredService<IDisplayModeService>();
         _display.Changed += OnDisplayModeChanged;
+        _compactOverlay = ServiceProvider.GetRequiredService<ICompactOverlayService>();
+        _compactOverlay.Changed += OnCompactOverlayChanged;
         Loading += WindowShell_Loading;
 
         UpdateWindowTitle();
@@ -85,6 +88,16 @@ public sealed partial class WindowShell : Page, IWindowShell
             DisplayHost.Content = null;
             DisplayHost.Visibility = Visibility.Collapsed;
         }
+    }
+
+    private void OnCompactOverlayChanged(object? sender, EventArgs e)
+    {
+        var isActive = _compactOverlay.IsActive;
+        CompactOverlayHost.Content = isActive ? new Views.CompactOverlayView(ServiceProvider.GetRequiredService<CompactOverlayViewModel>()) : null;
+        CompactOverlayHost.Visibility = isActive ? Visibility.Visible : Visibility.Collapsed;
+
+        // Collapsed as well as covered, so Tab can't wander into a page nobody can see.
+        NavView.Visibility = isActive ? Visibility.Collapsed : Visibility.Visible;
     }
 
     public WindowShellViewModel ViewModel { get; }

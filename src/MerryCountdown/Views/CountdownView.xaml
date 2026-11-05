@@ -13,6 +13,7 @@
             AutomationProperties.AutomationId="CountdownScene"
             AutomationProperties.Name="{markup:Localize Key=SceneAccessibleName}"
             CalmMotion="{x:Bind ViewModel.CalmMotion, Mode=OneWay}"
+            IsPaused="{x:Bind ViewModel.IsScenePaused, Mode=OneWay}"
             Photo="{x:Bind ViewModel.Backdrop.Photo, Mode=OneWay}"
             SceneId="{x:Bind ViewModel.SceneId, Mode=OneWay}"
             ShowForeground="{x:Bind ViewModel.Backdrop.ShowForeground, Mode=OneWay}"
@@ -249,6 +250,15 @@
                             </StackPanel>
                         </Flyout>
                     </Button.Flyout>
+                </Button>
+                <Button
+                    AutomationProperties.AutomationId="CompactOverlayButton"
+                    AutomationProperties.Name="{markup:Localize Key=CompactOverlay}"
+                    Command="{x:Bind ViewModel.EnterCompactOverlayCommand}"
+                    Style="{StaticResource SceneRoundButtonStyle}"
+                    ToolTipService.ToolTip="{markup:Localize Key=CompactOverlay}"
+                    Visibility="{x:Bind ViewModel.CanUseCompactOverlay}">
+                    <FontIcon FontSize="24" Glyph="&#xE944;" />
                 </Button>
                 <Button
                     AutomationProperties.AutomationId="FamilyDisplayButton"

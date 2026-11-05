@@ -23,6 +23,7 @@ public partial class CountdownViewModel : ViewModelBase
     private readonly IDisplayModeService _display;
     private readonly IParentGateService _gate;
     private readonly ISoundService _sounds;
+    private readonly ICompactOverlayService _overlay;
 
     public CountdownViewModel(
         IFamilyService family,
@@ -34,9 +35,11 @@ public partial class CountdownViewModel : ViewModelBase
         IDisplayModeService display,
         PhotoBackdrop backdrop,
         IParentGateService gate,
-        ISoundService sounds)
+        ISoundService sounds,
+        ICompactOverlayService overlay)
     {
         _sounds = sounds;
+        _overlay = overlay;
         _family = family;
         _fullVersion = fullVersion;
         _clock = clock;
@@ -96,8 +99,15 @@ public partial class CountdownViewModel : ViewModelBase
     [ObservableProperty]
     public partial bool HasEvents { get; set; }
 
+    public bool CanUseCompactOverlay => _overlay.IsSupported;
+
+    /// <summary>The overlay covers this page, so painting its scene as well would only drain the battery.</summary>
+    [ObservableProperty]
+    public partial bool IsScenePaused { get; set; }
+
     public override void ViewLoaded()
     {
+        _overlay.Changed += OnOverlayChanged;
         _ticker.Second += OnSecond;
         _family.Changed += OnFamilyChanged;
         _fullVersion.Changed += OnFamilyChanged;
@@ -106,6 +116,7 @@ public partial class CountdownViewModel : ViewModelBase
 
     public override void ViewUnloaded()
     {
+        _overlay.Changed -= OnOverlayChanged;
         _ticker.Second -= OnSecond;
         _family.Changed -= OnFamilyChanged;
         _fullVersion.Changed -= OnFamilyChanged;
@@ -180,6 +191,11 @@ public partial class CountdownViewModel : ViewModelBase
 
     [RelayCommand]
     private void EnterFamilyDisplay() => _display.Enter();
+
+    [RelayCommand]
+    private void EnterCompactOverlay() => _overlay.Enter();
+
+    private void OnOverlayChanged(object? sender, EventArgs e) => IsScenePaused = _overlay.IsActive;
 
     private void OnSecond(object? sender, EventArgs e) => Refresh();
 

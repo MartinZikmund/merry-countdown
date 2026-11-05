@@ -145,6 +145,65 @@ public sealed class DisplayModeService(IWindowShellProvider shells, IDisplayRequ
     }
 }
 
+public sealed class CompactOverlayService(IWindowShellProvider shells, IXamlRootProvider xamlRoots) : ICompactOverlayService
+{
+    // Windows sizes the overlay from the work area, which on an ultrawide means a very wide "small" window.
+    private const int WidthInDips = 420;
+    private const int HeightInDips = 236;
+
+    private AppWindowPresenter? _previous;
+    private Windows.UI.Color? _previousCaptionColor;
+
+    // Uno's AppWindow throws NotSupportedException for CompactOverlay on every non-Windows target.
+#if WINAPPSDK
+    public bool IsSupported => true;
+#else
+    public bool IsSupported => false;
+#endif
+
+    public bool IsActive { get; private set; }
+
+    public event EventHandler? Changed;
+
+    public void Enter()
+    {
+        if (IsActive || !IsSupported)
+        {
+            return;
+        }
+
+        var window = shells.Window.AppWindow;
+        _previous = window.Presenter;
+        window.SetPresenter(AppWindowPresenterKind.CompactOverlay);
+
+        var scale = xamlRoots.XamlRoot.RasterizationScale;
+        window.ResizeClient(new Windows.Graphics.SizeInt32((int)(WidthInDips * scale), (int)(HeightInDips * scale)));
+
+        // The caption buttons sit on the scene here, not on the themed page, so the theme's colour may vanish into it.
+        _previousCaptionColor = window.TitleBar.ButtonForegroundColor;
+        window.TitleBar.ButtonForegroundColor = Microsoft.UI.Colors.White;
+
+        IsActive = true;
+        Changed?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void Exit()
+    {
+        if (!IsActive)
+        {
+            return;
+        }
+
+        // The same presenter, not a new default one, so a maximized window comes back maximized.
+        var window = shells.Window.AppWindow;
+        window.SetPresenter(_previous);
+        window.TitleBar.ButtonForegroundColor = _previousCaptionColor;
+        _previous = null;
+        IsActive = false;
+        Changed?.Invoke(this, EventArgs.Empty);
+    }
+}
+
 public sealed class SnackService(IDialogService dialogs, IConfirmationDialogService confirmations) : ISnackService
 {
     public async Task ShowMessageAsync(string title, string message) => await dialogs.ShowAsync(title, message);

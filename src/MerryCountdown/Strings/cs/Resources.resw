@@ -586,6 +586,12 @@
   <data name="DisplayHint" xml:space="preserve">
     <value>Esc nebo Zpět pro odchod. Šipky mění obrázek.</value>
   </data>
+  <data name="CompactOverlay" xml:space="preserve">
+    <value>Malé okno navrchu</value>
+  </data>
+  <data name="CompactOverlayExit" xml:space="preserve">
+    <value>Zpět do velkého okna</value>
+  </data>
   <data name="DisplayExit" xml:space="preserve">
     <value>Opustit rodinnou obrazovku</value>
   </data>
