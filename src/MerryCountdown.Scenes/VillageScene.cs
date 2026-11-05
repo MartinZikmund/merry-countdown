@@ -75,8 +75,8 @@ public sealed class VillageScene : Scene
         // The town tree stands in the front so the sky stays clear for the big number.
         var unit = Math.Min(width, height);
         var x = width * 0.5f;
-        var ground = height * 0.92f;
-        var treeHeight = unit * 0.42f;
+        var ground = height * 0.94f;
+        var treeHeight = unit * 0.34f;
 
         Painter.Glow(canvas, x, ground - (treeHeight * 0.5f), treeHeight * 0.85f, Palette.Candle, 40);
         Painter.Pine(canvas, x, ground, treeHeight, Palette.Pine, Palette.Snow);

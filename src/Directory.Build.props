@@ -17,7 +17,6 @@
             Logging;
             Mvvm;
             Configuration;
-            HttpRefit;
             Serialization;
             Localization;
         </UnoFeatures>

@@ -1,97 +1,166 @@
-﻿<local:SettingsViewBase
+<local:SettingsViewBase
     x:Class="MerryCountdown.Views.SettingsView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:MerryCountdown.Views"
     xmlns:markup="using:MerryCountdown.Markup"
     xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource PageBackdropBrush}">
 
-    <Grid RowSpacing="8">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+    <ScrollViewer>
+        <StackPanel
+            x:Name="ContentRoot"
+            MaxWidth="960"
+            Padding="24"
+            Spacing="8">
 
-        <ScrollViewer Grid.Row="1">
-            <StackPanel
-                x:Name="ContentRoot"
-                Padding="24"
-                Orientation="Vertical"
-                Spacing="8">
+            <TextBlock
+                Margin="0,0,0,16"
+                Style="{StaticResource PageTitleTextStyle}"
+                Text="{x:Bind ViewModel.PageTitle, Mode=OneWay}" />
 
-                <!--  Page header  -->
-                <TextBlock
-                    Margin="0,0,0,16"
-                    Style="{ThemeResource TitleLargeTextBlockStyle}"
-                    Text="{x:Bind ViewModel.PageTitle, Mode=OneWay}" />
+            <!--  Christmas  -->
+            <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{markup:Localize Key=SettingsChristmas}" />
 
-                <!--  General section  -->
-                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{markup:Localize Key=General}" />
+            <toolkit:SettingsCard Description="{markup:Localize Key=BigDayDescription}" Header="{markup:Localize Key=BigDayHeader}">
+                <toolkit:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE787;" />
+                </toolkit:SettingsCard.HeaderIcon>
+                <ComboBox
+                    AutomationProperties.AutomationId="BigDayCombo"
+                    AutomationProperties.Name="{markup:Localize Key=BigDayHeader}"
+                    ItemsSource="{x:Bind ViewModel.BigDayOptions}"
+                    SelectedIndex="{x:Bind ViewModel.BigDayIndex, Mode=TwoWay}" />
+            </toolkit:SettingsCard>
 
-                <toolkit:SettingsCard Header="{markup:Localize Key=Theme}">
-                    <toolkit:SettingsCard.HeaderIcon>
-                        <FontIcon Glyph="&#xE793;" />
-                    </toolkit:SettingsCard.HeaderIcon>
-                    <ComboBox ItemsSource="{x:Bind ViewModel.ThemeOptions}" SelectedItem="{x:Bind ViewModel.Theme, Mode=TwoWay}">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate x:DataType="ElementTheme">
-                                <TextBlock Text="{x:Bind Converter={StaticResource EnumLocalizationConverter}}" />
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                </toolkit:SettingsCard>
+            <toolkit:SettingsCard Description="{markup:Localize Key=BringerDescription}" Header="{markup:Localize Key=BringerHeader}">
+                <toolkit:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE715;" />
+                </toolkit:SettingsCard.HeaderIcon>
+                <ComboBox
+                    AutomationProperties.AutomationId="BringerCombo"
+                    AutomationProperties.Name="{markup:Localize Key=BringerHeader}"
+                    ItemsSource="{x:Bind ViewModel.BringerOptions}"
+                    SelectedIndex="{x:Bind ViewModel.BringerIndex, Mode=TwoWay}" />
+            </toolkit:SettingsCard>
 
-                <!--  About section  -->
-                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{markup:Localize Key=About}" />
+            <!--  Look and motion  -->
+            <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{markup:Localize Key=SettingsLook}" />
 
-                <toolkit:SettingsCard Description="{markup:Localize Key=AboutAppDescription}" Header="{markup:Localize Key=ApplicationName}">
-                    <toolkit:SettingsCard.HeaderIcon>
-                        <BitmapIcon ShowAsMonochrome="False" UriSource="ms-appx:///Assets/Icons/icon_foreground.png" />
-                    </toolkit:SettingsCard.HeaderIcon>
-                    <StackPanel HorizontalAlignment="Right" Spacing="2">
-                        <TextBlock HorizontalAlignment="Right" Text="{x:Bind ViewModel.AppVersion}" />
-                        <TextBlock
-                            HorizontalAlignment="Right"
-                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                            Style="{StaticResource CaptionTextBlockStyle}"
-                            Text="{x:Bind ViewModel.WorktreeLabel}"
-                            Visibility="{x:Bind ViewModel.WorktreeLabel, Converter={StaticResource StringVisibilityConverter}}" />
-                    </StackPanel>
-                </toolkit:SettingsCard>
+            <toolkit:SettingsCard Header="{markup:Localize Key=Theme}">
+                <toolkit:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE793;" />
+                </toolkit:SettingsCard.HeaderIcon>
+                <ComboBox
+                    AutomationProperties.AutomationId="ThemeCombo"
+                    AutomationProperties.Name="{markup:Localize Key=Theme}"
+                    ItemsSource="{x:Bind ViewModel.ThemeOptions}"
+                    SelectedItem="{x:Bind ViewModel.Theme, Mode=TwoWay}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="ElementTheme">
+                            <TextBlock Text="{x:Bind Converter={StaticResource EnumLocalizationConverter}}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </toolkit:SettingsCard>
 
-                <!--  Debug section  -->
-                <StackPanel Visibility="{x:Bind ViewModel.IsDebug}">
-                    <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{markup:Localize Key=Debugging}" />
+            <toolkit:SettingsCard Header="{markup:Localize Key=SnowHeader}">
+                <toolkit:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE9CA;" />
+                </toolkit:SettingsCard.HeaderIcon>
+                <ComboBox
+                    AutomationProperties.AutomationId="SnowCombo"
+                    AutomationProperties.Name="{markup:Localize Key=SnowHeader}"
+                    ItemsSource="{x:Bind ViewModel.SnowOptions}"
+                    SelectedIndex="{x:Bind ViewModel.SnowIndex, Mode=TwoWay}" />
+            </toolkit:SettingsCard>
 
-                    <toolkit:SettingsCard Header="{markup:Localize Key=ClearPreferences}">
-                        <Button Command="{x:Bind ViewModel.ClearPreferencesCommand}" Content="{markup:Localize Key=Clear}" />
+            <toolkit:SettingsCard Description="{markup:Localize Key=CalmDescription}" Header="{markup:Localize Key=CalmHeader}">
+                <toolkit:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE708;" />
+                </toolkit:SettingsCard.HeaderIcon>
+                <ToggleSwitch
+                    AutomationProperties.AutomationId="CalmToggle"
+                    AutomationProperties.Name="{markup:Localize Key=CalmHeader}"
+                    IsOn="{x:Bind ViewModel.CalmMotion, Mode=TwoWay}" />
+            </toolkit:SettingsCard>
+
+            <!--  Family Display  -->
+            <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{markup:Localize Key=FamilyDisplay}" />
+
+            <toolkit:SettingsExpander
+                Description="{markup:Localize Key=FamilyDisplayDescription}"
+                Header="{markup:Localize Key=FamilyDisplay}"
+                IsExpanded="True">
+                <toolkit:SettingsExpander.HeaderIcon>
+                    <FontIcon Glyph="&#xE7F4;" />
+                </toolkit:SettingsExpander.HeaderIcon>
+                <Button
+                    AutomationProperties.AutomationId="StartFamilyDisplayButton"
+                    Command="{x:Bind ViewModel.EnterFamilyDisplayCommand}"
+                    Content="{markup:Localize Key=FamilyDisplayStart}"
+                    Style="{StaticResource AccentButtonStyle}" />
+                <toolkit:SettingsExpander.Items>
+                    <toolkit:SettingsCard Header="{markup:Localize Key=DisplayRotate}">
+                        <ToggleSwitch
+                            AutomationProperties.AutomationId="RotateToggle"
+                            AutomationProperties.Name="{markup:Localize Key=DisplayRotate}"
+                            IsOn="{x:Bind ViewModel.DisplayRotatesScenes, Mode=TwoWay}" />
                     </toolkit:SettingsCard>
+                    <toolkit:SettingsCard Description="{markup:Localize Key=DisplayAutostartDescription}" Header="{markup:Localize Key=DisplayAutostart}">
+                        <ToggleSwitch
+                            AutomationProperties.AutomationId="AutostartToggle"
+                            AutomationProperties.Name="{markup:Localize Key=DisplayAutostart}"
+                            IsOn="{x:Bind ViewModel.StartInFamilyDisplay, Mode=TwoWay}" />
+                    </toolkit:SettingsCard>
+                </toolkit:SettingsExpander.Items>
+            </toolkit:SettingsExpander>
+
+            <!--  Grown-ups  -->
+            <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{markup:Localize Key=SettingsGrownUps}" />
+
+            <toolkit:SettingsCard
+                AutomationProperties.AutomationId="ParentZoneCard"
+                Command="{x:Bind ViewModel.OpenParentZoneCommand}"
+                Description="{markup:Localize Key=ParentZoneDescription}"
+                Header="{markup:Localize Key=ParentZoneTitle}"
+                IsClickEnabled="True">
+                <toolkit:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE716;" />
+                </toolkit:SettingsCard.HeaderIcon>
+            </toolkit:SettingsCard>
+
+            <!--  About  -->
+            <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{markup:Localize Key=About}" />
+
+            <toolkit:SettingsCard Description="{markup:Localize Key=AboutAppDescription}" Header="{markup:Localize Key=ApplicationName}">
+                <toolkit:SettingsCard.HeaderIcon>
+                    <BitmapIcon ShowAsMonochrome="False" UriSource="ms-appx:///Assets/Icons/icon_foreground.png" />
+                </toolkit:SettingsCard.HeaderIcon>
+                <StackPanel HorizontalAlignment="Right" Spacing="2">
+                    <TextBlock HorizontalAlignment="Right" Text="{x:Bind ViewModel.AppVersion}" />
+                    <TextBlock
+                        HorizontalAlignment="Right"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Style="{ThemeResource CaptionTextBlockStyle}"
+                        Text="{x:Bind ViewModel.WorktreeLabel}"
+                        Visibility="{x:Bind local:SettingsView.VisibleWhenSet(ViewModel.WorktreeLabel)}" />
                 </StackPanel>
+            </toolkit:SettingsCard>
 
+            <toolkit:SettingsCard Description="{markup:Localize Key=PrivacyDescription}" Header="{markup:Localize Key=PrivacyHeader}">
+                <toolkit:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE72E;" />
+                </toolkit:SettingsCard.HeaderIcon>
+            </toolkit:SettingsCard>
+
+            <!--  Debug  -->
+            <StackPanel Spacing="8" Visibility="{x:Bind ViewModel.IsDebug}">
+                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{markup:Localize Key=Debugging}" />
+                <toolkit:SettingsCard Header="{markup:Localize Key=ClearPreferences}">
+                    <Button Command="{x:Bind ViewModel.ClearPreferencesCommand}" Content="{markup:Localize Key=Clear}" />
+                </toolkit:SettingsCard>
             </StackPanel>
-        </ScrollViewer>
-
-        <!--  Responsive padding  -->
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup>
-                <VisualState>
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="0" />
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="ContentRoot.Padding" Value="12" />
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState>
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="768" />
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="ContentRoot.Padding" Value="24" />
-                    </VisualState.Setters>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
-    </Grid>
+        </StackPanel>
+    </ScrollViewer>
 </local:SettingsViewBase>

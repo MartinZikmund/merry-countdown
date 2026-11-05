@@ -12,4 +12,7 @@ public sealed partial class SettingsView : SettingsViewBase
     {
         this.InitializeComponent();
     }
+
+    public static Visibility VisibleWhenSet(string? text) =>
+        string.IsNullOrEmpty(text) ? Visibility.Collapsed : Visibility.Visible;
 }

@@ -1,4 +1,7 @@
+using MerryCountdown.Core.Family;
 using MerryCountdown.Core.Infrastructure;
+using MerryCountdown.Core.Parents;
+using MerryCountdown.Core.Store;
 using MerryCountdown.Core.Services;
 using MerryCountdown.Core.ViewModels;
 using MerryCountdown.Infrastructure;
@@ -6,6 +9,7 @@ using MerryCountdown.Services.Dialogs;
 using MerryCountdown.Services.Navigation;
 using MerryCountdown.Services.Rating;
 using MerryCountdown.Services.Settings;
+using MerryCountdown.Services.Store;
 using MerryCountdown.Services.Theming;
 using Uno.Resizetizer;
 
@@ -34,7 +38,7 @@ public partial class App : Application, IApplication
         this.InitializeComponent();
     }
 
-    protected Window? MainWindow { get; private set; }
+    public Window? MainWindow { get; private set; }
     protected IHost? Host { get; private set; }
 
     protected override async void OnLaunched(LaunchActivatedEventArgs args)
@@ -55,12 +59,6 @@ public partial class App : Application, IApplication
                 {
                     options.ValidateScopes = true;
                     options.ValidateOnBuild = true;
-                })
-                .UseHttp((context, services) =>
-                {
-#if DEBUG
-                    services.AddTransient<DelegatingHandler, DebugHttpHandler>();
-#endif
                 })
                 .ConfigureServices(RegisterServices)
             );
@@ -89,7 +87,19 @@ public partial class App : Application, IApplication
         }
 
         MainWindow.Activate();
+
+        _ = Host.Services.GetRequiredService<IFullVersionService>().RefreshAsync();
+
+        if (Host.Services.GetRequiredService<IFamilyService>().Settings.StartInFamilyDisplay || WasAskedForFamilyDisplay(args.Arguments))
+        {
+            ((WindowShell)MainWindow.Content).EnterFamilyDisplayOnLoad();
+        }
     }
+
+    // --display on desktop, ?display=1 on the web: lets a TV or a kiosk start straight in the big screen.
+    private static bool WasAskedForFamilyDisplay(string? arguments) =>
+        Environment.GetCommandLineArgs().Contains("--display")
+        || (arguments?.Contains("display=1", StringComparison.OrdinalIgnoreCase) ?? false);
 
     private static void RegisterServices(HostBuilderContext context, IServiceCollection services)
     {
@@ -101,7 +111,20 @@ public partial class App : Application, IApplication
         services.AddSingleton<IAppUpdater, Infrastructure.AppUpdater>();
         services.AddScoped<IAppRatingService, AppRatingService>();
 
+        // Family, time and money
+        services.AddSingleton<FamilyService>(_ => new FamilyService(new JsonFamilyStore(Windows.Storage.ApplicationData.Current.LocalFolder.Path)));
+        services.AddSingleton<IFamilyService>(sp => sp.GetRequiredService<FamilyService>());
+        services.AddSingleton<IAppClock, SystemClock>();
+        services.AddSingleton<ITicker, UiTicker>();
+        services.AddSingleton<IEntitlementCache, FamilyEntitlementCache>();
+        services.AddSingleton<IFullVersionService, FullVersionService>();
+        RegisterStore(services);
+
         // Per-window scoped services
+        services.AddScoped<KidPickerViewModel>();
+        services.AddScoped<IDisplayModeService, DisplayModeService>();
+        services.AddScoped<IParentGateService, ParentGateService>();
+        services.AddScoped<ISnackService, SnackService>();
         services.AddScoped<IThemeManager, ThemeManager>();
         services.AddScoped<WindowShellProvider>();
         services.AddScoped<IWindowShellProvider>(sp => sp.GetRequiredService<WindowShellProvider>());
@@ -115,7 +138,10 @@ public partial class App : Application, IApplication
         services.AddScoped<INavigationService>(sp =>
         {
             var service = new NavigationService(sp.GetRequiredService<IFrameProvider>());
-            service.RegisterView(typeof(Views.MainView), typeof(MainViewModel));
+            service.RegisterView(typeof(Views.CountdownView), typeof(CountdownViewModel));
+            service.RegisterView(typeof(Views.CalendarView), typeof(CalendarViewModel));
+            service.RegisterView(typeof(Views.WishListView), typeof(WishListViewModel));
+            service.RegisterView(typeof(Views.ParentZoneView), typeof(ParentZoneViewModel));
             service.RegisterView(typeof(Views.SettingsView), typeof(SettingsViewModel));
             return service;
         });
@@ -124,8 +150,36 @@ public partial class App : Application, IApplication
         services.AddScoped<WindowShellViewModel>();
 
         // Transient ViewModels (new instance per navigation)
-        services.AddTransient<MainViewModel>();
+        services.AddTransient<CountdownViewModel>();
+        services.AddTransient<CalendarViewModel>();
+        services.AddTransient<WishListViewModel>();
+        services.AddTransient<ParentZoneViewModel>();
+        services.AddTransient<DisplayViewModel>();
         services.AddTransient<SettingsViewModel>();
+    }
+
+    private static void RegisterStore(IServiceCollection services)
+    {
+#if DEBUG
+        // MERRY_SIMULATE_STORE=1, or a simulate-store.txt in LocalFolder for hosts that do not pass the environment on.
+        if (Environment.GetEnvironmentVariable("MERRY_SIMULATE_STORE") == "1"
+            || File.Exists(Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "simulate-store.txt")))
+        {
+            services.AddSingleton<IStoreService, SimulatedStoreService>();
+            return;
+        }
+#endif
+
+#if WINAPPSDK
+        services.AddSingleton<IStoreService>(_ => new WindowsStoreService(
+            () => WinRT.Interop.WindowNative.GetWindowHandle(Current.MainWindow!)));
+#elif __ANDROID__ || __IOS__
+        Uno.RevenueCat.RevenueCatExtension.AddRevenueCat(services);
+        services.AddSingleton<IStoreService, RevenueCatStoreService>();
+#else
+        // Web and desktop have no billing, so everything is simply free there.
+        services.AddSingleton<IStoreService, NoBillingStoreService>();
+#endif
     }
 
     private static void ConfigureLogging(HostBuilderContext context, ILoggingBuilder logBuilder)

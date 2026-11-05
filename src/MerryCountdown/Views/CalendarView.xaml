@@ -1,0 +1,171 @@
+<local:CalendarViewBase
+    x:Class="MerryCountdown.Views.CalendarView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:MerryCountdown.Controls"
+    xmlns:local="using:MerryCountdown.Views"
+    xmlns:markup="using:MerryCountdown.Markup"
+    xmlns:vm="using:MerryCountdown.Core.ViewModels"
+    Background="{ThemeResource PageBackdropBrush}"
+    KeyboardAcceleratorPlacementMode="Hidden">
+
+    <Page.KeyboardAccelerators>
+        <KeyboardAccelerator Key="Escape" Invoked="CloseReveal_Invoked" />
+    </Page.KeyboardAccelerators>
+
+    <Grid>
+        <Grid Padding="16,16,16,0" RowSpacing="12">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid ColumnSpacing="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Style="{StaticResource PageTitleTextStyle}" Text="{markup:Localize Key=CalendarTitle}" />
+                <TextBlock
+                    Grid.Column="1"
+                    VerticalAlignment="Center"
+                    AutomationProperties.AutomationId="CalendarProgress"
+                    Foreground="{ThemeResource PageTextBrush}"
+                    Style="{StaticResource FriendlyStrongTextStyle}"
+                    Text="{x:Bind ViewModel.Progress, Mode=OneWay}" />
+            </Grid>
+
+            <controls:KidPicker
+                Grid.Row="1"
+                Picker="{x:Bind ViewModel.KidPicker}"
+                Visibility="{x:Bind ViewModel.KidPicker.HasSeveralKids, Mode=OneWay}" />
+
+            <TextBlock
+                Grid.Row="2"
+                AutomationProperties.AutomationId="DoorHint"
+                AutomationProperties.LiveSetting="Polite"
+                Foreground="{ThemeResource PageTextBrush}"
+                Style="{StaticResource FriendlyStrongTextStyle}"
+                Text="{x:Bind ViewModel.Hint, Mode=OneWay}"
+                TextWrapping="Wrap" />
+
+            <ScrollViewer
+                x:Name="DoorScroller"
+                Grid.Row="3"
+                Padding="0,4,0,16"
+                SizeChanged="DoorScroller_SizeChanged">
+                <ItemsRepeater x:Name="DoorWall" ItemsSource="{x:Bind ViewModel.Doors}">
+                    <ItemsRepeater.Layout>
+                        <UniformGridLayout
+                            x:Name="DoorLayout"
+                            ItemsStretch="Fill"
+                            MinColumnSpacing="8"
+                            MinItemHeight="88"
+                            MinItemWidth="88"
+                            MinRowSpacing="8" />
+                    </ItemsRepeater.Layout>
+                    <ItemsRepeater.ItemTemplate>
+                        <DataTemplate x:DataType="vm:DoorViewModel">
+                            <controls:DoorTile Click="Door_Click" Door="{x:Bind}" />
+                        </DataTemplate>
+                    </ItemsRepeater.ItemTemplate>
+                </ItemsRepeater>
+            </ScrollViewer>
+        </Grid>
+
+        <!--  What's behind the door  -->
+        <Grid
+            x:Name="RevealLayer"
+            Background="{ThemeResource ScrimBrush}"
+            Visibility="{x:Bind ViewModel.IsRevealOpen, Mode=OneWay}">
+            <ScrollViewer
+                x:Name="RevealScroller"
+                HorizontalScrollMode="Disabled"
+                VerticalScrollBarVisibility="Auto">
+                <Border
+                    x:Name="RevealCard"
+                    MaxWidth="520"
+                    Margin="16,24"
+                    Padding="24"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Background="{ThemeResource RevealCardBrush}"
+                    CornerRadius="24"
+                    RenderTransformOrigin="0.5,0.5">
+                    <Border.RenderTransform>
+                        <CompositeTransform x:Name="RevealTransform" />
+                    </Border.RenderTransform>
+                    <StackPanel Spacing="12">
+                        <Image
+                            Width="112"
+                            Height="112"
+                            HorizontalAlignment="Center"
+                            Source="{x:Bind controls:Stickers.Image(ViewModel.Reveal.Sticker), Mode=OneWay}" />
+                        <TextBlock
+                            AutomationProperties.AutomationId="RevealTitle"
+                            Style="{StaticResource RevealTitleTextStyle}"
+                            Text="{x:Bind ViewModel.Reveal.Title, Mode=OneWay}" />
+                        <TextBlock
+                            AutomationProperties.AutomationId="RevealBody"
+                            Style="{StaticResource RevealBodyTextStyle}"
+                            Text="{x:Bind ViewModel.Reveal.Body, Mode=OneWay}" />
+
+                        <Button
+                            AutomationProperties.AutomationId="ShowPunchlineButton"
+                            Command="{x:Bind ViewModel.Reveal.ShowPunchlineCommand, Mode=OneWay}"
+                            Content="{markup:Localize Key=ShowPunchline}"
+                            Style="{StaticResource BigActionButtonStyle}"
+                            Visibility="{x:Bind ViewModel.Reveal.CanRevealPunchline, Mode=OneWay}" />
+                        <TextBlock
+                            AutomationProperties.AutomationId="Punchline"
+                            FontSize="28"
+                            Foreground="{ThemeResource BrandBrush}"
+                            Style="{StaticResource RevealBodyTextStyle}"
+                            Text="{x:Bind ViewModel.Reveal.Punchline, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.Reveal.IsPunchlineShown, Mode=OneWay}" />
+
+                        <Button
+                            AutomationProperties.AutomationId="WatchVideoButton"
+                            Command="{x:Bind ViewModel.OpenVideoCommand}"
+                            Style="{StaticResource BigActionButtonStyle}"
+                            Visibility="{x:Bind ViewModel.Reveal.IsVideo, Mode=OneWay}">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Image
+                                    Width="28"
+                                    Height="28"
+                                    Source="ms-appx:///Assets/Stickers/play.png" />
+                                <TextBlock VerticalAlignment="Center" Text="{markup:Localize Key=WatchWithGrownUp}" />
+                            </StackPanel>
+                        </Button>
+
+                        <Border
+                            Padding="16,12"
+                            Background="{ThemeResource RevealRibbonBrush}"
+                            CornerRadius="12"
+                            Visibility="{x:Bind ViewModel.Reveal.HasPersonalMessage, Mode=OneWay}">
+                            <TextBlock
+                                AutomationProperties.AutomationId="PersonalMessage"
+                                FontSize="24"
+                                HorizontalTextAlignment="Center"
+                                Style="{StaticResource LetterTextStyle}"
+                                Text="{x:Bind ViewModel.Reveal.PersonalMessage, Mode=OneWay}" />
+                        </Border>
+
+                        <Button
+                            x:Name="CloseRevealButton"
+                            MinWidth="160"
+                            MinHeight="48"
+                            HorizontalAlignment="Center"
+                            AutomationProperties.AutomationId="CloseRevealButton"
+                            Command="{x:Bind ViewModel.CloseRevealCommand}"
+                            Content="{markup:Localize Key=CloseDoor}"
+                            CornerRadius="24"
+                            Foreground="{ThemeResource RevealTextBrush}" />
+                    </StackPanel>
+                </Border>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</local:CalendarViewBase>

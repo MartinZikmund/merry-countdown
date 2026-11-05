@@ -16,6 +16,7 @@ public sealed partial class WindowShell : Page, IWindowShell
     private readonly Window _associatedWindow;
     private bool _isWindowClosed;
     private ViewModelBase? _currentPageViewModel;
+    private readonly IDisplayModeService _display;
 
     public WindowShell(IServiceProvider serviceProvider, Window associatedWindow)
     {
@@ -41,12 +42,47 @@ public sealed partial class WindowShell : Page, IWindowShell
         ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 
         InnerFrame.Navigated += InnerFrame_Navigated;
+        _display = ServiceProvider.GetRequiredService<IDisplayModeService>();
+        _display.Changed += OnDisplayModeChanged;
         Loading += WindowShell_Loading;
 
         UpdateWindowTitle();
     }
 
     public IServiceProvider ServiceProvider => _windowScope.ServiceProvider;
+
+    /// <summary>For a TV that should wake straight into the big screen.</summary>
+    public void EnterFamilyDisplayOnLoad()
+    {
+        if (IsLoaded)
+        {
+            _display.Enter();
+        }
+        else
+        {
+            Loaded += EnterOnce;
+        }
+
+        void EnterOnce(object sender, RoutedEventArgs e)
+        {
+            Loaded -= EnterOnce;
+            _display.Enter();
+        }
+    }
+
+    private void OnDisplayModeChanged(object? sender, EventArgs e)
+    {
+        if (_display.IsActive)
+        {
+            DisplayHost.Content = new Views.DisplayView(ServiceProvider.GetRequiredService<DisplayViewModel>());
+            DisplayHost.Visibility = Visibility.Visible;
+        }
+        else
+        {
+            DisplayHost.Content = null;
+            DisplayHost.Visibility = Visibility.Collapsed;
+        }
+    }
 
     public WindowShellViewModel ViewModel { get; }
 
@@ -168,7 +204,7 @@ public sealed partial class WindowShell : Page, IWindowShell
     #region Navigation
 
     private void NavView_Loaded(object sender, RoutedEventArgs e)
-        => NavigateToSection(NavigationSection.Main);
+        => NavigateToSection(NavigationSection.Countdown);
 
     private void NavView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
     {
@@ -194,8 +230,14 @@ public sealed partial class WindowShell : Page, IWindowShell
         var nav = ServiceProvider.GetRequiredService<INavigationService>();
         switch (section)
         {
-            case NavigationSection.Main:
-                nav.Navigate<MainViewModel>();
+            case NavigationSection.Countdown:
+                nav.Navigate<CountdownViewModel>();
+                break;
+            case NavigationSection.Calendar:
+                nav.Navigate<CalendarViewModel>();
+                break;
+            case NavigationSection.Wishes:
+                nav.Navigate<WishListViewModel>();
                 break;
             case NavigationSection.Settings:
                 nav.Navigate<SettingsViewModel>();
@@ -203,6 +245,9 @@ public sealed partial class WindowShell : Page, IWindowShell
             default:
                 throw new NotSupportedException($"Navigation section not supported: {section}");
         }
+
+        // Tabs, not a journey: only pages opened from a section (the grown-ups corner) have a way back.
+        nav.ClearBackStack();
     }
 
     private void NavView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
@@ -233,7 +278,9 @@ public sealed partial class WindowShell : Page, IWindowShell
         var section = ServiceProvider.GetRequiredService<INavigationService>().CurrentSection;
         NavView.SelectedItem = section switch
         {
-            NavigationSection.Main => MainNavItem,
+            NavigationSection.Countdown => CountdownNavItem,
+            NavigationSection.Calendar => CalendarNavItem,
+            NavigationSection.Wishes => WishesNavItem,
             NavigationSection.Settings => NavView.SettingsItem,
             _ => NavView.SelectedItem,
         };

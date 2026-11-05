@@ -9,14 +9,26 @@ public sealed class ShareService : IShareService
     private readonly IWindowShellProvider _windowShellProvider;
     private string? _pendingTitle;
     private string? _pendingUri;
+    private string? _pendingText;
 
     public ShareService(IWindowShellProvider windowShellProvider)
         => _windowShellProvider = windowShellProvider;
 
     public Task ShareAsync(string title, string uri)
     {
-        _pendingTitle = title;
         _pendingUri = uri;
+        return ShowShareUI(title);
+    }
+
+    public Task ShareTextAsync(string title, string text)
+    {
+        _pendingText = text;
+        return ShowShareUI(title);
+    }
+
+    private Task ShowShareUI(string title)
+    {
+        _pendingTitle = title;
 
 #if !HAS_UNO
         var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(_windowShellProvider.Window);
@@ -57,9 +69,14 @@ public sealed class ShareService : IShareService
             args.Request.Data.SetWebLink(new Uri(_pendingUri));
             args.Request.Data.SetText(_pendingUri);
         }
+        else if (_pendingText is not null)
+        {
+            args.Request.Data.SetText(_pendingText);
+        }
 
         _pendingTitle = null;
         _pendingUri = null;
+        _pendingText = null;
     }
 
 #if !HAS_UNO

@@ -1,0 +1,41 @@
+﻿<UserControl
+    x:Class="MerryCountdown.Controls.KidPicker"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:MerryCountdown.Controls"
+    xmlns:vm="using:MerryCountdown.Core.ViewModels">
+
+    <ScrollViewer
+        HorizontalScrollBarVisibility="Auto"
+        HorizontalScrollMode="Auto"
+        VerticalScrollBarVisibility="Disabled"
+        VerticalScrollMode="Disabled">
+        <ItemsRepeater x:Name="Repeater">
+            <ItemsRepeater.Layout>
+                <StackLayout Orientation="Horizontal" Spacing="8" />
+            </ItemsRepeater.Layout>
+            <ItemsRepeater.ItemTemplate>
+                <DataTemplate x:DataType="vm:KidChipViewModel">
+                    <ToggleButton
+                        MinHeight="48"
+                        Padding="12,4,16,4"
+                        AutomationProperties.Name="{x:Bind Name}"
+                        Command="{x:Bind SelectCommand}"
+                        CornerRadius="24"
+                        IsChecked="{x:Bind IsActive, Mode=OneWay}">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Image
+                                Width="32"
+                                Height="32"
+                                Source="{x:Bind controls:Stickers.Image(Sticker)}" />
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Style="{StaticResource FriendlyStrongTextStyle}"
+                                Text="{x:Bind Name}" />
+                        </StackPanel>
+                    </ToggleButton>
+                </DataTemplate>
+            </ItemsRepeater.ItemTemplate>
+        </ItemsRepeater>
+    </ScrollViewer>
+</UserControl>

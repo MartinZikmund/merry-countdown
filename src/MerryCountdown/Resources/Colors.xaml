@@ -1,16 +1,117 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ResourceDictionary.ThemeDictionaries>
-        <ResourceDictionary x:Key="Default">
-            <Color x:Key="BrandColor">#005FB8</Color>
-            <SolidColorBrush x:Key="BrandBrush" Color="{StaticResource BrandColor}" />
-            <SolidColorBrush x:Key="AppOverlayBackgroundBrush" Color="#44000000" />
-        </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
-            <Color x:Key="BrandColor">#005FB8</Color>
-            <SolidColorBrush x:Key="BrandBrush" Color="{StaticResource BrandColor}" />
+            <Color x:Key="SystemAccentColor">#C31F3D</Color>
+            <Color x:Key="SystemAccentColorLight1">#D62846</Color>
+            <Color x:Key="SystemAccentColorLight2">#E25A70</Color>
+            <Color x:Key="SystemAccentColorLight3">#EE97A6</Color>
+            <Color x:Key="SystemAccentColorDark1">#A81A34</Color>
+            <Color x:Key="SystemAccentColorDark2">#8C1734</Color>
+            <Color x:Key="SystemAccentColorDark3">#6A1127</Color>
+
+            <SolidColorBrush x:Key="BrandBrush" Color="#C31F3D" />
             <SolidColorBrush x:Key="AppOverlayBackgroundBrush" Color="#44FFFFFF" />
+            <LinearGradientBrush x:Key="PageBackdropBrush" StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Offset="0" Color="#FFF8EE" />
+                <GradientStop Offset="1" Color="#FBE9E4" />
+            </LinearGradientBrush>
+            <SolidColorBrush x:Key="NavigationViewTopPaneBackground" Color="#FFFBF5" />
+            <SolidColorBrush x:Key="DoorTint0Brush" Color="#C31F3D" />
+            <SolidColorBrush x:Key="DoorTint1Brush" Color="#1B7355" />
+            <SolidColorBrush x:Key="DoorTint2Brush" Color="#2A61B5" />
+            <SolidColorBrush x:Key="DoorTint3Brush" Color="#7A3FB0" />
+            <SolidColorBrush x:Key="DoorTint4Brush" Color="#B8602A" />
+            <SolidColorBrush x:Key="DoorOpenedBrush" Color="#FFF4DD" />
+            <SolidColorBrush x:Key="DoorBorderBrush" Color="#33000000" />
+            <SolidColorBrush x:Key="DoorTodayBorderBrush" Color="#F2A91E" />
+            <SolidColorBrush x:Key="DoorNumberBrush" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="LetterPaperBrush" Color="#FFFDF4" />
+            <SolidColorBrush x:Key="LetterInkBrush" Color="#2A2F55" />
+            <SolidColorBrush x:Key="LetterLineBrush" Color="#D9E2F2" />
+            <SolidColorBrush x:Key="RevealCardBrush" Color="#FFFDF7" />
+            <SolidColorBrush x:Key="RevealTextBrush" Color="#2A2F55" />
+            <SolidColorBrush x:Key="RevealRibbonBrush" Color="#FDE9B8" />
+            <SolidColorBrush x:Key="ScrimBrush" Color="#99161A3A" />
+            <SolidColorBrush x:Key="FullVersionCardBrush" Color="#FDE9B8" />
+            <SolidColorBrush x:Key="FullVersionCardForegroundBrush" Color="#2A2F55" />
+            <StaticResource x:Key="PageTextBrush" ResourceKey="TextFillColorPrimaryBrush" />
+        </ResourceDictionary>
+
+        <ResourceDictionary x:Key="Dark">
+            <Color x:Key="SystemAccentColor">#FF5C78</Color>
+            <Color x:Key="SystemAccentColorLight1">#FF7B91</Color>
+            <Color x:Key="SystemAccentColorLight2">#FF9CAD</Color>
+            <Color x:Key="SystemAccentColorLight3">#FFBDC9</Color>
+            <Color x:Key="SystemAccentColorDark1">#D62846</Color>
+            <Color x:Key="SystemAccentColorDark2">#A81A34</Color>
+            <Color x:Key="SystemAccentColorDark3">#8C1734</Color>
+
+            <SolidColorBrush x:Key="BrandBrush" Color="#FF5C78" />
+            <SolidColorBrush x:Key="AppOverlayBackgroundBrush" Color="#44000000" />
+            <LinearGradientBrush x:Key="PageBackdropBrush" StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Offset="0" Color="#0B132B" />
+                <GradientStop Offset="1" Color="#241C57" />
+            </LinearGradientBrush>
+            <SolidColorBrush x:Key="NavigationViewTopPaneBackground" Color="#0B132B" />
+            <SolidColorBrush x:Key="DoorTint0Brush" Color="#B51F3A" />
+            <SolidColorBrush x:Key="DoorTint1Brush" Color="#176A4E" />
+            <SolidColorBrush x:Key="DoorTint2Brush" Color="#285CAD" />
+            <SolidColorBrush x:Key="DoorTint3Brush" Color="#6E3AA3" />
+            <SolidColorBrush x:Key="DoorTint4Brush" Color="#A85724" />
+            <SolidColorBrush x:Key="DoorOpenedBrush" Color="#FFF4DD" />
+            <SolidColorBrush x:Key="DoorBorderBrush" Color="#33FFFFFF" />
+            <SolidColorBrush x:Key="DoorTodayBorderBrush" Color="#FFC95C" />
+            <SolidColorBrush x:Key="DoorNumberBrush" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="LetterPaperBrush" Color="#FFFDF4" />
+            <SolidColorBrush x:Key="LetterInkBrush" Color="#2A2F55" />
+            <SolidColorBrush x:Key="LetterLineBrush" Color="#D9E2F2" />
+            <SolidColorBrush x:Key="RevealCardBrush" Color="#FFFDF7" />
+            <SolidColorBrush x:Key="RevealTextBrush" Color="#2A2F55" />
+            <SolidColorBrush x:Key="RevealRibbonBrush" Color="#FDE9B8" />
+            <SolidColorBrush x:Key="ScrimBrush" Color="#BB060A1E" />
+            <SolidColorBrush x:Key="FullVersionCardBrush" Color="#3A2F7A" />
+            <SolidColorBrush x:Key="FullVersionCardForegroundBrush" Color="#FFFFFF" />
+            <StaticResource x:Key="PageTextBrush" ResourceKey="TextFillColorPrimaryBrush" />
+        </ResourceDictionary>
+
+        <ResourceDictionary x:Key="HighContrast">
+            <SolidColorBrush x:Key="BrandBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+            <SolidColorBrush x:Key="AppOverlayBackgroundBrush" Color="{ThemeResource SystemColorWindowColor}" />
+            <SolidColorBrush x:Key="PageBackdropBrush" Color="{ThemeResource SystemColorWindowColor}" />
+            <StaticResource x:Key="NavigationViewTopPaneBackground" ResourceKey="SystemColorWindowColorBrush" />
+            <StaticResource x:Key="DoorTint0Brush" ResourceKey="SystemColorButtonFaceColorBrush" />
+            <StaticResource x:Key="DoorTint1Brush" ResourceKey="SystemColorButtonFaceColorBrush" />
+            <StaticResource x:Key="DoorTint2Brush" ResourceKey="SystemColorButtonFaceColorBrush" />
+            <StaticResource x:Key="DoorTint3Brush" ResourceKey="SystemColorButtonFaceColorBrush" />
+            <StaticResource x:Key="DoorTint4Brush" ResourceKey="SystemColorButtonFaceColorBrush" />
+            <StaticResource x:Key="DoorOpenedBrush" ResourceKey="SystemColorWindowColorBrush" />
+            <StaticResource x:Key="DoorBorderBrush" ResourceKey="SystemColorButtonTextColorBrush" />
+            <StaticResource x:Key="DoorTodayBorderBrush" ResourceKey="SystemColorHighlightColorBrush" />
+            <StaticResource x:Key="DoorNumberBrush" ResourceKey="SystemColorButtonTextColorBrush" />
+            <StaticResource x:Key="LetterPaperBrush" ResourceKey="SystemColorWindowColorBrush" />
+            <StaticResource x:Key="LetterInkBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+            <StaticResource x:Key="LetterLineBrush" ResourceKey="SystemColorGrayTextColorBrush" />
+            <StaticResource x:Key="RevealCardBrush" ResourceKey="SystemColorWindowColorBrush" />
+            <StaticResource x:Key="RevealTextBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+            <StaticResource x:Key="RevealRibbonBrush" ResourceKey="SystemColorWindowColorBrush" />
+            <StaticResource x:Key="ScrimBrush" ResourceKey="SystemColorWindowColorBrush" />
+            <StaticResource x:Key="FullVersionCardBrush" ResourceKey="SystemColorWindowColorBrush" />
+            <StaticResource x:Key="FullVersionCardForegroundBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+            <StaticResource x:Key="PageTextBrush" ResourceKey="SystemColorWindowTextColorBrush" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
+
+    <!--  Fixed in every theme: these sit on top of the night-time scenes, which don't change with the theme.  -->
+    <SolidColorBrush x:Key="SceneTextBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="SceneTextSoftBrush" Color="#DDE6FF" />
+    <SolidColorBrush x:Key="SceneGlassBrush" Color="#33101A3E" />
+    <SolidColorBrush x:Key="SceneGlassStrongBrush" Color="#88101A3E" />
+    <SolidColorBrush x:Key="SceneGlassBorderBrush" Color="#44FFFFFF" />
+    <SolidColorBrush x:Key="GoldBrush" Color="#FFC95C" />
+    <SolidColorBrush x:Key="GoldTextBrush" Color="#2A2F55" />
+
+    <FontFamily x:Key="DisplayFontFamily">ms-appx:///Assets/Fonts/Baloo2-Bold.ttf#Baloo 2</FontFamily>
+    <FontFamily x:Key="HandwritingFontFamily">ms-appx:///Assets/Fonts/PatrickHand-Regular.ttf#Patrick Hand</FontFamily>
 
 </ResourceDictionary>

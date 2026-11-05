@@ -43,12 +43,15 @@
         <UnoIconForegroundScale>1</UnoIconForegroundScale>
         <UnoIconForegroundScale Condition="'$(IsAndroid)' == 'true'">0.6</UnoIconForegroundScale>
         <UnoSplashScreenScale>0.85</UnoSplashScreenScale>
+        <UnoSplashScreenBackgroundColor>#101A3E</UnoSplashScreenBackgroundColor>
     </PropertyGroup>
 
-    <ItemGroup>
+    <ItemGroup Condition="'$(IsAndroid)' == 'true' or '$(IsIOS)' == 'true'">
+        <PackageReference Include="MZikmund.Uno.RevenueCat" />
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\MerryCountdown.Scenes\MerryCountdown.Scenes.csproj" />
         <ProjectReference Include="..\MerryCountdown.Core\MerryCountdown.Core.csproj" />
         <ProjectReference Include="..\CommunityToolkit.WinUI.Controls.SettingsControls\CommunityToolkit.WinUI.Controls.SettingsControls.csproj" />
     </ItemGroup>

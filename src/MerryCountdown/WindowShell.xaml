@@ -23,13 +23,8 @@
             Title="{markup:Localize Key=ApplicationName}"
             BackRequested="AppTitleBar_BackRequested"
             IsBackButtonVisible="{x:Bind ViewModel.CanGoBack, Mode=OneWay}"
-            IsPaneToggleButtonVisible="True"
-            PaneToggleRequested="AppTitleBar_PaneToggleRequested"
+            IsPaneToggleButtonVisible="False"
             Subtitle="{x:Bind ViewModel.Title, Mode=OneWay}">
-            <win:TitleBar.Resources>
-                <!--  Content defaults to Center; Stretch lets the search box fill to MaxWidth.  -->
-                <HorizontalAlignment x:Key="TitleBarContentHorizontalAlignment">Stretch</HorizontalAlignment>
-            </win:TitleBar.Resources>
             <win:TitleBar.IconSource>
                 <ImageIconSource ImageSource="ms-appx:///Assets/Icons/icon_foreground.png" />
             </win:TitleBar.IconSource>
@@ -40,15 +35,6 @@
             <win:TitleBar.RightHeader>
                 <controls:DevChannelBadge Margin="0,0,8,0" VerticalAlignment="Center" />
             </win:TitleBar.RightHeader>
-            <win:TitleBar.Content>
-                <!--  Plain, non-interactive placeholder. Apps wire up search here.  -->
-                <AutoSuggestBox
-                    MaxWidth="580"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Center"
-                    IsEnabled="False"
-                    QueryIcon="Find" />
-            </win:TitleBar.Content>
         </win:TitleBar>
 
         <!--  NavigationView  -->
@@ -64,18 +50,38 @@
             CompactPaneLength="48"
             ExpandedModeThresholdWidth="1008"
             IsBackEnabled="{x:Bind ViewModel.CanGoBack, Mode=OneWay}"
+            IsTitleBarAutoPaddingEnabled="False"
             Loaded="NavView_Loaded"
             OpenPaneLength="280"
-            PaneDisplayMode="Auto"
+            PaneDisplayMode="Top"
             SelectionChanged="NavView_SelectionChanged">
 
             <NavigationView.MenuItems>
                 <NavigationViewItem
-                    x:Name="MainNavItem"
-                    Content="{markup:Localize Key=Home}"
-                    Tag="Main">
+                    x:Name="CountdownNavItem"
+                    AutomationProperties.AutomationId="NavCountdown"
+                    Content="{markup:Localize Key=NavCountdown}"
+                    Tag="Countdown">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE80F;" />
+                        <FontIcon Glyph="&#xE916;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem
+                    x:Name="CalendarNavItem"
+                    AutomationProperties.AutomationId="NavCalendar"
+                    Content="{markup:Localize Key=NavCalendar}"
+                    Tag="Calendar">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE787;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem
+                    x:Name="WishesNavItem"
+                    AutomationProperties.AutomationId="NavWishes"
+                    Content="{markup:Localize Key=NavWishes}"
+                    Tag="Wishes">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE715;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>
@@ -90,10 +96,18 @@
         -->
         <not_win:Border
             Grid.RowSpan="2"
-            Margin="0,8,8,0"
+            Margin="0,56,8,0"
             HorizontalAlignment="Right"
             VerticalAlignment="Top">
             <controls:DevChannelBadge />
         </not_win:Border>
+
+        <!--  The Family Display covers the whole window, title bar and navigation included.  -->
+        <ContentControl
+            x:Name="DisplayHost"
+            Grid.RowSpan="2"
+            HorizontalContentAlignment="Stretch"
+            VerticalContentAlignment="Stretch"
+            Visibility="Collapsed" />
     </Grid>
 </Page>

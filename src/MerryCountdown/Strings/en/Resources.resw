@@ -117,9 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ApplicationName" xml:space="preserve">
-    <value>Merry Countdown</value>
-  </data>
   <data name="Settings" xml:space="preserve">
     <value>Settings</value>
   </data>
@@ -131,9 +128,6 @@
   </data>
   <data name="About" xml:space="preserve">
     <value>About</value>
-  </data>
-  <data name="AboutAppDescription" xml:space="preserve">
-    <value>An Uno Platform application</value>
   </data>
   <data name="WorktreeFormat" xml:space="preserve">
     <value>Worktree: {0}</value>
@@ -166,13 +160,472 @@
   <data name="ElementTheme_Dark" xml:space="preserve">
     <value>Dark</value>
   </data>
-  <data name="Home" xml:space="preserve">
-    <value>Home</value>
-  </data>
   <data name="RateAppTitle" xml:space="preserve">
     <value>Enjoying the app?</value>
   </data>
   <data name="RateAppMessage" xml:space="preserve">
     <value>If you enjoy using this app, would you mind taking a moment to rate it? Your feedback helps us improve!</value>
+  </data>
+  <data name="ApplicationName" xml:space="preserve">
+    <value>Merry Countdown</value>
+  </data>
+  <data name="AboutAppDescription" xml:space="preserve">
+    <value>A Christmas countdown, advent calendar and wish list for kids and families. Made in Prague by Martin Zikmund.</value>
+  </data>
+  <data name="NavCountdown" xml:space="preserve">
+    <value>Countdown</value>
+  </data>
+  <data name="NavCalendar" xml:space="preserve">
+    <value>Doors</value>
+  </data>
+  <data name="NavWishes" xml:space="preserve">
+    <value>Wishes</value>
+  </data>
+  <data name="Greeting" xml:space="preserve">
+    <value>Hello there!</value>
+  </data>
+  <data name="GreetingNamed" xml:space="preserve">
+    <value>Hello, {0}!</value>
+  </data>
+  <data name="SleepsCaption_One" xml:space="preserve">
+    <value>sleep</value>
+  </data>
+  <data name="SleepsCaption_Few" xml:space="preserve">
+    <value>sleeps</value>
+  </data>
+  <data name="SleepsCaption_Many" xml:space="preserve">
+    <value>sleeps</value>
+  </data>
+  <data name="HeadlineFar" xml:space="preserve">
+    <value>until {0}. Better start being good!</value>
+  </data>
+  <data name="HeadlineNear" xml:space="preserve">
+    <value>until {0}. It is getting close!</value>
+  </data>
+  <data name="HeadlineOneSleep" xml:space="preserve">
+    <value>Just one more sleep until {0}!</value>
+  </data>
+  <data name="HeadlineToday" xml:space="preserve">
+    <value>It is today! Listen out for {0}!</value>
+  </data>
+  <data name="HeadlineCelebrating" xml:space="preserve">
+    <value>Merry Christmas!</value>
+  </data>
+  <data name="BigDay_ChristmasEve" xml:space="preserve">
+    <value>Christmas Eve</value>
+  </data>
+  <data name="BigDay_ChristmasDay" xml:space="preserve">
+    <value>Christmas Day</value>
+  </data>
+  <data name="GiftBringer_Santa" xml:space="preserve">
+    <value>Santa</value>
+  </data>
+  <data name="GiftBringer_Jezisek" xml:space="preserve">
+    <value>Ježíšek</value>
+  </data>
+  <data name="ClockDays" xml:space="preserve">
+    <value>days</value>
+  </data>
+  <data name="ClockHours" xml:space="preserve">
+    <value>hours</value>
+  </data>
+  <data name="ClockMinutes" xml:space="preserve">
+    <value>min</value>
+  </data>
+  <data name="ClockSeconds" xml:space="preserve">
+    <value>sec</value>
+  </data>
+  <data name="OpenDoorButton" xml:space="preserve">
+    <value>Open door {0}!</value>
+  </data>
+  <data name="ChooseScene" xml:space="preserve">
+    <value>Change the picture</value>
+  </data>
+  <data name="FamilyDisplay" xml:space="preserve">
+    <value>Family Display</value>
+  </data>
+  <data name="SceneAccessibleName" xml:space="preserve">
+    <value>A moving Christmas picture. Tap it!</value>
+  </data>
+  <data name="Scene_village" xml:space="preserve">
+    <value>Snowy village</value>
+  </data>
+  <data name="Scene_globe" xml:space="preserve">
+    <value>Snow globe (tap to shake!)</value>
+  </data>
+  <data name="Scene_aurora" xml:space="preserve">
+    <value>Northern lights</value>
+  </data>
+  <data name="Scene_fireplace" xml:space="preserve">
+    <value>Cosy fireplace</value>
+  </data>
+  <data name="Scene_train" xml:space="preserve">
+    <value>Toy train</value>
+  </data>
+  <data name="EventToday" xml:space="preserve">
+    <value>today!</value>
+  </data>
+  <data name="EventInSleeps_One" xml:space="preserve">
+    <value>in {0} sleep</value>
+  </data>
+  <data name="EventInSleeps_Few" xml:space="preserve">
+    <value>in {0} sleeps</value>
+  </data>
+  <data name="EventInSleeps_Many" xml:space="preserve">
+    <value>in {0} sleeps</value>
+  </data>
+  <data name="CalendarTitle" xml:space="preserve">
+    <value>Advent doors</value>
+  </data>
+  <data name="CalendarProgress" xml:space="preserve">
+    <value>{0} of {1} opened</value>
+  </data>
+  <data name="DoorLockedHint_One" xml:space="preserve">
+    <value>Not yet! This door opens after {0} more sleep.</value>
+  </data>
+  <data name="DoorLockedHint_Few" xml:space="preserve">
+    <value>Not yet! This door opens after {0} more sleeps.</value>
+  </data>
+  <data name="DoorLockedHint_Many" xml:space="preserve">
+    <value>Not yet! This door opens after {0} more sleeps.</value>
+  </data>
+  <data name="DoorAccessible_Locked" xml:space="preserve">
+    <value>Door {0}, still shut</value>
+  </data>
+  <data name="DoorAccessible_Ready" xml:space="preserve">
+    <value>Door {0}, ready to open!</value>
+  </data>
+  <data name="DoorAccessible_Opened" xml:space="preserve">
+    <value>Door {0}, already open</value>
+  </data>
+  <data name="ShowPunchline" xml:space="preserve">
+    <value>Tell me!</value>
+  </data>
+  <data name="WatchWithGrownUp" xml:space="preserve">
+    <value>Watch with a grown-up</value>
+  </data>
+  <data name="CloseDoor" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="KidNoName" xml:space="preserve">
+    <value>Me</value>
+  </data>
+  <data name="WishesTitle" xml:space="preserve">
+    <value>My wish list</value>
+  </data>
+  <data name="LetterIntro" xml:space="preserve">
+    <value>This year I would really love:</value>
+  </data>
+  <data name="LetterSignOff" xml:space="preserve">
+    <value>Love from,</value>
+  </data>
+  <data name="YourName" xml:space="preserve">
+    <value>Your name</value>
+  </data>
+  <data name="LetterDear_Santa" xml:space="preserve">
+    <value>Dear Santa,</value>
+  </data>
+  <data name="LetterDear_Jezisek" xml:space="preserve">
+    <value>Dear Ježíšek,</value>
+  </data>
+  <data name="WishPrompt" xml:space="preserve">
+    <value>What would you like?</value>
+  </data>
+  <data name="WishPlaceholder" xml:space="preserve">
+    <value>A red sledge</value>
+  </data>
+  <data name="WishPickPicture" xml:space="preserve">
+    <value>Or pick a picture:</value>
+  </data>
+  <data name="AddWish" xml:space="preserve">
+    <value>Add to my letter</value>
+  </data>
+  <data name="RemoveWish" xml:space="preserve">
+    <value>Remove this wish</value>
+  </data>
+  <data name="SendLetter" xml:space="preserve">
+    <value>Send my letter!</value>
+  </data>
+  <data name="LetterSentMessage" xml:space="preserve">
+    <value>Whoosh! Your letter is on its way to {0}!</value>
+  </data>
+  <data name="WriteMore" xml:space="preserve">
+    <value>I forgot something!</value>
+  </data>
+  <data name="ShareWishes" xml:space="preserve">
+    <value>Show a grown-up</value>
+  </data>
+  <data name="ShareWishesTitle" xml:space="preserve">
+    <value>Christmas wish list</value>
+  </data>
+  <data name="Sticker_teddy" xml:space="preserve">
+    <value>Teddy bear</value>
+  </data>
+  <data name="Sticker_bike" xml:space="preserve">
+    <value>Bike</value>
+  </data>
+  <data name="Sticker_ball" xml:space="preserve">
+    <value>Ball</value>
+  </data>
+  <data name="Sticker_game" xml:space="preserve">
+    <value>Video game</value>
+  </data>
+  <data name="Sticker_puppy" xml:space="preserve">
+    <value>Puppy</value>
+  </data>
+  <data name="Sticker_kitten" xml:space="preserve">
+    <value>Kitten</value>
+  </data>
+  <data name="Sticker_bricks" xml:space="preserve">
+    <value>Building bricks</value>
+  </data>
+  <data name="Sticker_train" xml:space="preserve">
+    <value>Toy train</value>
+  </data>
+  <data name="Sticker_robot" xml:space="preserve">
+    <value>Robot</value>
+  </data>
+  <data name="Sticker_crown" xml:space="preserve">
+    <value>Crown</value>
+  </data>
+  <data name="Sticker_book" xml:space="preserve">
+    <value>Book</value>
+  </data>
+  <data name="Sticker_paints" xml:space="preserve">
+    <value>Paints</value>
+  </data>
+  <data name="Sticker_skates" xml:space="preserve">
+    <value>Ice skates</value>
+  </data>
+  <data name="Sticker_candy" xml:space="preserve">
+    <value>Sweets</value>
+  </data>
+  <data name="SettingsChristmas" xml:space="preserve">
+    <value>Christmas</value>
+  </data>
+  <data name="BigDayHeader" xml:space="preserve">
+    <value>Our big day</value>
+  </data>
+  <data name="BigDayDescription" xml:space="preserve">
+    <value>When do the presents arrive at your house?</value>
+  </data>
+  <data name="BringerHeader" xml:space="preserve">
+    <value>Who brings the presents?</value>
+  </data>
+  <data name="BringerDescription" xml:space="preserve">
+    <value>Used in letters and messages.</value>
+  </data>
+  <data name="SettingsLook" xml:space="preserve">
+    <value>Look and motion</value>
+  </data>
+  <data name="SnowHeader" xml:space="preserve">
+    <value>Snowfall</value>
+  </data>
+  <data name="Snow_Off" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="Snow_Gentle" xml:space="preserve">
+    <value>Gentle</value>
+  </data>
+  <data name="Snow_Blizzard" xml:space="preserve">
+    <value>Blizzard!</value>
+  </data>
+  <data name="CalmHeader" xml:space="preserve">
+    <value>Calm motion</value>
+  </data>
+  <data name="CalmDescription" xml:space="preserve">
+    <value>Slower animations for sensitive eyes and old devices.</value>
+  </data>
+  <data name="FamilyDisplayDescription" xml:space="preserve">
+    <value>Full screen for a TV or tablet left on all advent. Stays awake and moves gently so nothing burns in.</value>
+  </data>
+  <data name="FamilyDisplayStart" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="DisplayRotate" xml:space="preserve">
+    <value>Change the picture every 30 minutes</value>
+  </data>
+  <data name="DisplayAutostart" xml:space="preserve">
+    <value>Always start in Family Display</value>
+  </data>
+  <data name="DisplayAutostartDescription" xml:space="preserve">
+    <value>Tip: start the desktop app with --display, or open the web app with ?display=1.</value>
+  </data>
+  <data name="SettingsGrownUps" xml:space="preserve">
+    <value>Grown-ups</value>
+  </data>
+  <data name="ParentZoneTitle" xml:space="preserve">
+    <value>Grown-ups corner</value>
+  </data>
+  <data name="ParentZoneDescription" xml:space="preserve">
+    <value>Kids, the full version, personal messages and family events.</value>
+  </data>
+  <data name="PrivacyHeader" xml:space="preserve">
+    <value>Privacy</value>
+  </data>
+  <data name="PrivacyDescription" xml:space="preserve">
+    <value>Everything stays on this device. No accounts, no ads, no tracking. Nothing is sent anywhere unless a grown-up shares it.</value>
+  </data>
+  <data name="ParentGateTitle" xml:space="preserve">
+    <value>Grown-ups only</value>
+  </data>
+  <data name="ParentGateMessage" xml:space="preserve">
+    <value>Please answer this to continue.</value>
+  </data>
+  <data name="ParentGateQuestion" xml:space="preserve">
+    <value>What is {0} times {1}?</value>
+  </data>
+  <data name="ParentGatePlaceholder" xml:space="preserve">
+    <value>Your answer in numbers</value>
+  </data>
+  <data name="ParentGateContinue" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="ParentGateCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Number_3" xml:space="preserve">
+    <value>three</value>
+  </data>
+  <data name="Number_4" xml:space="preserve">
+    <value>four</value>
+  </data>
+  <data name="Number_5" xml:space="preserve">
+    <value>five</value>
+  </data>
+  <data name="Number_6" xml:space="preserve">
+    <value>six</value>
+  </data>
+  <data name="Number_7" xml:space="preserve">
+    <value>seven</value>
+  </data>
+  <data name="Number_8" xml:space="preserve">
+    <value>eight</value>
+  </data>
+  <data name="Number_9" xml:space="preserve">
+    <value>nine</value>
+  </data>
+  <data name="FullVersionTitle" xml:space="preserve">
+    <value>Merry Countdown Full Version</value>
+  </data>
+  <data name="FullVersionPitch" xml:space="preserve">
+    <value>One purchase, forever, no subscription. Unlocks three more animated scenes, personal messages behind the doors, countdowns to birthdays and other family events, and an exact time for the big moment.</value>
+  </data>
+  <data name="BuyFullVersion" xml:space="preserve">
+    <value>Get the full version</value>
+  </data>
+  <data name="BuyFullVersionPrice" xml:space="preserve">
+    <value>Get it for {0}</value>
+  </data>
+  <data name="RestorePurchase" xml:space="preserve">
+    <value>Restore purchase</value>
+  </data>
+  <data name="PurchaseThanksTitle" xml:space="preserve">
+    <value>Thank you!</value>
+  </data>
+  <data name="PurchaseThanksMessage" xml:space="preserve">
+    <value>Everything is unlocked. Merry Christmas!</value>
+  </data>
+  <data name="PurchaseFailedTitle" xml:space="preserve">
+    <value>That did not work</value>
+  </data>
+  <data name="PurchaseFailedMessage" xml:space="preserve">
+    <value>The store could not complete the purchase. You have not been charged. Please try again later.</value>
+  </data>
+  <data name="RestoreNothingTitle" xml:space="preserve">
+    <value>Nothing to restore</value>
+  </data>
+  <data name="RestoreNothingMessage" xml:space="preserve">
+    <value>The store has no purchase of the full version for this account.</value>
+  </data>
+  <data name="KidsHeader" xml:space="preserve">
+    <value>Kids</value>
+  </data>
+  <data name="AddKid" xml:space="preserve">
+    <value>Add a kid</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="RemoveKidTitle" xml:space="preserve">
+    <value>Remove {0}?</value>
+  </data>
+  <data name="RemoveKidMessage" xml:space="preserve">
+    <value>Their wish list and opened doors will be gone for good.</value>
+  </data>
+  <data name="FullVersionLockedTitle" xml:space="preserve">
+    <value>Part of the full version</value>
+  </data>
+  <data name="FullVersionLockedMessage" xml:space="preserve">
+    <value>The settings below unlock with the full version above.</value>
+  </data>
+  <data name="ArrivalHeaderSection" xml:space="preserve">
+    <value>The big moment</value>
+  </data>
+  <data name="ArrivalHeader" xml:space="preserve">
+    <value>Exact time</value>
+  </data>
+  <data name="ArrivalDescription" xml:space="preserve">
+    <value>When the countdown reaches zero on the big day.</value>
+  </data>
+  <data name="MessagesHeader" xml:space="preserve">
+    <value>Personal door messages</value>
+  </data>
+  <data name="MessageChoose" xml:space="preserve">
+    <value>Hide a message behind a door</value>
+  </data>
+  <data name="MessagesDescription" xml:space="preserve">
+    <value>A note just for one kid, like a clue to a hidden treat.</value>
+  </data>
+  <data name="MessageKid" xml:space="preserve">
+    <value>Kid</value>
+  </data>
+  <data name="MessageDoor" xml:space="preserve">
+    <value>Door</value>
+  </data>
+  <data name="MessagePlaceholder" xml:space="preserve">
+    <value>Look under your pillow!</value>
+  </data>
+  <data name="MessageSave" xml:space="preserve">
+    <value>Save message</value>
+  </data>
+  <data name="EventsHeader" xml:space="preserve">
+    <value>Family countdowns</value>
+  </data>
+  <data name="AddEvent" xml:space="preserve">
+    <value>Add an event</value>
+  </data>
+  <data name="EventsDescription" xml:space="preserve">
+    <value>Birthdays and more. They repeat every year and show on the countdown screen.</value>
+  </data>
+  <data name="EventName" xml:space="preserve">
+    <value>Name of the event</value>
+  </data>
+  <data name="DisplayCountdown" xml:space="preserve">
+    <value>{0} days  {1} hours  {2} min  {3} sec</value>
+  </data>
+  <data name="DisplayHint" xml:space="preserve">
+    <value>Esc or Back to leave. Arrow keys change the picture.</value>
+  </data>
+  <data name="DisplayExit" xml:space="preserve">
+    <value>Leave Family Display</value>
+  </data>
+  <data name="DisplayDoorOpened" xml:space="preserve">
+    <value>door {0} opened</value>
+  </data>
+  <data name="DisplayDoorWaiting" xml:space="preserve">
+    <value>door {0} is waiting!</value>
+  </data>
+  <data name="DisplayWishes_One" xml:space="preserve">
+    <value>{0} wish</value>
+  </data>
+  <data name="DisplayWishes_Few" xml:space="preserve">
+    <value>{0} wishes</value>
+  </data>
+  <data name="DisplayWishes_Many" xml:space="preserve">
+    <value>{0} wishes</value>
   </data>
 </root>

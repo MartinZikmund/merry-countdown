@@ -1,0 +1,250 @@
+<local:WishListViewBase
+    x:Class="MerryCountdown.Views.WishListView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:MerryCountdown.Controls"
+    xmlns:local="using:MerryCountdown.Views"
+    xmlns:markup="using:MerryCountdown.Markup"
+    xmlns:vm="using:MerryCountdown.Core.ViewModels"
+    Background="{ThemeResource PageBackdropBrush}">
+
+    <ScrollViewer HorizontalScrollMode="Disabled">
+        <Grid Padding="16" RowSpacing="12">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Style="{StaticResource PageTitleTextStyle}" Text="{markup:Localize Key=WishesTitle}" />
+
+            <controls:KidPicker
+                Grid.Row="1"
+                Picker="{x:Bind ViewModel.KidPicker}"
+                Visibility="{x:Bind ViewModel.KidPicker.HasSeveralKids, Mode=OneWay}" />
+
+            <Grid
+                x:Name="Columns"
+                Grid.Row="2"
+                ColumnSpacing="24"
+                RowSpacing="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition x:Name="LetterColumn" Width="*" />
+                    <ColumnDefinition x:Name="ToolsColumn" Width="360" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition x:Name="ToolsRow" Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!--  The letter  -->
+                <Border
+                    x:Name="Letter"
+                    MinHeight="360"
+                    Padding="24"
+                    VerticalAlignment="Top"
+                    Background="{ThemeResource LetterPaperBrush}"
+                    BorderBrush="{ThemeResource LetterLineBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    RenderTransformOrigin="0.5,0.5"
+                    RequestedTheme="Light">
+                    <Border.RenderTransform>
+                        <CompositeTransform x:Name="LetterTransform" />
+                    </Border.RenderTransform>
+                    <StackPanel Spacing="12">
+                        <TextBlock
+                            AutomationProperties.AutomationId="LetterSalutation"
+                            FontSize="32"
+                            Style="{StaticResource LetterTextStyle}"
+                            Text="{x:Bind ViewModel.Salutation, Mode=OneWay}" />
+                        <TextBlock Style="{StaticResource LetterTextStyle}" Text="{markup:Localize Key=LetterIntro}" />
+
+                        <ItemsRepeater ItemsSource="{x:Bind ViewModel.Wishes}">
+                            <ItemsRepeater.Layout>
+                                <StackLayout Orientation="Vertical" Spacing="4" />
+                            </ItemsRepeater.Layout>
+                            <ItemsRepeater.ItemTemplate>
+                                <DataTemplate x:DataType="vm:WishItemViewModel">
+                                    <Grid
+                                        Padding="0,4"
+                                        BorderBrush="{ThemeResource LetterLineBrush}"
+                                        BorderThickness="0,0,0,1"
+                                        ColumnSpacing="12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <Image
+                                            Width="40"
+                                            Height="40"
+                                            Source="{x:Bind controls:Stickers.Image(Sticker)}" />
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource LetterTextStyle}"
+                                            Text="{x:Bind Label}" />
+                                        <Button
+                                            Grid.Column="2"
+                                            Width="44"
+                                            Height="44"
+                                            Padding="0"
+                                            AutomationProperties.Name="{markup:Localize Key=RemoveWish}"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Click="RemoveWish_Click"
+                                            Foreground="{ThemeResource LetterInkBrush}"
+                                            Tag="{x:Bind}"
+                                            ToolTipService.ToolTip="{markup:Localize Key=RemoveWish}">
+                                            <FontIcon FontSize="16" Glyph="&#xE711;" />
+                                        </Button>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsRepeater.ItemTemplate>
+                        </ItemsRepeater>
+
+                        <StackPanel Margin="0,12,0,0" Spacing="4">
+                            <TextBlock Style="{StaticResource LetterTextStyle}" Text="{markup:Localize Key=LetterSignOff}" />
+                            <TextBox
+                                AutomationProperties.AutomationId="LetterKidName"
+                                AutomationProperties.Name="{markup:Localize Key=YourName}"
+                                FontFamily="{StaticResource HandwritingFontFamily}"
+                                FontSize="24"
+                                MaxLength="24"
+                                PlaceholderText="{markup:Localize Key=YourName}"
+                                Text="{x:Bind ViewModel.KidName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!--  Write a wish, or pick one when you can't write yet  -->
+                <StackPanel
+                    x:Name="Tools"
+                    Grid.Column="1"
+                    Spacing="12"
+                    Visibility="{x:Bind ViewModel.IsWriting, Mode=OneWay}">
+                    <TextBlock
+                        Foreground="{ThemeResource PageTextBrush}"
+                        Style="{StaticResource FriendlyStrongTextStyle}"
+                        Text="{markup:Localize Key=WishPrompt}" />
+                    <TextBox
+                        AutomationProperties.AutomationId="NewWishBox"
+                        AutomationProperties.Name="{markup:Localize Key=WishPrompt}"
+                        FontSize="20"
+                        KeyDown="NewWish_KeyDown"
+                        MaxLength="{x:Bind ViewModel.WishMaxLength}"
+                        PlaceholderText="{markup:Localize Key=WishPlaceholder}"
+                        Text="{x:Bind ViewModel.NewWishText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock
+                        Foreground="{ThemeResource PageTextBrush}"
+                        Style="{StaticResource FriendlyStrongTextStyle}"
+                        Text="{markup:Localize Key=WishPickPicture}" />
+                    <ItemsRepeater ItemsSource="{x:Bind ViewModel.Stickers}">
+                        <ItemsRepeater.Layout>
+                            <UniformGridLayout
+                                MinColumnSpacing="4"
+                                MinItemHeight="64"
+                                MinItemWidth="64"
+                                MinRowSpacing="4" />
+                        </ItemsRepeater.Layout>
+                        <ItemsRepeater.ItemTemplate>
+                            <DataTemplate x:DataType="vm:WishStickerViewModel">
+                                <RadioButton
+                                    Width="64"
+                                    Height="64"
+                                    AutomationProperties.AutomationId="{x:Bind Key}"
+                                    AutomationProperties.Name="{x:Bind Name}"
+                                    Click="Sticker_Click"
+                                    GroupName="WishStickers"
+                                    Style="{StaticResource StickerRadioStyle}"
+                                    Tag="{x:Bind}"
+                                    ToolTipService.ToolTip="{x:Bind Name}">
+                                    <Image
+                                        Width="48"
+                                        Height="48"
+                                        Source="{x:Bind controls:Stickers.Image(Key)}" />
+                                </RadioButton>
+                            </DataTemplate>
+                        </ItemsRepeater.ItemTemplate>
+                    </ItemsRepeater>
+
+                    <Button
+                        MinHeight="48"
+                        HorizontalAlignment="Stretch"
+                        AutomationProperties.AutomationId="AddWishButton"
+                        Command="{x:Bind ViewModel.AddWishCommand}"
+                        Content="{markup:Localize Key=AddWish}"
+                        CornerRadius="24"
+                        FontFamily="{StaticResource DisplayFontFamily}"
+                        FontSize="18" />
+                    <Button
+                        HorizontalAlignment="Stretch"
+                        AutomationProperties.AutomationId="SendLetterButton"
+                        Command="{x:Bind ViewModel.SendLetterCommand}"
+                        Content="{markup:Localize Key=SendLetter}"
+                        IsEnabled="{x:Bind ViewModel.CanSend, Mode=OneWay}"
+                        Style="{StaticResource BigActionButtonStyle}" />
+                </StackPanel>
+
+                <!--  Sent!  -->
+                <StackPanel
+                    x:Name="SentPanel"
+                    Grid.Column="1"
+                    Spacing="12"
+                    Visibility="{x:Bind ViewModel.IsSent, Mode=OneWay}">
+                    <Image
+                        Width="112"
+                        Height="112"
+                        HorizontalAlignment="Center"
+                        Source="ms-appx:///Assets/Stickers/letter.png" />
+                    <TextBlock
+                        AutomationProperties.AutomationId="LetterSentMessage"
+                        AutomationProperties.LiveSetting="Polite"
+                        Foreground="{ThemeResource PageTextBrush}"
+                        HorizontalTextAlignment="Center"
+                        Style="{StaticResource PageTitleTextStyle}"
+                        Text="{x:Bind ViewModel.SentMessage, Mode=OneWay}" />
+                    <Button
+                        MinHeight="48"
+                        HorizontalAlignment="Stretch"
+                        AutomationProperties.AutomationId="WriteMoreButton"
+                        Command="{x:Bind ViewModel.WriteMoreCommand}"
+                        Content="{markup:Localize Key=WriteMore}"
+                        CornerRadius="24" />
+                    <Button
+                        MinHeight="48"
+                        HorizontalAlignment="Stretch"
+                        AutomationProperties.AutomationId="ShareWishesButton"
+                        Command="{x:Bind ViewModel.ShareWithGrownUpsCommand}"
+                        Content="{markup:Localize Key=ShareWishes}"
+                        CornerRadius="24" />
+                </StackPanel>
+            </Grid>
+
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup>
+                    <VisualState>
+                        <VisualState.StateTriggers>
+                            <AdaptiveTrigger MinWindowWidth="0" />
+                        </VisualState.StateTriggers>
+                        <VisualState.Setters>
+                            <Setter Target="ToolsColumn.Width" Value="0" />
+                            <Setter Target="Columns.ColumnSpacing" Value="0" />
+                            <Setter Target="Tools.(Grid.Column)" Value="0" />
+                            <Setter Target="Tools.(Grid.Row)" Value="1" />
+                            <Setter Target="SentPanel.(Grid.Column)" Value="0" />
+                            <Setter Target="SentPanel.(Grid.Row)" Value="1" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState>
+                        <VisualState.StateTriggers>
+                            <AdaptiveTrigger MinWindowWidth="840" />
+                        </VisualState.StateTriggers>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+        </Grid>
+    </ScrollViewer>
+</local:WishListViewBase>
