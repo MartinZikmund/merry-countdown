@@ -1,3 +1,4 @@
+using MerryCountdown.Core.Family;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 
@@ -11,11 +12,13 @@ public static class Stickers
     public static BitmapImage Image(string? key) =>
         new(new Uri($"ms-appx:///Assets/Stickers/{(string.IsNullOrEmpty(key) ? "star" : key)}.png"));
 
-    /// <summary>White text can't be trusted on a family photo, so it gets a panel. Painted scenes are dark enough.</summary>
-    public static Brush TextBacking(bool isPhotoShown) =>
-        isPhotoShown
-            ? (Brush)Application.Current.Resources["SceneGlassStrongBrush"]
+    public static Brush SelectionBrush(bool isSelected) =>
+        isSelected
+            ? (Brush)Application.Current.Resources["AccentFillColorDefaultBrush"]
             : new SolidColorBrush(Microsoft.UI.Colors.Transparent);
+
+    public static Visibility WhenBaubles(SignDesign design) =>
+        design == SignDesign.Baubles ? Visibility.Visible : Visibility.Collapsed;
 
     public static BitmapImage Photo(byte[]? bytes)
     {
