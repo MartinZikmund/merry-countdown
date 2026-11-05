@@ -1,3 +1,4 @@
+using MerryCountdown.Core.Family;
 using MerryCountdown.Core.Tests.Fakes;
 using MerryCountdown.Core.ViewModels;
 using FluentAssertions;
@@ -53,5 +54,10 @@ public class SettingsViewModelTests
             new FakeAppPreferences(),
             new FakeThemeManager(),
             new FakePreferences(),
-            new FakeApplication { WorktreeName = worktreeName });
+            new FakeApplication { WorktreeName = worktreeName },
+            new FamilyService(new FakeFamilyStore(), "en-US"),
+            new FakeGate(),
+            new FakeNavigation(),
+            new FakeDisplayMode(),
+            new FakeLauncher());
 }

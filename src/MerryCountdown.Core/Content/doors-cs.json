@@ -7,7 +7,7 @@
     "video": "Čas na film!",
     "finale": "Už je to tady!"
   },
-  "finale": "Otevřel jsi všechna okénka! {bringer} je na cestě, tak se hezky zachumlej, buď trpělivý a poslouchej, jestli nezazvoní zvoneček. Veselé Vánoce!",
+  "finale": "Všechna okénka jsou otevřená! {bringer} je na cestě, tak se hezky zachumlej, vydrž a poslouchej, jestli nezazvoní zvoneček. Veselé Vánoce!",
   "jokes": [
     { "text": "Co snídá sněhulák?", "punchline": "Ledové vločky!", "sticker": "snowman" },
     { "text": "Co řekne sněhulák, když se chce ochladit?", "punchline": "Jdu si vlézt do mrazáku!", "sticker": "snowman" },
@@ -58,7 +58,7 @@
   ],
   "kindness": [
     { "text": "Dej dnes někomu z rodiny pořádně velké objetí.", "sticker": "teddy" },
-    { "text": "Vyber hračku, ze které už jsi vyrostl, a daruj ji dítěti, které z ní bude mít radost.", "sticker": "gift" },
+    { "text": "Vyber hračku, se kterou už si nehraješ, a daruj ji dítěti, které z ní bude mít radost.", "sticker": "gift" },
     { "text": "Pomoz s úklidem, aniž by tě o to někdo žádal. A sleduj jejich obličeje!", "sticker": "star" },
     { "text": "Řekni třem lidem, co se ti na nich moc líbí.", "sticker": "bell" },
     { "text": "Nasyp ven zrníčka nebo drobky pro zimní ptáčky.", "sticker": "mitten" },

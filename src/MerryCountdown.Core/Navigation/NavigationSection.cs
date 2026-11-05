@@ -2,6 +2,8 @@ namespace MerryCountdown.Core.Navigation;
 
 public enum NavigationSection
 {
-    Main,
+    Countdown,
+    Calendar,
+    Wishes,
     Settings,
 }
