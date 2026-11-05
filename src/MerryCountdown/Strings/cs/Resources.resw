@@ -181,12 +181,6 @@
   <data name="NavWishes" xml:space="preserve">
     <value>Přání</value>
   </data>
-  <data name="Greeting" xml:space="preserve">
-    <value>Ahoj!</value>
-  </data>
-  <data name="GreetingNamed" xml:space="preserve">
-    <value>Ahoj, {0}!</value>
-  </data>
   <data name="SleepsCaption_One" xml:space="preserve">
     <value>spaní</value>
   </data>
@@ -195,18 +189,6 @@
   </data>
   <data name="SleepsCaption_Many" xml:space="preserve">
     <value>spaní</value>
-  </data>
-  <data name="HeadlineFar" xml:space="preserve">
-    <value>zbývá do dne {0}. Začni být hodný!</value>
-  </data>
-  <data name="HeadlineNear" xml:space="preserve">
-    <value>zbývá do dne {0}. Už se to blíží!</value>
-  </data>
-  <data name="HeadlineOneSleep" xml:space="preserve">
-    <value>Už jen jedno spaní do dne {0}!</value>
-  </data>
-  <data name="HeadlineToday" xml:space="preserve">
-    <value>Je to dnes! Poslouchej, jestli nejde {0}!</value>
   </data>
   <data name="HeadlineCelebrating" xml:space="preserve">
     <value>Veselé Vánoce!</value>
@@ -223,23 +205,11 @@
   <data name="GiftBringer_Jezisek" xml:space="preserve">
     <value>Ježíšek</value>
   </data>
-  <data name="ClockDays" xml:space="preserve">
-    <value>dní</value>
-  </data>
-  <data name="ClockHours" xml:space="preserve">
-    <value>hodin</value>
-  </data>
-  <data name="ClockMinutes" xml:space="preserve">
-    <value>minut</value>
-  </data>
-  <data name="ClockSeconds" xml:space="preserve">
-    <value>sekund</value>
-  </data>
   <data name="OpenDoorButton" xml:space="preserve">
     <value>Otevři okénko {0}!</value>
   </data>
   <data name="ChooseScene" xml:space="preserve">
-    <value>Změnit obrázek</value>
+    <value>Změnit vzhled</value>
   </data>
   <data name="FamilyDisplay" xml:space="preserve">
     <value>Rodinná obrazovka</value>
@@ -601,9 +571,6 @@
   <data name="EventName" xml:space="preserve">
     <value>Název události</value>
   </data>
-  <data name="DisplayCountdown" xml:space="preserve">
-    <value>{0} dní  {1} hodin  {2} minut  {3} sekund</value>
-  </data>
   <data name="DisplayHint" xml:space="preserve">
     <value>Esc nebo Zpět pro odchod. Šipky mění obrázek.</value>
   </data>
@@ -675,5 +642,101 @@
   </data>
   <data name="FullVersionPitch" xml:space="preserve">
     <value>Jeden nákup navždy, žádné předplatné. Odemkne tři další animované obrázky, vlastní fotky jako prezentaci, osobní vzkazy za okénky, odpočet do narozenin a dalších rodinných událostí a přesný čas velkého okamžiku.</value>
+  </data>
+  <data name="UnitDays_One" xml:space="preserve">
+    <value>den</value>
+  </data>
+  <data name="UnitDays_Few" xml:space="preserve">
+    <value>dny</value>
+  </data>
+  <data name="UnitDays_Many" xml:space="preserve">
+    <value>dní</value>
+  </data>
+  <data name="UnitHours_One" xml:space="preserve">
+    <value>hodina</value>
+  </data>
+  <data name="UnitHours_Few" xml:space="preserve">
+    <value>hodiny</value>
+  </data>
+  <data name="UnitHours_Many" xml:space="preserve">
+    <value>hodin</value>
+  </data>
+  <data name="UnitMinutes_One" xml:space="preserve">
+    <value>minuta</value>
+  </data>
+  <data name="UnitMinutes_Few" xml:space="preserve">
+    <value>minuty</value>
+  </data>
+  <data name="UnitMinutes_Many" xml:space="preserve">
+    <value>minut</value>
+  </data>
+  <data name="UnitSeconds_One" xml:space="preserve">
+    <value>sekunda</value>
+  </data>
+  <data name="UnitSeconds_Few" xml:space="preserve">
+    <value>sekundy</value>
+  </data>
+  <data name="UnitSeconds_Many" xml:space="preserve">
+    <value>sekund</value>
+  </data>
+  <data name="SignNextChange" xml:space="preserve">
+    <value>než bude {0}</value>
+  </data>
+  <data name="SignNextChangeLastSleep" xml:space="preserve">
+    <value>a je {0}!</value>
+  </data>
+  <data name="SignNextChangeBigDay" xml:space="preserve">
+    <value>a pak dárky!</value>
+  </data>
+  <data name="SignAccessible_Plates" xml:space="preserve">
+    <value>{6}: {0} {1}, {2} {3} a {4} {5}</value>
+  </data>
+  <data name="SignAccessible_Sleeps" xml:space="preserve">
+    <value>{2}: {0} {1}</value>
+  </data>
+  <data name="DoorOneOpensIn_One" xml:space="preserve">
+    <value>Okénko 1 se otevře po {0} spaní</value>
+  </data>
+  <data name="DoorOneOpensIn_Few" xml:space="preserve">
+    <value>Okénko 1 se otevře po {0} spaních</value>
+  </data>
+  <data name="DoorOneOpensIn_Many" xml:space="preserve">
+    <value>Okénko 1 se otevře po {0} spaních</value>
+  </data>
+  <data name="DoorSeeYouTomorrow" xml:space="preserve">
+    <value>Zase zítra!</value>
+  </data>
+  <data name="WriteWishLetter" xml:space="preserve">
+    <value>Napiš dopis s přáním</value>
+  </data>
+  <data name="ChooseStyleHeader" xml:space="preserve">
+    <value>Odpočet</value>
+  </data>
+  <data name="ChooseSignHeader" xml:space="preserve">
+    <value>Cedule</value>
+  </data>
+  <data name="ChooseSceneHeader" xml:space="preserve">
+    <value>Obrázek</value>
+  </data>
+  <data name="Style_Plates" xml:space="preserve">
+    <value>Dny, hodiny, minuty</value>
+  </data>
+  <data name="Style_SleepsAndClock" xml:space="preserve">
+    <value>Spaní a hodiny</value>
+  </data>
+  <data name="Sign_Plank" xml:space="preserve">
+    <value>Zasněžené prkno</value>
+  </data>
+  <data name="Sign_Gingerbread" xml:space="preserve">
+    <value>Perník</value>
+  </data>
+  <data name="Sign_ParcelTag" xml:space="preserve">
+    <value>Visačka na dárek</value>
+  </data>
+  <data name="Sign_Station" xml:space="preserve">
+    <value>Nádražní cedule</value>
+  </data>
+  <data name="Sign_Baubles" xml:space="preserve">
+    <value>Girlanda s baňkami</value>
   </data>
 </root>

@@ -13,7 +13,8 @@ public enum CountdownPhase
     Celebrating,
 }
 
-public readonly record struct CountdownState(CountdownPhase Phase, DateTime Target, int Sleeps, TimeSpan Remaining);
+/// <param name="UntilNextSleep">Time until <paramref name="Sleeps"/> next changes: midnight, or the arrival once none are left.</param>
+public readonly record struct CountdownState(CountdownPhase Phase, DateTime Target, int Sleeps, TimeSpan Remaining, TimeSpan UntilNextSleep);
 
 /// <summary>Works in local wall-clock time on purpose: a child's Christmas is wherever they are.</summary>
 public static class CountdownClock
@@ -26,7 +27,7 @@ public static class CountdownClock
 
         if (now >= target && now < new DateTime(now.Year, 12, LastCelebrationDay + 1))
         {
-            return new CountdownState(CountdownPhase.Celebrating, target, 0, TimeSpan.Zero);
+            return new CountdownState(CountdownPhase.Celebrating, target, 0, TimeSpan.Zero, TimeSpan.Zero);
         }
 
         if (now > target)
@@ -34,7 +35,8 @@ public static class CountdownClock
             target = TargetIn(now.Year + 1, bigDay, arrivalMinutes);
         }
 
-        return new CountdownState(CountdownPhase.Counting, target, (target.Date - now.Date).Days, target - now);
+        var sleeps = (target.Date - now.Date).Days;
+        return new CountdownState(CountdownPhase.Counting, target, sleeps, target - now, sleeps > 0 ? now.Date.AddDays(1) - now : target - now);
     }
 
     /// <summary>The next date a yearly event falls on, today included. Leap-day birthdays land on 28 February.</summary>

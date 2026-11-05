@@ -46,12 +46,15 @@ public partial class DisplayViewModel : ViewModelBase
         _localizer = localizer;
         _display = display;
         Backdrop = backdrop;
+        Sign = new CountdownSignViewModel(localizer);
         _library = DoorLibrary.Load(CultureInfo.CurrentUICulture.Name);
         SceneId = backdrop.SceneFor(SceneCatalog.Resolve(family.Settings.SceneId, fullVersion.IsFull).Id);
         Tick();
     }
 
     public PhotoBackdrop Backdrop { get; }
+
+    public CountdownSignViewModel Sign { get; }
 
     public ObservableCollection<DisplayKidViewModel> Kids { get; } = [];
 
@@ -63,21 +66,6 @@ public partial class DisplayViewModel : ViewModelBase
 
     [ObservableProperty]
     public partial bool CalmMotion { get; set; }
-
-    [ObservableProperty]
-    public partial string SleepsNumber { get; set; } = "";
-
-    [ObservableProperty]
-    public partial string SleepsCaption { get; set; } = "";
-
-    [ObservableProperty]
-    public partial bool IsCelebrating { get; set; }
-
-    [ObservableProperty]
-    public partial bool IsCounting { get; set; }
-
-    [ObservableProperty]
-    public partial string Countdown { get; set; } = "";
 
     [ObservableProperty]
     public partial string Clock { get; set; } = "";
@@ -128,15 +116,9 @@ public partial class DisplayViewModel : ViewModelBase
     {
         var now = _clock.Now;
         var settings = _family.Settings;
-        var state = CountdownClock.Compute(now, settings.BigDay, settings.ArrivalMinutes);
-
         Snow = settings.Snow;
         CalmMotion = settings.CalmMotion;
-        IsCelebrating = state.Phase == CountdownPhase.Celebrating;
-        IsCounting = !IsCelebrating;
-        SleepsNumber = state.Sleeps.ToString(CultureInfo.CurrentCulture);
-        SleepsCaption = _localizer.Plural("SleepsCaption", state.Sleeps);
-        Countdown = _localizer["DisplayCountdown", (int)state.Remaining.TotalDays, state.Remaining.Hours, state.Remaining.Minutes.ToString("00", CultureInfo.CurrentCulture), state.Remaining.Seconds.ToString("00", CultureInfo.CurrentCulture)];
+        Sign.Update(now, settings);
         Clock = now.ToString("t", CultureInfo.CurrentCulture);
         Today = now.ToString("M", CultureInfo.CurrentCulture);
         DailyFact = _library.DailyFact(now);
