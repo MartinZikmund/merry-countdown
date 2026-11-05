@@ -22,6 +22,8 @@ public sealed partial class DisplayView : UserControl
 
     public DisplayViewModel ViewModel { get; }
 
+    private void Scene_Tapped(object sender, TappedRoutedEventArgs e) => ViewModel.SceneTapped();
+
     private void OnPointerMoved(object sender, PointerRoutedEventArgs e) => ViewModel.ShowHint();
 
     private void OnKeyDown(object sender, KeyRoutedEventArgs e)

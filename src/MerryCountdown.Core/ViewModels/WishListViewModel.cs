@@ -16,6 +16,7 @@ public partial class WishListViewModel : ViewModelBase
     private readonly IStringLocalizer _localizer;
     private readonly IParentGateService _gate;
     private readonly IShareService _share;
+    private readonly ISoundService _sounds;
     private Kid? _shownKid;
     private bool _isLoading;
 
@@ -25,8 +26,10 @@ public partial class WishListViewModel : ViewModelBase
         IStringLocalizer localizer,
         IParentGateService gate,
         IShareService share,
-        KidPickerViewModel kidPicker)
+        KidPickerViewModel kidPicker,
+        ISoundService sounds)
     {
+        _sounds = sounds;
         _family = family;
         _clock = clock;
         _localizer = localizer;
@@ -117,8 +120,14 @@ public partial class WishListViewModel : ViewModelBase
     private bool CanAddWish() => !string.IsNullOrWhiteSpace(NewWishText) || SelectedSticker is not null;
 
     [RelayCommand]
-    private void ChooseSticker(WishStickerViewModel sticker) =>
+    private void ChooseSticker(WishStickerViewModel sticker)
+    {
         SelectedSticker = SelectedSticker == sticker ? null : sticker;
+        if (SelectedSticker is not null)
+        {
+            _sounds.Play(SoundEffect.Sticker);
+        }
+    }
 
     [RelayCommand]
     private void RemoveWish(WishItemViewModel item)
@@ -132,6 +141,7 @@ public partial class WishListViewModel : ViewModelBase
     {
         if (_family.SendLetter(AdventCalendar.SeasonYear(_clock.Now)))
         {
+            _sounds.Play(SoundEffect.Letter);
             Load();
         }
     }

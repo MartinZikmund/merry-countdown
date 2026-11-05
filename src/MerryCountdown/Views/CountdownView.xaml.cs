@@ -2,6 +2,7 @@ using System.ComponentModel;
 using MerryCountdown.Core.Family;
 using MerryCountdown.Core.Navigation;
 using MerryCountdown.Core.ViewModels;
+using Microsoft.UI.Xaml.Input;
 
 namespace MerryCountdown.Views;
 
@@ -76,6 +77,12 @@ public sealed partial class CountdownView : CountdownViewBase
             ? new Thickness(0, 0, Math.Max(DockClearance, offset), bottom)
             : new Thickness(offset, 0, 0, bottom);
     }
+
+    private void Scene_Tapped(object sender, TappedRoutedEventArgs e) => ViewModel?.SceneTapped();
+
+    private void Door_Swinging(object? sender, EventArgs e) => ViewModel?.DoorStartedSwinging();
+
+    private void Door_LockedTapped(object? sender, EventArgs e) => ViewModel?.LockedDoorTapped();
 
     private void SceneOption_Click(object sender, RoutedEventArgs e)
     {

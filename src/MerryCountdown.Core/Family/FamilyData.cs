@@ -135,6 +135,8 @@ public sealed class FamilySettings
 
     public bool CalmMotion { get; set; }
 
+    public bool SoundEnabled { get; set; } = true;
+
     public bool DisplayRotatesScenes { get; set; } = true;
 
     public bool StartInFamilyDisplay { get; set; }

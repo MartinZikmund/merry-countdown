@@ -48,6 +48,8 @@ public sealed partial class CalendarView : CalendarViewBase
 
     private void Door_Chosen(object? sender, DoorViewModel door) => ViewModel?.TapDoor(door);
 
+    private void Door_Swinging(object? sender, EventArgs e) => ViewModel?.DoorStartedSwinging();
+
     private void CloseReveal_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
     {
         if (ViewModel?.IsRevealOpen == true)

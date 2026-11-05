@@ -25,6 +25,7 @@ public partial class DisplayViewModel : ViewModelBase
     private readonly ITicker _ticker;
     private readonly IStringLocalizer _localizer;
     private readonly IDisplayModeService _display;
+    private readonly ISoundService _sounds;
     private readonly DoorLibrary _library;
     private int _secondsOnScene;
     private int _secondsRunning;
@@ -37,8 +38,10 @@ public partial class DisplayViewModel : ViewModelBase
         ITicker ticker,
         IStringLocalizer localizer,
         IDisplayModeService display,
-        PhotoBackdrop backdrop)
+        PhotoBackdrop backdrop,
+        ISoundService sounds)
     {
+        _sounds = sounds;
         _family = family;
         _fullVersion = fullVersion;
         _clock = clock;
@@ -88,6 +91,8 @@ public partial class DisplayViewModel : ViewModelBase
     public void Start() => _ticker.Second += OnSecond;
 
     public void Stop() => _ticker.Second -= OnSecond;
+
+    public void SceneTapped() => _sounds.Play(SoundEffect.SceneTap);
 
     /// <summary>Any key or wiggle of the mouse brings the how-to-leave hint back.</summary>
     public void ShowHint()

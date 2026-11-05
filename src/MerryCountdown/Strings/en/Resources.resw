@@ -400,6 +400,18 @@
   <data name="Snow_Blizzard" xml:space="preserve">
     <value>Blizzard!</value>
   </data>
+  <data name="SoundHeader" xml:space="preserve">
+    <value>Sounds</value>
+  </data>
+  <data name="SoundDescription" xml:space="preserve">
+    <value>Creaking doors, chimes and twinkles when you tap.</value>
+  </data>
+  <data name="SoundCreditsHeader" xml:space="preserve">
+    <value>Sound credits</value>
+  </data>
+  <data name="SoundCreditsDescription" xml:space="preserve">
+    <value>Sounds by Kenney (kenney.nl), laleksic, The Midnite Wolf, Asud12, haeldb, fvcalderan, wubitog, pyranostudios. All released under CC0.</value>
+  </data>
   <data name="CalmHeader" xml:space="preserve">
     <value>Calm motion</value>
   </data>

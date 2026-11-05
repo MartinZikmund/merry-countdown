@@ -34,6 +34,10 @@ public sealed partial class HomeDoor : UserControl
         Apply();
     }
 
+    public event EventHandler? Swinging;
+
+    public event EventHandler? LockedTapped;
+
     public HomeDoorStage Stage
     {
         get => (HomeDoorStage)GetValue(StageProperty);
@@ -76,13 +80,19 @@ public sealed partial class HomeDoor : UserControl
         switch (Stage)
         {
             case HomeDoorStage.Waiting when !CalmMotion:
+                Swinging?.Invoke(this, EventArgs.Empty);
                 Art.SwingOpen(() => Command?.Execute(null));
                 break;
             case HomeDoorStage.Waiting or HomeDoorStage.Opened:
                 Command?.Execute(null);
                 break;
-            case HomeDoorStage.Locked when !CalmMotion:
-                Art.Shake();
+            case HomeDoorStage.Locked:
+                LockedTapped?.Invoke(this, EventArgs.Empty);
+                if (!CalmMotion)
+                {
+                    Art.Shake();
+                }
+
                 break;
         }
     }

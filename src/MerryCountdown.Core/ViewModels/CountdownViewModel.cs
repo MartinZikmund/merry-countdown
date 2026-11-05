@@ -22,6 +22,7 @@ public partial class CountdownViewModel : ViewModelBase
     private readonly INavigationService _navigation;
     private readonly IDisplayModeService _display;
     private readonly IParentGateService _gate;
+    private readonly ISoundService _sounds;
 
     public CountdownViewModel(
         IFamilyService family,
@@ -32,8 +33,10 @@ public partial class CountdownViewModel : ViewModelBase
         INavigationService navigation,
         IDisplayModeService display,
         PhotoBackdrop backdrop,
-        IParentGateService gate)
+        IParentGateService gate,
+        ISoundService sounds)
     {
+        _sounds = sounds;
         _family = family;
         _fullVersion = fullVersion;
         _clock = clock;
@@ -114,6 +117,12 @@ public partial class CountdownViewModel : ViewModelBase
         Sign.Update(now, _family.Settings);
         UpdateDoor(now);
     }
+
+    public void DoorStartedSwinging() => _sounds.Play(SoundEffect.DoorOpen);
+
+    public void LockedDoorTapped() => _sounds.Play(SoundEffect.DoorLocked);
+
+    public void SceneTapped() => _sounds.Play(SoundEffect.SceneTap);
 
     [RelayCommand]
     private void OpenTodaysDoor() => _navigation.Navigate<CalendarViewModel>(DoorNumber);
