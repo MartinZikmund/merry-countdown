@@ -181,6 +181,15 @@
   <data name="NavWishes" xml:space="preserve">
     <value>Wishes</value>
   </data>
+  <data name="NavDoorWaiting" xml:space="preserve">
+    <value>Doors: door {0} is waiting to be opened</value>
+  </data>
+  <data name="NavBack" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="NavSettings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
   <data name="SleepsCaption_One" xml:space="preserve">
     <value>sleep</value>
   </data>
@@ -204,9 +213,6 @@
   </data>
   <data name="GiftBringer_Jezisek" xml:space="preserve">
     <value>Ježíšek</value>
-  </data>
-  <data name="OpenDoorButton" xml:space="preserve">
-    <value>Open door {0}!</value>
   </data>
   <data name="ChooseScene" xml:space="preserve">
     <value>Change the look</value>
@@ -711,21 +717,6 @@
   </data>
   <data name="SignAccessible_Sleeps" xml:space="preserve">
     <value>{0} {1} until {2}</value>
-  </data>
-  <data name="DoorOneOpensIn_One" xml:space="preserve">
-    <value>Door 1 opens in {0} sleep</value>
-  </data>
-  <data name="DoorOneOpensIn_Few" xml:space="preserve">
-    <value>Door 1 opens in {0} sleeps</value>
-  </data>
-  <data name="DoorOneOpensIn_Many" xml:space="preserve">
-    <value>Door 1 opens in {0} sleeps</value>
-  </data>
-  <data name="DoorSeeYouTomorrow" xml:space="preserve">
-    <value>See you tomorrow!</value>
-  </data>
-  <data name="WriteWishLetter" xml:space="preserve">
-    <value>Write your wish letter</value>
   </data>
   <data name="ChooseStyleHeader" xml:space="preserve">
     <value>Countdown</value>

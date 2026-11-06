@@ -1,5 +1,3 @@
-using System.ComponentModel;
-using MerryCountdown.Core.Family;
 using MerryCountdown.Core.Navigation;
 using MerryCountdown.Core.ViewModels;
 using Microsoft.UI.Xaml.Input;
@@ -11,78 +9,34 @@ public partial class CountdownViewBase : ViewBase<CountdownViewModel> { }
 
 public sealed partial class CountdownView : CountdownViewBase
 {
-    private const double CompactWidth = 560;
-    private const double CompactHeight = 560;
-    private const double DoorOffsetRatio = 0.16;
-    private const double EdgeMargin = 16;
-    private const double DockClearance = 152;
-    private const double AboveDock = 92;
-    private const double GroundMargin = 20;
+    private const double CompactSize = 560;
+    private const double ControlsMargin = 16;
+    private const double ControlsGapUnderSign = 8;
 
     public CountdownView()
     {
         InitializeComponent();
-        Overlay.SizeChanged += (_, _) => ArrangeForSize();
-        Loaded += OnLoaded;
-        Unloaded += OnUnloaded;
-    }
-
-    private void OnLoaded(object sender, RoutedEventArgs e)
-    {
-        if (ViewModel is { } viewModel)
-        {
-            viewModel.PropertyChanged += OnViewModelPropertyChanged;
-            Door.CalmMotion = viewModel.CalmMotion;
-        }
-
-        ArrangeForSize();
-    }
-
-    private void OnUnloaded(object sender, RoutedEventArgs e)
-    {
-        if (ViewModel is { } viewModel)
-        {
-            viewModel.PropertyChanged -= OnViewModelPropertyChanged;
-        }
-    }
-
-    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName is nameof(CountdownViewModel.IsDoorOnRight) or nameof(CountdownViewModel.DoorStage) or nameof(CountdownViewModel.CalmMotion))
-        {
-            Door.CalmMotion = ViewModel?.CalmMotion ?? false;
-            ArrangeForSize();
-        }
+        Root.SizeChanged += (_, _) => ArrangeForSize();
+        SkyPanel.SizeChanged += (_, _) => ArrangeForSize();
+        SceneControls.SizeChanged += (_, _) => ArrangeForSize();
     }
 
     private void ArrangeForSize()
     {
-        var (width, height) = (Overlay.ActualWidth, Overlay.ActualHeight);
-        var isCompact = width < CompactWidth || height < CompactHeight;
-        var stage = ViewModel?.DoorStage ?? HomeDoorStage.Hidden;
+        var isCompact = Root.ActualWidth < CompactSize || Root.ActualHeight < CompactSize;
 
         SignControl.IsCompact = isCompact;
         LookBody.Orientation = isCompact ? Orientation.Vertical : Orientation.Horizontal;
         LookOptions.Width = isCompact ? 304 : 460;
 
-        // Before December on a phone the padlocked door would only cover the scene, so the letter button goes alone.
-        Door.Visibility = stage == HomeDoorStage.Hidden || (isCompact && stage == HomeDoorStage.Locked) ? Visibility.Collapsed : Visibility.Visible;
-        Door.DoorWidth = isCompact ? 95 : 104;
-
-        var onRight = !isCompact && ViewModel?.IsDoorOnRight == true;
-        var bottom = isCompact && stage == HomeDoorStage.Locked ? AboveDock : GroundMargin;
-        var offset = isCompact ? EdgeMargin : Math.Max(EdgeMargin, width * DoorOffsetRatio);
-        DoorSpot.HorizontalAlignment = onRight ? HorizontalAlignment.Right : HorizontalAlignment.Left;
-        DoorSpot.Margin = onRight
-            ? new Thickness(0, 0, Math.Max(DockClearance, offset), bottom)
-            : new Thickness(offset, 0, 0, bottom);
+        // Signs differ in width, so measure: beside the sign if they fit, otherwise under it.
+        var roomBesideSign = (Root.ActualWidth - SkyPanel.ActualWidth) / 2;
+        var fitsBeside = roomBesideSign >= SceneControls.ActualWidth + (2 * ControlsMargin);
+        Grid.SetRow(SceneControls, fitsBeside ? 0 : 1);
+        SceneControls.Margin = new Thickness(0, fitsBeside ? ControlsMargin : ControlsGapUnderSign, ControlsMargin, 0);
     }
 
     private void Scene_Tapped(object sender, TappedRoutedEventArgs e) => ViewModel?.SceneTapped();
-
-    private void Door_Swinging(object? sender, EventArgs e) => ViewModel?.DoorStartedSwinging();
-
-    private void Door_LockedTapped(object? sender, EventArgs e) => ViewModel?.LockedDoorTapped();
 
     private void SceneOption_Click(object sender, RoutedEventArgs e)
     {

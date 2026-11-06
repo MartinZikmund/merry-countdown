@@ -12,8 +12,6 @@ public partial class CountdownViewModel : ViewModelBase
 {
     public const string PhotosOptionId = "photos";
 
-    private const string SceneWithTrainOnTheLeft = "train";
-
     private readonly IFamilyService _family;
     private readonly IFullVersionService _fullVersion;
     private readonly IAppClock _clock;
@@ -69,26 +67,7 @@ public partial class CountdownViewModel : ViewModelBase
     public ObservableCollection<UpcomingEventViewModel> Events { get; } = [];
 
     [ObservableProperty]
-    public partial HomeDoorStage DoorStage { get; set; }
-
-    [ObservableProperty]
-    public partial int DoorNumber { get; set; }
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(HasDoorCaption))]
-    public partial string DoorCaption { get; set; } = "";
-
-    public bool HasDoorCaption => DoorCaption.Length > 0;
-
-    [ObservableProperty]
-    public partial bool CanWriteWishLetter { get; set; }
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsDoorOnRight))]
     public partial string SceneId { get; set; } = "";
-
-    /// <summary>The toy train runs along the left, so the door stands on the other side there.</summary>
-    public bool IsDoorOnRight => SceneId == SceneWithTrainOnTheLeft;
 
     [ObservableProperty]
     public partial SnowLevel Snow { get; set; }
@@ -122,24 +101,9 @@ public partial class CountdownViewModel : ViewModelBase
         _fullVersion.Changed -= OnFamilyChanged;
     }
 
-    public void Refresh()
-    {
-        var now = _clock.Now;
-        Sign.Update(now, _family.Settings);
-        UpdateDoor(now);
-    }
-
-    public void DoorStartedSwinging() => _sounds.Play(SoundEffect.DoorOpen);
-
-    public void LockedDoorTapped() => _sounds.Play(SoundEffect.DoorLocked);
+    public void Refresh() => Sign.Update(_clock.Now, _family.Settings);
 
     public void SceneTapped() => _sounds.Play(SoundEffect.SceneTap);
-
-    [RelayCommand]
-    private void OpenTodaysDoor() => _navigation.Navigate<CalendarViewModel>(DoorNumber);
-
-    [RelayCommand]
-    private void WriteWishLetter() => _navigation.Navigate<WishListViewModel>();
 
     [RelayCommand]
     private void SelectSign(SignOptionViewModel option)
@@ -244,44 +208,6 @@ public partial class CountdownViewModel : ViewModelBase
         HasEvents = Events.Count > 0;
         Refresh();
     }
-
-    private void UpdateDoor(DateTime now)
-    {
-        var door = AdventCalendar.TodaysDoor(now);
-        if (door is { } today)
-        {
-            var isOpened = _family.IsDoorOpened(_family.ActiveKid, AdventCalendar.SeasonYear(now), today);
-            DoorStage = isOpened ? HomeDoorStage.Opened : HomeDoorStage.Waiting;
-            DoorNumber = today;
-            DoorCaption = !isOpened
-                ? _localizer["OpenDoorButton", today]
-                : today < AdventCalendar.DoorCount ? _localizer["DoorSeeYouTomorrow"] : "";
-            CanWriteWishLetter = false;
-            return;
-        }
-
-        if (Sign.IsCelebrating)
-        {
-            DoorStage = HomeDoorStage.Hidden;
-            DoorCaption = "";
-            CanWriteWishLetter = false;
-            return;
-        }
-
-        var firstDoor = new DateTime(now.Month == 12 ? now.Year + 1 : now.Year, 12, 1);
-        DoorStage = HomeDoorStage.Locked;
-        DoorNumber = 1;
-        DoorCaption = _localizer.Plural("DoorOneOpensIn", (firstDoor - now.Date).Days);
-        CanWriteWishLetter = true;
-    }
-}
-
-public enum HomeDoorStage
-{
-    Hidden,
-    Locked,
-    Waiting,
-    Opened,
 }
 
 public sealed partial class SignOptionViewModel(SignDesign design, string name, CountdownSignViewModel preview) : ObservableObject

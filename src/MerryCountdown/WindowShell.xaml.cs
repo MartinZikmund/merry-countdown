@@ -12,6 +12,8 @@ namespace MerryCountdown;
 
 public sealed partial class WindowShell : Page, IWindowShell
 {
+    private const double NarrowWidth = 480;
+
     private readonly IServiceScope _windowScope;
     private readonly Window _associatedWindow;
     private bool _isWindowClosed;
@@ -54,9 +56,6 @@ public sealed partial class WindowShell : Page, IWindowShell
 
     public IServiceProvider ServiceProvider => _windowScope.ServiceProvider;
 
-    public static NavigationViewBackButtonVisible BackVisibility(bool canGoBack) =>
-        canGoBack ? NavigationViewBackButtonVisible.Visible : NavigationViewBackButtonVisible.Collapsed;
-
     /// <summary>For a TV that should wake straight into the big screen.</summary>
     public void EnterFamilyDisplayOnLoad()
     {
@@ -97,7 +96,7 @@ public sealed partial class WindowShell : Page, IWindowShell
         CompactOverlayHost.Visibility = isActive ? Visibility.Visible : Visibility.Collapsed;
 
         // Collapsed as well as covered, so Tab can't wander into a page nobody can see.
-        NavView.Visibility = isActive ? Visibility.Collapsed : Visibility.Visible;
+        AppContent.Visibility = isActive ? Visibility.Collapsed : Visibility.Visible;
     }
 
     public WindowShellViewModel ViewModel { get; }
@@ -146,7 +145,7 @@ public sealed partial class WindowShell : Page, IWindowShell
         }
 
         ViewModel.NotifyCanGoBackChanged();
-        UpdateNavigationViewSelection();
+        UpdateTabSelection();
     }
 
     private void PageViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -219,24 +218,28 @@ public sealed partial class WindowShell : Page, IWindowShell
 
     #region Navigation
 
-    private void NavView_Loaded(object sender, RoutedEventArgs e)
+    private void AppContent_Loaded(object sender, RoutedEventArgs e)
         => NavigateToSection(NavigationSection.Countdown);
 
-    private void NavView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+    private void AppContent_SizeChanged(object sender, SizeChangedEventArgs e)
     {
-        if (args.SelectedItemContainer is not NavigationViewItem item)
-        {
-            return;
-        }
+        var isNarrow = e.NewSize.Width < NarrowWidth;
+        var orientation = isNarrow ? Orientation.Vertical : Orientation.Horizontal;
 
-        var tag = item.Tag?.ToString();
-        if (tag is null && item == (NavigationViewItem)sender.SettingsItem)
-        {
-            tag = NavigationSection.Settings.ToString();
-        }
+        CountdownTabContent.Orientation = orientation;
+        CalendarTabContent.Orientation = orientation;
+        WishesTabContent.Orientation = orientation;
 
+        foreach (var tab in new[] { CountdownTab, CalendarTab, WishesTab })
+        {
+            tab.FontSize = isNarrow ? 14 : 16;
+        }
+    }
+
+    private void Tab_Checked(object sender, RoutedEventArgs e)
+    {
         // Selection also follows navigation that started elsewhere, which must not navigate a second time.
-        if (Enum.TryParse<NavigationSection>(tag, out var section)
+        if (Enum.TryParse<NavigationSection>((sender as FrameworkElement)?.Tag?.ToString(), out var section)
             && ServiceProvider.GetRequiredService<INavigationService>().CurrentSection != section)
         {
             NavigateToSection(section);
@@ -269,37 +272,27 @@ public sealed partial class WindowShell : Page, IWindowShell
         ViewModel.NotifyCanGoBackChanged();
     }
 
-    private void NavView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
+    private void GoBack()
     {
-        var nav = ServiceProvider.GetRequiredService<INavigationService>();
-        if (nav.GoBack())
+        if (ServiceProvider.GetRequiredService<INavigationService>().GoBack())
         {
-            UpdateNavigationViewSelection();
+            UpdateTabSelection();
         }
     }
 
-#if !HAS_UNO
-    private void AppTitleBar_BackRequested(TitleBar sender, object args)
-    {
-        var nav = ServiceProvider.GetRequiredService<INavigationService>();
-        if (nav.GoBack())
-        {
-            UpdateNavigationViewSelection();
-        }
-    }
+#if HAS_UNO
+    private void Back_Click(object sender, RoutedEventArgs e) => GoBack();
+#else
+    private void AppTitleBar_BackRequested(TitleBar sender, object args) => GoBack();
 #endif
 
-    private void UpdateNavigationViewSelection()
+    private void UpdateTabSelection()
     {
-        var section = ServiceProvider.GetRequiredService<INavigationService>().CurrentSection;
-        NavView.SelectedItem = section switch
+        var section = ServiceProvider.GetRequiredService<INavigationService>().CurrentSection.ToString();
+        foreach (var tab in new[] { CountdownTab, CalendarTab, WishesTab, SettingsTab })
         {
-            NavigationSection.Countdown => CountdownNavItem,
-            NavigationSection.Calendar => CalendarNavItem,
-            NavigationSection.Wishes => WishesNavItem,
-            NavigationSection.Settings => NavView.SettingsItem,
-            _ => NavView.SelectedItem,
-        };
+            tab.IsChecked = (string?)tab.Tag == section;
+        }
     }
 
     #endregion
