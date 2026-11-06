@@ -31,7 +31,7 @@ A joyful Christmas countdown for kids and families: a much improved, modern take
 
 ## Product shape
 
-- **Countdown:** full-bleed animated scene, a huge "N sleeps", a live clock, today's door button, family events. Tap something in the scene and it reacts; tap anything else for sparkles. See [scene-taps.md](../../scene-taps.md).
+- **Countdown:** full-bleed animated scene, a huge "N sleeps", a live clock, family events. A badge on the Doors tab says when today's door is waiting ([app-bar.md](../../app-bar.md)). Tap something in the scene and it reacts; tap anything else for sparkles. See [scene-taps.md](../../scene-taps.md).
 - **Doors:** 24 shuffled doors that lay themselves out to fill any screen. Locked doors jiggle and say how many sleeps are left; missed days stay open. Behind them: jokes with hidden punchlines, facts, missions, kind deeds and videos, rotating each year.
 - **Wishes:** a letter on paper in a handwritten font. Write a wish or pick a picture (for kids who can't write yet), sign it, send it, watch it fly. "I forgot something!" reopens it.
 - **Family Display:** the current scene, huge number, date and clock, one card per kid and a fact of the day. Screen kept awake, content drifts slowly to protect panels, scenes rotate every 30 minutes. `--display` (desktop) or `?display=1` (web) starts straight in it.
