@@ -171,7 +171,7 @@ public sealed partial class CountdownSign : UserControl
         Text(ColonOne, DisplayFont, size.PlateFont * 0.8, look.Label);
         Text(ColonTwo, DisplayFont, size.PlateFont * 0.8, look.Label);
         Text(NextChange, labelFont, size.LabelSize * 1.1, look.Label);
-        Text(BoardMerry, DisplayFont, size.BigFont * 0.5, look.Big);
+        Text(BoardMerry, DisplayFont, size.MerryFont, look.Big);
     }
 
     private void ApplyBaubles()
@@ -341,10 +341,10 @@ public sealed partial class CountdownSign : UserControl
         storyboard.Begin();
     }
 
-    private sealed record BoardSize(double PlateWidth, double PlateHeight, double PlateFont, double LabelSize, double GroupGap, double BigFont)
+    private sealed record BoardSize(double PlateWidth, double PlateHeight, double PlateFont, double LabelSize, double GroupGap, double BigFont, double MerryFont)
     {
-        public static readonly BoardSize Regular = new(44, 66, 50, 20, 12, 112);
-        public static readonly BoardSize Compact = new(32, 50, 37, 15, 6, 92);
+        public static readonly BoardSize Regular = new(44, 66, 50, 20, 12, 112, 56);
+        public static readonly BoardSize Compact = new(32, 50, 37, 15, 6, 92, 34);
     }
 
     private sealed record SignLook(
