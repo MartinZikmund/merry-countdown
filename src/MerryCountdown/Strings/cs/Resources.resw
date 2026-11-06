@@ -181,6 +181,15 @@
   <data name="NavWishes" xml:space="preserve">
     <value>Přání</value>
   </data>
+  <data name="NavDoorWaiting" xml:space="preserve">
+    <value>Okénka: okénko {0} čeká na otevření</value>
+  </data>
+  <data name="NavBack" xml:space="preserve">
+    <value>Zpět</value>
+  </data>
+  <data name="NavSettings" xml:space="preserve">
+    <value>Nastavení</value>
+  </data>
   <data name="SleepsCaption_One" xml:space="preserve">
     <value>spaní</value>
   </data>
@@ -204,9 +213,6 @@
   </data>
   <data name="GiftBringer_Jezisek" xml:space="preserve">
     <value>Ježíšek</value>
-  </data>
-  <data name="OpenDoorButton" xml:space="preserve">
-    <value>Otevři okénko {0}!</value>
   </data>
   <data name="ChooseScene" xml:space="preserve">
     <value>Změnit vzhled</value>
@@ -711,21 +717,6 @@
   </data>
   <data name="SignAccessible_Sleeps" xml:space="preserve">
     <value>{2}: {0} {1}</value>
-  </data>
-  <data name="DoorOneOpensIn_One" xml:space="preserve">
-    <value>Okénko 1 se otevře po {0} spaní</value>
-  </data>
-  <data name="DoorOneOpensIn_Few" xml:space="preserve">
-    <value>Okénko 1 se otevře po {0} spaních</value>
-  </data>
-  <data name="DoorOneOpensIn_Many" xml:space="preserve">
-    <value>Okénko 1 se otevře po {0} spaních</value>
-  </data>
-  <data name="DoorSeeYouTomorrow" xml:space="preserve">
-    <value>Zase zítra!</value>
-  </data>
-  <data name="WriteWishLetter" xml:space="preserve">
-    <value>Napiš dopis s přáním</value>
   </data>
   <data name="ChooseStyleHeader" xml:space="preserve">
     <value>Odpočet</value>

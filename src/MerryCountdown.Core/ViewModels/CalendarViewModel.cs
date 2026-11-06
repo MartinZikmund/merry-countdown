@@ -61,16 +61,6 @@ public partial class CalendarViewModel : ViewModelBase
     public bool IsRevealOpen => Reveal is not null;
 
     /// <summary>Arriving with a door number means someone just opened that door on the home screen.</summary>
-    public override void OnNavigatedTo(object? parameter)
-    {
-        base.OnNavigatedTo(parameter);
-
-        if (parameter is int number && Doors.FirstOrDefault(d => d.Number == number) is { } door)
-        {
-            TapDoor(door);
-        }
-    }
-
     public override void ViewLoaded()
     {
         _ticker.Second += OnSecond;

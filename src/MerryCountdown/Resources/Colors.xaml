@@ -16,7 +16,7 @@
                 <GradientStop Offset="0" Color="#FFF8EE" />
                 <GradientStop Offset="1" Color="#FBE9E4" />
             </LinearGradientBrush>
-            <SolidColorBrush x:Key="NavigationViewTopPaneBackground" Color="#FFFBF5" />
+            <SolidColorBrush x:Key="AppBarBackgroundBrush" Color="#FFFBF5" />
             <SolidColorBrush x:Key="DoorTint0Brush" Color="#C31F3D" />
             <SolidColorBrush x:Key="DoorTint1Brush" Color="#1B7355" />
             <SolidColorBrush x:Key="DoorTint2Brush" Color="#2A61B5" />
@@ -55,7 +55,7 @@
                 <GradientStop Offset="0" Color="#0B132B" />
                 <GradientStop Offset="1" Color="#241C57" />
             </LinearGradientBrush>
-            <SolidColorBrush x:Key="NavigationViewTopPaneBackground" Color="#0B132B" />
+            <SolidColorBrush x:Key="AppBarBackgroundBrush" Color="#0B132B" />
             <SolidColorBrush x:Key="DoorTint0Brush" Color="#B51F3A" />
             <SolidColorBrush x:Key="DoorTint1Brush" Color="#176A4E" />
             <SolidColorBrush x:Key="DoorTint2Brush" Color="#285CAD" />
@@ -83,7 +83,7 @@
             <SolidColorBrush x:Key="BrandBrush" Color="{ThemeResource SystemColorHighlightColor}" />
             <SolidColorBrush x:Key="AppOverlayBackgroundBrush" Color="{ThemeResource SystemColorWindowColor}" />
             <SolidColorBrush x:Key="PageBackdropBrush" Color="{ThemeResource SystemColorWindowColor}" />
-            <StaticResource x:Key="NavigationViewTopPaneBackground" ResourceKey="SystemColorWindowColorBrush" />
+            <StaticResource x:Key="AppBarBackgroundBrush" ResourceKey="SystemColorWindowColorBrush" />
             <StaticResource x:Key="DoorTint0Brush" ResourceKey="SystemColorButtonFaceColorBrush" />
             <StaticResource x:Key="DoorTint1Brush" ResourceKey="SystemColorButtonFaceColorBrush" />
             <StaticResource x:Key="DoorTint2Brush" ResourceKey="SystemColorButtonFaceColorBrush" />
@@ -116,6 +116,7 @@
     <SolidColorBrush x:Key="SceneGlassBorderBrush" Color="#44FFFFFF" />
     <SolidColorBrush x:Key="GoldBrush" Color="#FFC95C" />
     <SolidColorBrush x:Key="GoldTextBrush" Color="#2A2F55" />
+    <SolidColorBrush x:Key="DoorBadgeBrush" Color="#C31F3D" />
 
     <FontFamily x:Key="DisplayFontFamily">ms-appx:///Assets/Fonts/Baloo2-Bold.ttf#Baloo 2</FontFamily>
     <FontFamily x:Key="HandwritingFontFamily">ms-appx:///Assets/Fonts/PatrickHand-Regular.ttf#Patrick Hand</FontFamily>
