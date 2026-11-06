@@ -1,6 +1,6 @@
 # The countdown sign
 
-To change how the home screen counts down, open the palette button at the bottom right. Families pick a **sign** (snowy plank, gingerbread, parcel tag, station sign or bauble garland) and a **countdown style** (number plates or sleeps and a clock). Family Display follows the same two settings.
+To change how the home screen counts down, open the palette button at the top right of the scene. Families pick a **sign** (snowy plank, gingerbread, parcel tag, station sign or bauble garland) and a **countdown style** (number plates or sleeps and a clock). Family Display follows the same two settings.
 
 Both are saved in `FamilySettings.Sign` and `FamilySettings.CountdownStyle`. Number plates on the snowy plank are the default, and families who saved data before signs existed get that default too.
 
@@ -9,7 +9,6 @@ Both are saved in `FamilySettings.Sign` and `FamilySettings.CountdownStyle`. Num
 - `CountdownSignViewModel` holds everything the sign shows. `CountdownViewModel` and `DisplayViewModel` each own one and call `Update` every second.
 - `CountdownSign` draws it. All four board designs share one layout and only swap their surface and colours; the bauble garland has its own layout, and `Garland` draws the pine band across the top of the page.
 - `DigitText` draws numbers in fixed cells, because Baloo's "1" is much narrower than its "0" and plain centred text would shuffle sideways on every tick.
-- `HomeDoor` is today's door on the ground, drawn by the same `DoorArt` as [the door wall](./door-wall.md). It swings open in place, then `CalendarViewModel.OnNavigatedTo` receives the door number and shows its reveal.
 
 ## Sleeps and the clock
 

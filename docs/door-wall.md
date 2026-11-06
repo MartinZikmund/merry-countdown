@@ -1,6 +1,6 @@
 # The door wall
 
-To change how a door looks or opens, edit `DoorArt`. It draws one door and owns its swing and shake, and both the Doors page (`DoorTile`) and today's door on Home (`HomeDoor`) use it.
+To change how a door looks or opens, edit `DoorArt`. It draws one door and owns its swing and shake, and the Doors page (`DoorTile`) uses it. Home has no door of its own: see [app-bar.md](./app-bar.md) for how it says one is waiting.
 
 ## What each door shows
 
