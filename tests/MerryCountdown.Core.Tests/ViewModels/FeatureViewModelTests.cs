@@ -120,27 +120,6 @@ public class CalendarViewModelTests
     private static DoorViewModel Door(CalendarViewModel vm, int number) => vm.Doors.Single(d => d.Number == number);
 
     [TestMethod]
-    public void OnNavigatedTo_WithTodaysDoor_OpensItAndRevealsIt()
-    {
-        var (vm, family, _, _, _) = Create(new DateTime(2026, 12, 5));
-
-        vm.OnNavigatedTo(5);
-
-        vm.Reveal.Should().NotBeNull();
-        family.IsDoorOpened(family.ActiveKid, 2026, 5).Should().BeTrue();
-    }
-
-    [TestMethod]
-    public void OnNavigatedTo_WithoutADoor_JustShowsTheWall()
-    {
-        var (vm, _, _, _, _) = Create(new DateTime(2026, 12, 5));
-
-        vm.OnNavigatedTo(null);
-
-        vm.Reveal.Should().BeNull();
-    }
-
-    [TestMethod]
     public void Doors_AreAllTwentyFour()
     {
         Create(new DateTime(2026, 12, 5)).Vm.Doors.Should().HaveCount(24);

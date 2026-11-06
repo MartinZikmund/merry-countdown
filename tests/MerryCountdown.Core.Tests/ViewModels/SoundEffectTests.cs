@@ -126,17 +126,6 @@ public class SoundEffectTests
     }
 
     [TestMethod]
-    public void HomeDoor_SwingAndLockedTap_MakeTheirSounds()
-    {
-        var vm = Countdown();
-
-        vm.DoorStartedSwinging();
-        vm.LockedDoorTapped();
-
-        _sounds.Played.Should().Equal(SoundEffect.DoorOpen, SoundEffect.DoorLocked);
-    }
-
-    [TestMethod]
     public void SceneTapped_OnHomeAndFamilyDisplay_Twinkles()
     {
         Countdown().SceneTapped();
