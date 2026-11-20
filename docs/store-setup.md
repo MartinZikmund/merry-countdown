@@ -5,23 +5,30 @@ before December.
 
 Until then the app runs fine and shows the paywall, but **buying can't work**. Only web and desktop are fully free.
 
-The whole app knows one product: **`full_version`**, a one-time purchase (see
+The whole app knows one product: **`dev.mzikmund.merrycountdown.pro`**, a one-time purchase (see
 [`StoreConfig`](../src/MerryCountdown/Services/Store/StoreConfig.cs)).
 
 ## Microsoft Store (WinUI head)
 
-1. Partner Center: reserve the app name and note the package identity.
-2. Set the Prod identity in `MerryCountdown.csproj` and `Package.appxmanifest` to the Partner Center values.
-3. Add-ons: create a **Durable** add-on, lifetime forever, with product id `full_version`.
+1. Partner Center: the name *Merry Countdown* is reserved.
+2. The Prod identity is set in `MerryCountdown.csproj` for the Windows head only: `ApplicationId` is the package name and
+   `StorePackagePublisher` the `CN=` publisher. Uno writes the publisher as `O=<ApplicationPublisher>`, so the
+   `SetStorePackagePublisher` target in `src/Directory.Build.targets` overwrites it in the generated manifest.
+3. Add-ons: create a **Durable** add-on, lifetime forever, with product id `dev.mzikmund.merrycountdown.pro`.
 4. Submit the app and add-on. Store licences only exist once certified, so this can't be tested earlier.
 
 ## Google Play and App Store (via RevenueCat)
 
-1. Create the app in Play Console and App Store Connect, each with a non-consumable product (`full_version`).
-2. In RevenueCat: add both apps, create the entitlement **`full_version`**, attach the products and put them in the
+1. Create the app in Play Console and App Store Connect, each with a non-consumable product (`dev.mzikmund.merrycountdown.pro`).
+2. In RevenueCat: add both apps, create the entitlement **`dev.mzikmund.merrycountdown.pro`**, attach the products and put them in the
    *current* offering. The first package of that offering is what the app sells.
 3. Put the public SDK keys in `StoreConfig.RevenueCatAndroidKey` and `RevenueCatIosKey`. These keys are designed to ship
    inside apps.
+
+## Privacy policy
+
+All three stores ask for a privacy policy URL, for the app and for the in-app product:
+<https://mzikmund.dev/Apps/MerryCountdown/PrivacyPolicy> (English and Czech on one page).
 
 ## Kids' category notes
 
