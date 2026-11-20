@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 using MerryCountdown.Core.Services.Settings;
 using Windows.Storage;
 
@@ -6,6 +7,12 @@ namespace MerryCountdown.Services.Settings;
 
 public sealed class Preferences : IPreferences
 {
+    // Trimmed builds have reflection-based JSON off, so complex values need source-generated metadata.
+    private static readonly JsonSerializerOptions _jsonOptions = new()
+    {
+        TypeInfoResolver = PreferencesJsonContext.Default,
+    };
+
     private readonly ApplicationDataContainer _container = ApplicationData.Current.LocalSettings;
 
     public T Get<T>(string key, T defaultValue) =>
@@ -48,7 +55,7 @@ public sealed class Preferences : IPreferences
         {
             try
             {
-                if (JsonSerializer.Deserialize<T>(json) is { } result)
+                if (JsonSerializer.Deserialize(json, GetTypeInfo<T>()) is { } result)
                 {
                     value = result;
                     return true;
@@ -64,11 +71,13 @@ public sealed class Preferences : IPreferences
         return false;
     }
 
-    public void SetComplex<T>(string key, T? value) => _container.Values[key] = JsonSerializer.Serialize(value);
+    public void SetComplex<T>(string key, T? value) => _container.Values[key] = JsonSerializer.Serialize(value, GetTypeInfo<T?>());
 
     public bool ContainsKey(string key) => _container.Values.ContainsKey(key);
 
     public void Remove(string key) => _container.Values.Remove(key);
 
     public void Clear() => _container.Values.Clear();
+
+    private static JsonTypeInfo<T> GetTypeInfo<T>() => (JsonTypeInfo<T>)_jsonOptions.GetTypeInfo(typeof(T));
 }
