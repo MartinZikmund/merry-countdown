@@ -1,26 +1,36 @@
 name: Build Windows Packages
 
 on:
-  # Push to main: Dev-channel package (self-signed, sideload-safe artifact).
-  # Push to release/v*: Prod-channel package (Store-signed .msixupload artifact for manual Partner Center submission).
-  # See docs/versioning.md for the full model.
+  # Push to main: Dev-channel packages.
+  # Push to release/v*: Prod-channel .msixupload for manual Partner Center submission.
+  # Manual run: pick the channel, so a Prod upload can be built from main too.
+  # See docs/windows-packaging.md and docs/versioning.md.
   push:
     branches:
       - "main"
       - "release/v**"
   workflow_dispatch:
+    inputs:
+      channel:
+        description: App channel to package
+        type: choice
+        options: [Dev, Prod]
+        default: Dev
 
 env:
   # App Configuration
   APP_NAME: MerryCountdown
   DOTNET_VERSION: 10.0.x
-  SOLUTION_FILE: src/MerryCountdown.slnx
   PROJECT_PATH: src/MerryCountdown
   PROJECT_FILE: src/MerryCountdown/MerryCountdown.csproj
   WINDOWS_TARGET_FRAMEWORK: net10.0-windows10.0.26100
 
+  # Partner Center's Product identity page; a Prod package must carry exactly these.
+  STORE_IDENTITY_NAME: 5143MartinZikmund.MerryCountdown
+  STORE_PUBLISHER: CN=5EDFBB6C-AD5D-4B76-B479-1C5F44017714
+
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ inputs.channel }}
   cancel-in-progress: true
 
 jobs:
@@ -29,19 +39,17 @@ jobs:
     if: github.event.repository.private == false || github.event_name == 'workflow_dispatch'
 
     strategy:
+      fail-fast: false
       matrix:
         configuration: [Release]
         platform: [x86,x64,ARM64]
 
-    runs-on: windows-latest  # For a list of available runner types, refer to
-                             # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
+    runs-on: windows-latest
 
     outputs:
       channel: ${{ steps.channel.outputs.value }}
 
     env:
-      STEP_TIMEOUT_MINUTES: 60
-
       # .NET niceties
       DOTNET_NOLOGO: 1
       DOTNET_CLI_TELEMETRY_OPTOUT: 1
@@ -52,7 +60,9 @@ jobs:
       id: channel
       shell: pwsh
       run: |
-        if ($env:GITHUB_REF -like 'refs/heads/release/v*') {
+        if ('${{ inputs.channel }}') {
+          "value=${{ inputs.channel }}" >> $env:GITHUB_OUTPUT
+        } elseif ($env:GITHUB_REF -like 'refs/heads/release/v*') {
           "value=Prod" >> $env:GITHUB_OUTPUT
         } else {
           "value=Dev" >> $env:GITHUB_OUTPUT
@@ -82,13 +92,16 @@ jobs:
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1.3.1
 
-    # Restore the application to populate the obj folder with RuntimeIdentifiers
+    # The project, not the .slnx: the solution defines no platforms, so /p:Platform=ARM64 fails with MSB4126.
+    # The platform picks the win-<platform>.pubxml publish profile; without it the trimmer is never restored
+    # and the build silently skips trimming.
     - name: Restore the application
-      run: msbuild $env:SOLUTION_FILE /t:Restore /p:Configuration=$env:Configuration /p:TargetFramework=$env:WINDOWS_TARGET_FRAMEWORK /p:PublishReadyToRun=true /p:AppChannel=${{ steps.channel.outputs.value }}
+      run: msbuild $env:PROJECT_FILE /t:Restore /p:Configuration=$env:Configuration /p:TargetFramework=$env:WINDOWS_TARGET_FRAMEWORK /p:Platform=$env:Platform /p:PublishReadyToRun=true /p:AppChannel=${{ steps.channel.outputs.value }}
       env:
         Configuration: ${{ matrix.configuration }}
+        Platform: ${{ matrix.platform }}
 
-    # Decode the base 64 encoded pfx and save the Signing_Certificate
+    # Not passed to the build yet: Prod is re-signed by the Store, and the smoke test signs its own copy.
     - name: Decode the pfx
       shell: pwsh
       run: |
@@ -97,13 +110,15 @@ jobs:
         } else {
           $pfxBase64 = '${{ secrets.BASE64_ENCODED_WINDOWS_PFX_DEV }}'
         }
+        if (-not $pfxBase64) {
+          Write-Host "No signing certificate secret; the package stays unsigned."
+          exit 0
+        }
         $pfx_cert_byte = [System.Convert]::FromBase64String($pfxBase64)
-        $certificatePath = "GitHubActionsWorkflow.pfx"
-        [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
+        [IO.File]::WriteAllBytes("GitHubActionsWorkflow.pfx", $pfx_cert_byte)
 
-    # Create the app package by building and packaging the project
     - name: Create the app package
-      run: msbuild $env:SOLUTION_FILE /p:TargetFramework=$env:WINDOWS_TARGET_FRAMEWORK /p:Configuration=$env:Configuration /p:Platform=$env:Platform /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:Appx_Bundle /p:AppxPackageDir="$env:Appx_Package_Dir" /p:GenerateAppxPackageOnBuild=true /p:AppChannel=${{ steps.channel.outputs.value }}
+      run: msbuild $env:PROJECT_FILE /p:TargetFramework=$env:WINDOWS_TARGET_FRAMEWORK /p:Configuration=$env:Configuration /p:Platform=$env:Platform /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:Appx_Bundle /p:AppxPackageDir="$env:Appx_Package_Dir" /p:GenerateAppxPackageOnBuild=true /p:AppxPackageSigningEnabled=false /p:AppChannel=${{ steps.channel.outputs.value }}
       env:
         Appx_Bundle: Never
         Appx_Package_Build_Mode: CI
@@ -111,9 +126,171 @@ jobs:
         Configuration: ${{ matrix.configuration }}
         Platform: ${{ matrix.platform }}
 
-    # Remove the pfx
     - name: Remove the pfx
-      run: Remove-Item -path GitHubActionsWorkflow.pfx
+      if: always()
+      run: Remove-Item -Path GitHubActionsWorkflow.pfx -ErrorAction SilentlyContinue
+
+    # An untrimmed package is ~4x larger and still builds green, so fail loudly instead.
+    - name: Verify the package was trimmed
+      shell: pwsh
+      run: |
+        $linked = Get-ChildItem "$env:PROJECT_PATH/obj" -Recurse -Filter "$env:APP_NAME.dll" |
+          Where-Object { $_.Directory.Name -eq 'linked' }
+        if (-not $linked) {
+          Write-Host "::error::no ILLink output found - the package was not trimmed"
+          exit 1
+        }
+        $linked | ForEach-Object { Write-Host "Trimmed: $($_.FullName)" }
+
+    - name: Verify the package manifest
+      id: package
+      shell: pwsh
+      env:
+        CHANNEL: ${{ steps.channel.outputs.value }}
+      run: |
+        $ErrorActionPreference = 'Stop'
+        # Only the app's own package: Dependencies\ holds the Windows App Runtime the Store installs itself.
+        $msix = Get-ChildItem "$env:PROJECT_PATH/Packages" -Recurse -Filter "${env:APP_NAME}_*.msix" |
+          Where-Object FullName -notmatch '[\\/]Dependencies[\\/]' | Select-Object -First 1
+        if (-not $msix) { throw "no ${env:APP_NAME}_*.msix under $env:PROJECT_PATH/Packages" }
+
+        Add-Type -AssemblyName System.IO.Compression.FileSystem
+        $zip = [IO.Compression.ZipFile]::OpenRead($msix.FullName)
+        try {
+          $reader = [IO.StreamReader]::new($zip.GetEntry('AppxManifest.xml').Open())
+          [xml]$manifest = $reader.ReadToEnd()
+          $reader.Dispose()
+        }
+        finally { $zip.Dispose() }
+
+        $identity = $manifest.Package.Identity
+        $sizeMb = [math]::Round($msix.Length / 1MB, 1)
+        Write-Host "Package:   $($msix.Name) ($sizeMb MB)"
+        Write-Host "Name:      $($identity.Name)"
+        Write-Host "Publisher: $($identity.Publisher)"
+        Write-Host "Version:   $($identity.Version)"
+        Write-Host "Arch:      $($identity.ProcessorArchitecture)"
+        "| ${{ matrix.platform }} | $env:CHANNEL | $($identity.Name) | $($identity.Version) | $sizeMb MB |" >> $env:GITHUB_STEP_SUMMARY
+
+        $bad = $false
+        # The Store rejects any package whose revision is not 0.
+        if ($identity.Version -notmatch '^\d+\.\d+\.\d+\.0$') {
+          Write-Host "::error::version $($identity.Version) must be X.Y.Z.0"; $bad = $true
+        }
+        if ($env:CHANNEL -eq 'Prod') {
+          if ($identity.Name -ne $env:STORE_IDENTITY_NAME) {
+            Write-Host "::error::Identity/@Name is '$($identity.Name)', expected '$env:STORE_IDENTITY_NAME'"; $bad = $true
+          }
+          if ($identity.Publisher -ne $env:STORE_PUBLISHER) {
+            Write-Host "::error::Identity/@Publisher is '$($identity.Publisher)', expected '$env:STORE_PUBLISHER'"; $bad = $true
+          }
+        }
+        if ($bad) { exit 1 }
+
+        "msix=$($msix.FullName)" >> $env:GITHUB_OUTPUT
+        "runtime_name=$((($manifest.Package.Dependencies.PackageDependency) | Where-Object Name -like 'Microsoft.WindowsAppRuntime.*').Name)" >> $env:GITHUB_OUTPUT
+        "runtime_min=$((($manifest.Package.Dependencies.PackageDependency) | Where-Object Name -like 'Microsoft.WindowsAppRuntime.*').MinVersion)" >> $env:GITHUB_OUTPUT
+
+    - name: Setup winapp CLI
+      if: matrix.platform == 'x64'
+      uses: microsoft/setup-WinAppCli@v0.2
+      with:
+        # PIN, never `latest`: winapp is a 0.x preview.
+        version: 'v0.8.0'
+
+    # Installs the real package and proves it survives startup - a trimmed package can build green and
+    # still crash at launch.
+    - name: Smoke launch the packaged app
+      if: matrix.platform == 'x64'
+      shell: pwsh
+      env:
+        MSIX: ${{ steps.package.outputs.msix }}
+        RUNTIME_NAME: ${{ steps.package.outputs.runtime_name }}
+        RUNTIME_MIN: ${{ steps.package.outputs.runtime_min }}
+      run: |
+        $ErrorActionPreference = 'Stop'
+        $PSNativeCommandUseErrorActionPreference = $true
+        $work = Join-Path $env:RUNNER_TEMP 'smoke'
+        New-Item $work -ItemType Directory -Force | Out-Null
+
+        # The package is framework-dependent and the runner has no Windows App Runtime: install the one this
+        # build restored, the way the Store would.
+        if ($env:RUNTIME_NAME) {
+          $has = Get-AppxPackage -Name $env:RUNTIME_NAME |
+            Where-Object { $_.Architecture -eq 'X64' -and [version]$_.Version -ge [version]$env:RUNTIME_MIN }
+          if (-not $has) {
+            Add-Type -AssemblyName System.IO.Compression.FileSystem
+            $packages = (dotnet nuget locals global-packages --list) -replace '^global-packages:\s*', ''
+            $roots = @("$env:PROJECT_PATH/Packages", $packages) | Where-Object { Test-Path $_ }
+            $runtime = Get-ChildItem $roots -Recurse -Filter "$env:RUNTIME_NAME*.msix" -ErrorAction SilentlyContinue |
+              Where-Object FullName -match 'x64' |
+              ForEach-Object {
+                $zip = [IO.Compression.ZipFile]::OpenRead($_.FullName)
+                try {
+                  $reader = [IO.StreamReader]::new($zip.GetEntry('AppxManifest.xml').Open())
+                  $id = ([xml]$reader.ReadToEnd()).Package.Identity
+                  [pscustomobject]@{ Path = $_.FullName; Name = $id.Name; Version = [version]$id.Version }
+                }
+                finally { $zip.Dispose() }
+              } |
+              Where-Object { $_.Name -eq $env:RUNTIME_NAME -and $_.Version -ge [version]$env:RUNTIME_MIN } |
+              Sort-Object Version | Select-Object -Last 1
+            if (-not $runtime) { throw "no $env:RUNTIME_NAME.msix >= $env:RUNTIME_MIN found" }
+            Write-Host "Installing $($runtime.Path)"
+            Add-AppxPackage -Path $runtime.Path
+          }
+        }
+
+        # Sign a copy with a throwaway certificate; the uploaded artifact stays unsigned.
+        $signed = Join-Path $work (Split-Path $env:MSIX -Leaf)
+        Copy-Item $env:MSIX $signed
+        Add-Type -AssemblyName System.IO.Compression.FileSystem
+        $zip = [IO.Compression.ZipFile]::OpenRead($signed)
+        try { [IO.Compression.ZipFileExtensions]::ExtractToFile($zip.GetEntry('AppxManifest.xml'), "$work/AppxManifest.xml", $true) }
+        finally { $zip.Dispose() }
+        $pfx = Join-Path $work 'smoke.pfx'
+        winapp cert generate --manifest "$work/AppxManifest.xml" --output $pfx --password password
+        winapp sign $signed $pfx --password password
+        winapp cert install $pfx
+
+        Add-AppxPackage -Path $signed
+        [xml]$manifest = Get-Content "$work/AppxManifest.xml"
+        $pkg = Get-AppxPackage -Name $manifest.Package.Identity.Name
+        $appId = $manifest.Package.Applications.Application.Id
+        $started = Get-Date
+        Start-Process "shell:AppsFolder\$($pkg.PackageFamilyName)!$appId"
+
+        $proc = $null
+        for ($i = 0; $i -lt 30 -and -not $proc; $i++) {
+          Start-Sleep -Seconds 1
+          $proc = Get-Process -Name $env:APP_NAME -ErrorAction SilentlyContinue | Select-Object -First 1
+        }
+        try {
+          if (-not $proc) { throw "the packaged app never started" }
+          Start-Sleep -Seconds 15
+          if (-not (Get-Process -Id $proc.Id -ErrorAction SilentlyContinue)) {
+            Get-WinEvent -FilterHashtable @{ LogName = 'Application'; StartTime = $started.AddSeconds(-5) } -ErrorAction SilentlyContinue |
+              Where-Object ProviderName -in 'Application Error', '.NET Runtime' | Select-Object -First 3 |
+              ForEach-Object { Write-Host $_.Message }
+            Write-Host "::error::the packaged app exited within 15 s of launch"
+            exit 1
+          }
+          Write-Host "The packaged app (PID $($proc.Id)) is still running after 15 s."
+          try { winapp ui screenshot -a $proc.Id --output "$work/smoke.png" }
+          catch { Write-Host "::warning::smoke screenshot failed: $_" }
+        }
+        finally {
+          if ($proc) { Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue }
+          Remove-AppxPackage -Package $pkg.PackageFullName -ErrorAction SilentlyContinue
+        }
+
+    - name: Upload smoke screenshot
+      if: matrix.platform == 'x64' && always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: Smoke_Screenshot_${{ steps.channel.outputs.value }}
+        path: ${{ runner.temp }}/smoke/smoke.png
+        if-no-files-found: ignore
 
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
     - name: Upload MSIX package
@@ -127,45 +304,48 @@ jobs:
     runs-on: windows-latest
     needs: create_package
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Read package version from manifest
-        id: manifest
-        shell: pwsh
-        run: |
-          [xml]$xml = Get-Content "$env:PROJECT_PATH/Package.appxmanifest"
-          $version = $xml.Package.Identity.Version
-          echo "version=$version" >> $env:GITHUB_OUTPUT
-
       - name: Download all MSIX_Package_* artifacts
         uses: actions/download-artifact@v4
         with:
           pattern: MSIX_Package_*
           path: ./msix
 
-      - name: Copy all .msix files to temporary location
+      # Only the app's own packages: framework-dependent builds also drop the Windows App Runtime
+      # packages under Dependencies\, which the Store installs itself and makeappx refuses to bundle.
+      - name: Copy the app's .msix files to a temporary location
         id: copymsix
+        shell: pwsh
         run: |
-          $msixFiles = Get-ChildItem -Path ./msix -Filter *.msix -Recurse
+          $msixFiles = Get-ChildItem -Path ./msix -Filter "${env:APP_NAME}_*.msix" -Recurse |
+            Where-Object FullName -notmatch '[\\/]Dependencies[\\/]'
           $tmp = Join-Path $env:RUNNER_TEMP ([IO.Path]::GetRandomFileName()); New-Item $tmp -ItemType Directory | Out-Null
           Copy-Item $msixFiles -Destination $tmp
+          $msixFiles | ForEach-Object { Write-Host "$($_.Name): $([math]::Round($_.Length / 1MB, 1)) MB" }
           echo "msix_temp_dir=$tmp" >> $env:GITHUB_OUTPUT
+
+          # The repo's Package.appxmanifest says 0.0.0.0; NBGV stamps the real version at build time.
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          $zip = [IO.Compression.ZipFile]::OpenRead($msixFiles[0].FullName)
+          try {
+            $reader = [IO.StreamReader]::new($zip.GetEntry('AppxManifest.xml').Open())
+            $version = ([xml]$reader.ReadToEnd()).Package.Identity.Version
+            $reader.Dispose()
+          }
+          finally { $zip.Dispose() }
+          echo "version=$version" >> $env:GITHUB_OUTPUT
 
       - name: Make msixbundle
         id: bundler
-        uses: LanceMcCarthy/Action-MsixBundler@v2.0.0
+        uses: LanceMcCarthy/Action-MsixBundler@v3
         with:
           msix-folder: ${{ steps.copymsix.outputs.msix_temp_dir }}
-          msixbundle-filepath: "./msix/${{ env.APP_NAME }}_${{ steps.manifest.outputs.version }}.msixbundle"
-          msixbundle-version: ${{ steps.manifest.outputs.version }}
+          msixbundle-filepath: "./msix/${{ env.APP_NAME }}_${{ steps.copymsix.outputs.version }}.msixbundle"
+          msixbundle-version: ${{ steps.copymsix.outputs.version }}
 
       - name: Make .msixupload
         shell: pwsh
         run: |
-          $bundle = "./msix/${{ env.APP_NAME }}_${{ steps.manifest.outputs.version }}.msixbundle"
+          $bundle = "./msix/${{ env.APP_NAME }}_${{ steps.copymsix.outputs.version }}.msixbundle"
           $syms = Get-ChildItem -Path ./msix -Recurse -Filter *.msixsym
           foreach ($sym in $syms) {
             $newName = [IO.Path]::ChangeExtension($sym.FullName, ".appxsym")
@@ -175,10 +355,12 @@ jobs:
           $tmp = Join-Path $env:RUNNER_TEMP ([IO.Path]::GetRandomFileName()); New-Item $tmp -ItemType Directory | Out-Null
           Copy-Item $bundle $tmp
           Copy-Item $appxsymFiles $tmp
-          Compress-Archive -Path (Join-Path $tmp '*') -DestinationPath ${{ env.APP_NAME }}_${{ steps.manifest.outputs.version }}.msixupload -Force
+          Compress-Archive -Path (Join-Path $tmp '*') -DestinationPath ${{ env.APP_NAME }}_${{ steps.copymsix.outputs.version }}.msixupload -Force
+          Get-Item $bundle, "${{ env.APP_NAME }}_${{ steps.copymsix.outputs.version }}.msixupload" |
+            ForEach-Object { Write-Host "$($_.Name): $([math]::Round($_.Length / 1MB, 1)) MB" }
 
       - name: Upload .msixupload
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.APP_NAME }}_${{ steps.manifest.outputs.version }}.msixupload
-          path: ${{ env.APP_NAME }}_${{ steps.manifest.outputs.version }}.msixupload
+          name: ${{ env.APP_NAME }}_${{ steps.copymsix.outputs.version }}_${{ needs.create_package.outputs.channel }}.msixupload
+          path: ${{ env.APP_NAME }}_${{ steps.copymsix.outputs.version }}.msixupload
