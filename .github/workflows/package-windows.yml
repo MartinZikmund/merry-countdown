@@ -95,8 +95,13 @@ jobs:
     # The project, not the .slnx: the solution defines no platforms, so /p:Platform=ARM64 fails with MSB4126.
     # The platform picks the win-<platform>.pubxml publish profile; without it the trimmer is never restored
     # and the build silently skips trimming.
+    # The global TargetFramework also reaches the net10.0-only Scenes project and restores it for the wrong
+    # framework (NETSDK1005 at build), so restore that one again on its own.
     - name: Restore the application
-      run: msbuild $env:PROJECT_FILE /t:Restore /p:Configuration=$env:Configuration /p:TargetFramework=$env:WINDOWS_TARGET_FRAMEWORK /p:Platform=$env:Platform /p:PublishReadyToRun=true /p:AppChannel=${{ steps.channel.outputs.value }}
+      run: |
+        msbuild $env:PROJECT_FILE /t:Restore /p:Configuration=$env:Configuration /p:TargetFramework=$env:WINDOWS_TARGET_FRAMEWORK /p:Platform=$env:Platform /p:PublishReadyToRun=true /p:AppChannel=${{ steps.channel.outputs.value }}
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        msbuild src/MerryCountdown.Scenes/MerryCountdown.Scenes.csproj /t:Restore /p:Configuration=$env:Configuration
       env:
         Configuration: ${{ matrix.configuration }}
         Platform: ${{ matrix.platform }}
