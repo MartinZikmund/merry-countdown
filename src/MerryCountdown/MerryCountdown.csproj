@@ -24,6 +24,12 @@
         <ApplicationId>dev.mzikmund.merrycountdown</ApplicationId>
     </PropertyGroup>
 
+    <!-- Microsoft Store identity, from Partner Center's Product identity page. -->
+    <PropertyGroup Condition="'$(AppChannel)' == 'Prod' and '$(IsWinAppSdk)' == 'true'">
+        <ApplicationId>5143MartinZikmund.MerryCountdown</ApplicationId>
+        <StorePackagePublisher>CN=5EDFBB6C-AD5D-4B76-B479-1C5F44017714</StorePackagePublisher>
+    </PropertyGroup>
+
     <PropertyGroup Condition="'$(AppChannel)' == 'Dev'">
         <ApplicationTitle>Merry Countdown Dev</ApplicationTitle>
         <ApplicationId>dev.mzikmund.merrycountdown.dev</ApplicationId>
