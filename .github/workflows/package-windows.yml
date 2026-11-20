@@ -297,12 +297,17 @@ jobs:
         path: ${{ runner.temp }}/smoke/smoke.png
         if-no-files-found: ignore
 
-    # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
+    # Only what the merge job bundles: the runtime packages under Dependencies\ and the unsigned sideload
+    # folder would add ~200 MB per architecture.
     - name: Upload MSIX package
       uses: actions/upload-artifact@v4
       with:
         name: MSIX_Package_${{ matrix.platform }}
-        path: ${{ env.PROJECT_PATH }}\\Packages
+        path: |
+          ${{ env.PROJECT_PATH }}/Packages/**/${{ env.APP_NAME }}_*.msix
+          ${{ env.PROJECT_PATH }}/Packages/**/*.appxsym
+          ${{ env.PROJECT_PATH }}/Packages/**/*.msixsym
+        if-no-files-found: error
 
   merge:
     if: needs.create_package.result == 'success'
@@ -357,6 +362,21 @@ jobs:
             Rename-Item -Path $sym.FullName -NewName $newName
           }
           $appxsymFiles = Get-ChildItem -Path ./msix -Recurse -Filter *.appxsym
+
+          # Keep only the app's own PDBs: the Skia and ANGLE native ones are ~150 MB of the upload and only
+          # symbolicate crashes inside those libraries.
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          foreach ($sym in $appxsymFiles) {
+            $zip = [IO.Compression.ZipFile]::Open($sym.FullName, 'Update')
+            try {
+              @($zip.Entries) | Where-Object Name -notlike "${env:APP_NAME}*.pdb" | ForEach-Object {
+                Write-Host "Dropping $($_.Name) from $($sym.Name)"
+                $_.Delete()
+              }
+            }
+            finally { $zip.Dispose() }
+          }
+
           $tmp = Join-Path $env:RUNNER_TEMP ([IO.Path]::GetRandomFileName()); New-Item $tmp -ItemType Directory | Out-Null
           Copy-Item $bundle $tmp
           Copy-Item $appxsymFiles $tmp
