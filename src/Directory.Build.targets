@@ -10,6 +10,16 @@
         </PropertyGroup>
     </Target>
 
+    <!-- Uno writes Publisher as "O=$(ApplicationPublisher)", but the Store needs Partner Center's CN. -->
+    <Target Name="SetStorePackagePublisher"
+            Condition="'$(StorePackagePublisher)' != ''"
+            AfterTargets="UnoGeneratePackageAppxManifest">
+        <XmlPoke XmlInputPath="$(_UnoIntermediateManifest)Package.appxmanifest"
+                 Query="/m:Package/m:Identity/@Publisher"
+                 Value="$(StorePackagePublisher)"
+                 Namespaces="&lt;Namespace Prefix='m' Uri='http://schemas.microsoft.com/appx/manifest/foundation/windows10' /&gt;" />
+    </Target>
+
     <!-- Per-worktree app identity (applies the suffix + generates the in-app name).
          Must be a .targets import: the suffix layers on top of the ApplicationId the project
          sets per AppChannel. See docs/worktree-identity.md. -->
