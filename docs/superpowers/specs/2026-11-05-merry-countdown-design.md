@@ -23,7 +23,7 @@ A joyful Christmas countdown for kids and families: a much improved, modern take
 | **Kid profiles are free** | "Each kid has their own list" shouldn't sit behind a paywall. The paid tier keeps personal door messages, family events and exact arrival time. To gate it, check `IFullVersionService.IsFull` in `ParentZoneViewModel.AddKid`. |
 | Eve/Day choice and Santa/Ježíšek are free, defaulted from the culture | Czech families shouldn't pay to get the right day. Only the exact time is paid. |
 | 2 free scenes (village, snow globe), 3 paid (northern lights, fireplace, toy train) | A sleigh scene was dropped: it wouldn't fit Ježíšek families. |
-| One non-consumable product, `full_version`, about €3.99 | No subscription for a seasonal family app. The price is set in the store consoles. |
+| One non-consumable product, `dev.mzikmund.merrycountdown.pro`, about €3.99 | No subscription for a seasonal family app. The price is set in the store consoles. |
 | Parent gate: multiplication in words | Purchases and anything leaving the app (videos, sharing) sit behind it, as kids' store policies expect. |
 | Videos open in the browser, no thumbnails | No network calls, no embedded player, no tracking inside the app. |
 | Sound effects on taps only, no music | See [sound-effects.md](../../sound-effects.md). A TV left on all advent stays silent, and every source is CC0. |
