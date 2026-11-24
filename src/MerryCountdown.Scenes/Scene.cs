@@ -39,6 +39,7 @@ public abstract class Scene : IDisposable
     private PhotoChange? _pendingPhotoSlot;
     private float _shakenAt = float.NegativeInfinity;
     private float _shakeStrength;
+    private bool _isDisposed;
 
     public abstract string Id { get; }
 
@@ -60,6 +61,8 @@ public abstract class Scene : IDisposable
     protected float ClearPart => 1 - _coveredTop;
 
     internal int SparkleCount => _sparkles.Count;
+
+    internal bool IsDisposed => _isDisposed;
 
     /// <summary>
     /// Shows a family photo instead of the painted sky, optionally with the scene's foreground still in front.
@@ -100,7 +103,7 @@ public abstract class Scene : IDisposable
 
     public void Render(SKCanvas canvas, int width, int height, float time)
     {
-        if (width <= 0 || height <= 0)
+        if (width <= 0 || height <= 0 || _isDisposed)
         {
             return;
         }
@@ -207,6 +210,7 @@ public abstract class Scene : IDisposable
 
     public void Dispose()
     {
+        _isDisposed = true;
         _backdrop?.Dispose();
         _fadingOut?.Dispose();
         GC.SuppressFinalize(this);
