@@ -23,6 +23,7 @@
             CalmMotion="True"
             Photo="{x:Bind ViewModel.Backdrop.Photo, Mode=OneWay}"
             SceneId="{x:Bind ViewModel.SceneId}"
+            Shake="{x:Bind ViewModel.Shake, Mode=OneWay}"
             ShowForeground="{x:Bind ViewModel.Backdrop.ShowForeground, Mode=OneWay}"
             Snow="{x:Bind ViewModel.Snow}"
             Tapped="Scene_Tapped" />

@@ -23,6 +23,7 @@ public partial class CountdownViewModel : ViewModelBase
     private readonly ISoundService _sounds;
     private readonly ICompactOverlayService _overlay;
     private readonly ISnackService _messages;
+    private readonly IShakeService _shakes;
 
     public CountdownViewModel(
         IFamilyService family,
@@ -36,8 +37,10 @@ public partial class CountdownViewModel : ViewModelBase
         IParentGateService gate,
         ISoundService sounds,
         ICompactOverlayService overlay,
-        ISnackService messages)
+        ISnackService messages,
+        IShakeService shakes)
     {
+        _shakes = shakes;
         _messages = messages;
         _sounds = sounds;
         _overlay = overlay;
@@ -87,12 +90,17 @@ public partial class CountdownViewModel : ViewModelBase
     [ObservableProperty]
     public partial bool IsScenePaused { get; set; }
 
+    /// <summary>The latest push of a shake, for the scene to answer.</summary>
+    [ObservableProperty]
+    public partial ShakeEventArgs? Shake { get; private set; }
+
     public override void ViewLoaded()
     {
         _overlay.Changed += OnOverlayChanged;
         _ticker.Second += OnSecond;
         _family.Changed += OnFamilyChanged;
         _fullVersion.Changed += OnFamilyChanged;
+        _shakes.Shaken += OnShaken;
         Reload();
     }
 
@@ -102,6 +110,7 @@ public partial class CountdownViewModel : ViewModelBase
         _ticker.Second -= OnSecond;
         _family.Changed -= OnFamilyChanged;
         _fullVersion.Changed -= OnFamilyChanged;
+        _shakes.Shaken -= OnShaken;
     }
 
     public void Refresh() => Sign.Update(_clock.Now, _family.Settings);
@@ -179,6 +188,15 @@ public partial class CountdownViewModel : ViewModelBase
     private void OnOverlayChanged(object? sender, EventArgs e) => IsScenePaused = _overlay.IsActive;
 
     private void OnSecond(object? sender, EventArgs e) => Refresh();
+
+    // Under the overlay the scene is paused, and the overlay's own scene answers instead.
+    private void OnShaken(object? sender, ShakeEventArgs e)
+    {
+        if (!IsScenePaused)
+        {
+            Shake = e;
+        }
+    }
 
     private void OnFamilyChanged(object? sender, EventArgs e) => Reload();
 

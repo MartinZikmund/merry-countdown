@@ -138,6 +138,12 @@ public partial class App : Application, IApplication
         services.AddScoped<IDisplayModeService, DisplayModeService>();
         services.AddScoped<IScreenWake, ScreenWake>();
         services.AddScoped<ICompactOverlayService, CompactOverlayService>();
+#if __ANDROID__ || __IOS__
+        services.AddScoped<IShakeService, MotionShakeService>();
+#else
+        // The web head is left out for now: iOS Safari asks before it shares motion.
+        services.AddScoped<IShakeService>(sp => OperatingSystem.IsBrowser() ? new NoShakeService() : ActivatorUtilities.CreateInstance<WindowShakeService>(sp));
+#endif
         services.AddScoped<IParentGateService, ParentGateService>();
         services.AddScoped<ISnackService, SnackService>();
         services.AddScoped<IThemeManager, ThemeManager>();

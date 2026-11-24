@@ -17,6 +17,7 @@
             IsPaused="{x:Bind ViewModel.IsScenePaused, Mode=OneWay}"
             Photo="{x:Bind ViewModel.Backdrop.Photo, Mode=OneWay}"
             SceneId="{x:Bind ViewModel.SceneId, Mode=OneWay}"
+            Shake="{x:Bind ViewModel.Shake, Mode=OneWay}"
             ShowForeground="{x:Bind ViewModel.Backdrop.ShowForeground, Mode=OneWay}"
             Snow="{x:Bind ViewModel.Snow, Mode=OneWay}"
             Tapped="Scene_Tapped" />

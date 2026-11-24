@@ -45,6 +45,9 @@ public sealed partial class SceneCanvas : Grid
     public static readonly DependencyProperty IsPausedProperty = DependencyProperty.Register(
         nameof(IsPaused), typeof(bool), typeof(SceneCanvas), new PropertyMetadata(false));
 
+    public static readonly DependencyProperty ShakeProperty = DependencyProperty.Register(
+        nameof(Shake), typeof(ShakeEventArgs), typeof(SceneCanvas), new PropertyMetadata(null, (d, e) => ((SceneCanvas)d).OnShaken(e.NewValue as ShakeEventArgs)));
+
     private readonly Stopwatch _clock = new();
     private readonly Action _invalidate;
     private Scene? _scene;
@@ -116,6 +119,13 @@ public sealed partial class SceneCanvas : Grid
     {
         get => (bool)GetValue(IsPausedProperty);
         set => SetValue(IsPausedProperty, value);
+    }
+
+    /// <summary>The latest push of a shake. Every new value makes the scene react.</summary>
+    public ShakeEventArgs? Shake
+    {
+        get => (ShakeEventArgs?)GetValue(ShakeProperty);
+        set => SetValue(ShakeProperty, value);
     }
 
     /// <summary>A prepared JPEG to show in place of the painted sky. Null shows the painted scene.</summary>
@@ -203,6 +213,14 @@ public sealed partial class SceneCanvas : Grid
             (int)(ActualWidth * _pixelsPerDip),
             (int)(ActualHeight * _pixelsPerDip),
             _sceneTime);
+    }
+
+    private void OnShaken(ShakeEventArgs? shake)
+    {
+        if (shake is not null && !IsPaused)
+        {
+            _scene?.Shake((float)shake.Strength, _sceneTime);
+        }
     }
 
     private void ReplaceScene()

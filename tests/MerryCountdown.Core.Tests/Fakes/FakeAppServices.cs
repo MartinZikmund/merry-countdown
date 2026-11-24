@@ -138,6 +138,21 @@ internal sealed class FakeCompactOverlay(bool isSupported = true) : ICompactOver
     }
 }
 
+internal sealed class FakeShakes : IShakeService
+{
+    private EventHandler<ShakeEventArgs>? _shaken;
+
+    public bool IsListening => _shaken is not null;
+
+    public event EventHandler<ShakeEventArgs>? Shaken
+    {
+        add => _shaken += value;
+        remove => _shaken -= value;
+    }
+
+    public void Shake(double strength) => _shaken?.Invoke(this, new ShakeEventArgs(strength));
+}
+
 internal sealed class FakeGate(bool passes = true) : IParentGateService
 {
     public int Asked { get; private set; }

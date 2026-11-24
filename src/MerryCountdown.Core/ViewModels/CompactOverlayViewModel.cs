@@ -13,6 +13,7 @@ public partial class CompactOverlayViewModel : ViewModelBase
     private readonly ITicker _ticker;
     private readonly ICompactOverlayService _overlay;
     private readonly ISoundService _sounds;
+    private readonly IShakeService _shakes;
 
     public CompactOverlayViewModel(
         IFamilyService family,
@@ -22,8 +23,10 @@ public partial class CompactOverlayViewModel : ViewModelBase
         IStringLocalizer localizer,
         ICompactOverlayService overlay,
         PhotoBackdrop backdrop,
-        ISoundService sounds)
+        ISoundService sounds,
+        IShakeService shakes)
     {
+        _shakes = shakes;
         _family = family;
         _clock = clock;
         _ticker = ticker;
@@ -47,9 +50,21 @@ public partial class CompactOverlayViewModel : ViewModelBase
 
     public bool CalmMotion { get; }
 
-    public void Start() => _ticker.Second += OnSecond;
+    /// <summary>The latest push of a shake, for the scene to answer. The mini window is the natural thing to shake.</summary>
+    [ObservableProperty]
+    public partial ShakeEventArgs? Shake { get; private set; }
 
-    public void Stop() => _ticker.Second -= OnSecond;
+    public void Start()
+    {
+        _ticker.Second += OnSecond;
+        _shakes.Shaken += OnShaken;
+    }
+
+    public void Stop()
+    {
+        _ticker.Second -= OnSecond;
+        _shakes.Shaken -= OnShaken;
+    }
 
     public void SceneTapped() => _sounds.Play(SoundEffect.SceneTap);
 
@@ -57,6 +72,8 @@ public partial class CompactOverlayViewModel : ViewModelBase
     private void Exit() => _overlay.Exit();
 
     private void OnSecond(object? sender, EventArgs e) => Tick();
+
+    private void OnShaken(object? sender, ShakeEventArgs e) => Shake = e;
 
     private void Tick() => Sign.Update(_clock.Now, _family.Settings);
 }
