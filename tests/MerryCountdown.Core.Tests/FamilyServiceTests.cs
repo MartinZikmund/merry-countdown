@@ -86,6 +86,33 @@ public class FamilyServiceTests
     }
 
     [TestMethod]
+    public void RestoreWish_PutsItBackWhereItWas()
+    {
+        var (service, store) = Create();
+        service.AddWish("sledge", null);
+        var puppy = service.AddWish("puppy", null)!;
+        service.AddWish("skates", null);
+        service.RemoveWish(puppy);
+        var saves = store.Saves;
+
+        service.RestoreWish(puppy, 1);
+
+        service.ActiveKid.Wishes.Select(w => w.Text).Should().Equal("sledge", "puppy", "skates");
+        store.Saves.Should().Be(saves + 1);
+    }
+
+    [TestMethod]
+    public void RestoreWish_PastTheEnd_GoesLast()
+    {
+        var (service, _) = Create();
+        service.AddWish("sledge", null);
+
+        service.RestoreWish(new Wish { Text = "puppy" }, 5);
+
+        service.ActiveKid.Wishes.Select(w => w.Text).Should().Equal("sledge", "puppy");
+    }
+
+    [TestMethod]
     public void SendLetter_WithNoWishes_DoesNothing()
     {
         var (service, _) = Create();

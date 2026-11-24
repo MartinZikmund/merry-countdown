@@ -28,6 +28,9 @@ public interface IFamilyService
 
     void RemoveWish(Wish wish);
 
+    /// <summary>Puts a removed wish back at <paramref name="index"/>, or last if the list got shorter.</summary>
+    void RestoreWish(Wish wish, int index);
+
     bool SendLetter(int year);
 
     void ReopenLetter();
@@ -143,6 +146,12 @@ public sealed class FamilyService : IFamilyService
     public void RemoveWish(Wish wish)
     {
         ActiveKid.Wishes.Remove(wish);
+        Commit();
+    }
+
+    public void RestoreWish(Wish wish, int index)
+    {
+        ActiveKid.Wishes.Insert(Math.Clamp(index, 0, ActiveKid.Wishes.Count), wish);
         Commit();
     }
 
