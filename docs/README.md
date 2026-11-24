@@ -14,6 +14,7 @@ One page per topic. Keep it that way — see [`.claude/rules/docs.md`](../.claud
 - [compact-overlay.md](./compact-overlay.md) — the small always-on-top countdown window, and why only WinUI offers it.
 - [countdown-sign.md](./countdown-sign.md) — the choosable signs and countdown styles on Home and Family Display, and how to add a sign.
 - [dialogs.md](./dialogs.md) — how every dialog gets the app look and the chosen theme, and why its template is a copy.
+- [door-content.md](./door-content.md) — what is behind the doors, the rules for jokes, facts and videos, and Czech typography.
 - [door-wall.md](./door-wall.md) — how the 24 doors are drawn, opened and fitted to the screen.
 - [json-aot-serialization.md](./json-aot-serialization.md) — `JsonSerializerContext` conventions for AOT-safe, trim-safe JSON serialization.
 - [keep-screen-on.md](./keep-screen-on.md) — the setting that stops the screen sleeping, how it combines with Family Display and window visibility, and what each head uses.
