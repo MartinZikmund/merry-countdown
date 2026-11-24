@@ -547,6 +547,9 @@
   <data name="FullVersionLockedMessage" xml:space="preserve">
     <value>Nastavení níže odemkne plná verze výše.</value>
   </data>
+  <data name="FullVersionPrompt" xml:space="preserve">
+    <value>Tohle je součást plné verze. Má se na to podívat někdo dospělý?</value>
+  </data>
   <data name="ArrivalHeaderSection" xml:space="preserve">
     <value>Velký okamžik</value>
   </data>

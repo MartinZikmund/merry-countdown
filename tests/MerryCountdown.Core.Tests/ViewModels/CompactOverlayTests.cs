@@ -18,7 +18,7 @@ public sealed class CompactOverlayTests
     private readonly FakeSounds _sounds = new();
 
     private CountdownViewModel Home(ICompactOverlayService overlay) =>
-        new(_family, _full, _clock, _ticker, new FakeStringLocalizer(), new FakeNavigation(), new FakeDisplayMode(), new PhotoBackdrop(_family, _full, new FakePhotoLibrary(), _ticker), new FakeGate(), _sounds, overlay);
+        new(_family, _full, _clock, _ticker, new FakeStringLocalizer(), new FakeNavigation(), new FakeDisplayMode(), new PhotoBackdrop(_family, _full, new FakePhotoLibrary(), _ticker), new FakeGate(), _sounds, overlay, new FakeMessages());
 
     private CompactOverlayViewModel Overlay(ICompactOverlayService overlay) =>
         new(_family, _full, _clock, _ticker, new FakeStringLocalizer(), overlay, new PhotoBackdrop(_family, _full, new FakePhotoLibrary(), _ticker), _sounds);
