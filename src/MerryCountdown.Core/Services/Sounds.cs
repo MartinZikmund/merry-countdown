@@ -15,7 +15,7 @@ public enum SoundEffect
 
 public static class SoundFiles
 {
-    /// <summary>Only letters and underscores: Android packaging renames "-" and Uno's player wouldn't find the file.</summary>
+    /// <summary>Only letters and underscores: Android packaging renames "-" and the player wouldn't find the file.</summary>
     public static string NameOf(SoundEffect effect) => effect switch
     {
         SoundEffect.DoorOpen => "door_open.mp3",

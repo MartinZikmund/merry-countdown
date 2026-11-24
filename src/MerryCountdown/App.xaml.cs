@@ -125,7 +125,7 @@ public partial class App : Application, IApplication
         services.AddSingleton<IFamilyService>(sp => sp.GetRequiredService<FamilyService>());
         services.AddSingleton<IAppClock, SystemClock>();
         services.AddSingleton<ITicker, UiTicker>();
-        services.AddSingleton<ISoundOutput, MediaSoundOutput>();
+        services.AddSingleton<ISoundOutput, PlatformSoundOutput>();
         services.AddSingleton<ISoundService, SoundService>();
         services.AddSingleton<IEntitlementCache, FamilyEntitlementCache>();
         services.AddSingleton<IFullVersionService, FullVersionService>();
