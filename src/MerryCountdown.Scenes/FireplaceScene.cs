@@ -95,9 +95,10 @@ public sealed class FireplaceScene : Scene
     {
     }
 
-    private static (float X, float Floor, float Hearth) Geometry(int width, int height)
+    private (float X, float Floor, float Hearth) Geometry(int width, int height)
     {
-        var hearth = Math.Min(width * 0.62f, height * 0.5f);
+        // Mantel and garland top out 1.12 hearths above the floor.
+        var hearth = Math.Min(Math.Min(width * 0.62f, height * 0.5f), height * (ClearPart - 0.1f) / 1.18f);
         return (width / 2f, height * 0.9f, hearth);
     }
 
@@ -196,7 +197,7 @@ public sealed class FireplaceScene : Scene
         }
     }
 
-    private static (float X, float Y, float Width, float Height, SKColor Color)[] Stockings(int width, int height)
+    private (float X, float Y, float Width, float Height, SKColor Color)[] Stockings(int width, int height)
     {
         var (cx, floor, hearth) = Geometry(width, height);
         var y = floor - (hearth * 1.02f) + (hearth * 0.02f);
@@ -258,7 +259,7 @@ public sealed class FireplaceScene : Scene
         }
     }
 
-    private static (float X, float Bottom, float Size, SKColor Color)[] Presents(int width, int height)
+    private (float X, float Bottom, float Size, SKColor Color)[] Presents(int width, int height)
     {
         var (cx, floor, hearth) = Geometry(width, height);
         var left = cx - (hearth * 0.75f);

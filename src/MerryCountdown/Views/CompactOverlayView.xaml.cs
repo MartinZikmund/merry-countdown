@@ -18,9 +18,15 @@ public sealed partial class CompactOverlayView : UserControl
             Focus(FocusState.Programmatic);
         };
         Unloaded += (_, _) => ViewModel.Stop();
+
+        Root.SizeChanged += (_, _) => TellSceneAboutSign();
+        SignBox.SizeChanged += (_, _) => TellSceneAboutSign();
     }
 
     public CompactOverlayViewModel ViewModel { get; }
+
+    private void TellSceneAboutSign() =>
+        Scene.CoveredTop = Root.ActualHeight > 0 ? SignBox.ActualHeight / Root.ActualHeight : 0;
 
     private void Scene_Tapped(object sender, TappedRoutedEventArgs e) => ViewModel.SceneTapped();
 

@@ -22,9 +22,12 @@ public abstract class Scene : IDisposable
     private const float ShadedPart = 0.6f;
     private const byte ShadeAlpha = 140;
     private const float TapMargin = 0.025f;
+    private const float MostCovered = 0.6f;
 
     private SKImage? _backdrop;
     private SKSizeI _backdropSize;
+    private float _backdropCover;
+    private float _coveredTop;
     private readonly SnowField _snow = new();
     private readonly List<Sparkle> _sparkles = [];
     private SKImage? _photo;
@@ -39,6 +42,18 @@ public abstract class Scene : IDisposable
 
     /// <summary>Reactions light things up instead of moving them.</summary>
     public bool CalmMotion { get; set; }
+
+    /// <summary>
+    /// How much of the height the sign hangs over, from the top. Scenes with a centrepiece shrink it to fit below.
+    /// </summary>
+    public float CoveredTop
+    {
+        get => _coveredTop;
+        set => _coveredTop = float.IsFinite(value) ? Math.Clamp(value, 0, MostCovered) : 0;
+    }
+
+    /// <summary>The share of the height still in plain view.</summary>
+    protected float ClearPart => 1 - _coveredTop;
 
     internal int SparkleCount => _sparkles.Count;
 
@@ -180,7 +195,8 @@ public abstract class Scene : IDisposable
 
     private void EnsureBackdrop(int width, int height)
     {
-        if (_backdrop is not null && _backdropSize.Width == width && _backdropSize.Height == height)
+        var cover = _coveredTop;
+        if (_backdrop is not null && _backdropSize.Width == width && _backdropSize.Height == height && _backdropCover == cover)
         {
             return;
         }
@@ -190,6 +206,7 @@ public abstract class Scene : IDisposable
         PaintStill(surface.Canvas, width, height);
         _backdrop = surface.Snapshot();
         _backdropSize = new SKSizeI(width, height);
+        _backdropCover = cover;
     }
 
     // Some heads render off the UI thread, so a new photo only takes effect between frames.

@@ -39,6 +39,9 @@ public sealed partial class SceneCanvas : Grid
     public static readonly DependencyProperty ShowForegroundProperty = DependencyProperty.Register(
         nameof(ShowForeground), typeof(bool), typeof(SceneCanvas), new PropertyMetadata(true, (d, _) => ((SceneCanvas)d).ApplyPhoto()));
 
+    public static readonly DependencyProperty CoveredTopProperty = DependencyProperty.Register(
+        nameof(CoveredTop), typeof(double), typeof(SceneCanvas), new PropertyMetadata(0d, (d, _) => ((SceneCanvas)d).ApplyCover()));
+
     public static readonly DependencyProperty IsPausedProperty = DependencyProperty.Register(
         nameof(IsPaused), typeof(bool), typeof(SceneCanvas), new PropertyMetadata(false));
 
@@ -128,6 +131,13 @@ public sealed partial class SceneCanvas : Grid
         set => SetValue(ShowForegroundProperty, value);
     }
 
+    /// <summary>How much of the height the sign hangs over, 0 to 1, so the scene can keep its centrepiece below it.</summary>
+    public double CoveredTop
+    {
+        get => (double)GetValue(CoveredTopProperty);
+        set => SetValue(CoveredTopProperty, value);
+    }
+
     public static SceneCanvas CreateConfetti() =>
         new(isTransparent: true) { IsHitTestVisible = false, SceneId = "confetti" };
 
@@ -201,6 +211,7 @@ public sealed partial class SceneCanvas : Grid
         _scene = SceneId == "confetti" ? new ConfettiScene() : Scene.Create(SceneId);
         ApplySnow();
         ApplyCalmMotion();
+        ApplyCover();
         ApplyPhoto();
         _invalidate();
     }
@@ -216,6 +227,14 @@ public sealed partial class SceneCanvas : Grid
         if (_scene is not null)
         {
             _scene.CalmMotion = CalmMotion;
+        }
+    }
+
+    private void ApplyCover()
+    {
+        if (_scene is not null)
+        {
+            _scene.CoveredTop = (float)CoveredTop;
         }
     }
 

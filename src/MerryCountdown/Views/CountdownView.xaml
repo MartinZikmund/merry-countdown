@@ -10,6 +10,7 @@
 
     <Grid x:Name="Root">
         <controls:SceneCanvas
+            x:Name="Scene"
             AutomationProperties.AutomationId="CountdownScene"
             AutomationProperties.Name="{markup:Localize Key=SceneAccessibleName}"
             CalmMotion="{x:Bind ViewModel.CalmMotion, Mode=OneWay}"
