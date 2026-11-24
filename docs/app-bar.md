@@ -3,10 +3,18 @@
 To add a section, add a `RadioButton` to `TabPanel` in `WindowShell.xaml` with `AppBarTabStyle`, a sticker and a label, set its `Tag` to the `NavigationSection` name, and add it to the list in `WindowShell.UpdateTabSelection`.
 
 - The tabs are radio buttons with their own template, not a `NavigationView`, so they can look like the rest of the app: stickers for kids who can't read yet, Baloo for the label, and the same gold as the app's other big buttons for the selected tab.
-- Below 480 wide, the label moves under the sticker so three tabs and the settings button fit on a small phone.
+- The bar is 48 high, with tabs and round buttons 40 high inside it. See [the title bar on Windows](#the-title-bar-on-windows) for why.
 - Settings is the same kind of tab with a plain icon and no label, because it's for grown-ups.
 - A back button appears at the start of the bar when there is somewhere to go back to.
 - On Home, a palette button sits next to Settings. It opens the [look picker](#the-customize-button).
+
+## Bottom tabs on phones
+
+Under 640 wide, the three tabs move to a bar at the bottom, under the thumb: sticker over label, 56 high. They share the width equally, so they fit a 320-wide phone, and stop growing at 420 in total. Back, the palette and Settings stay in the top bar, out of a small thumb's reach.
+
+A phone on its side is wide, so it gets the top bar and keeps its little height for the page.
+
+`AppBarLayout.PlaceTabs` in Core makes the call and `WindowShell.MoveTabs` applies it. It's the same `TabPanel` in both places, moved from one bar to the other, so there is one set of tabs to keep selected.
 
 ## The door badge
 
@@ -16,14 +24,14 @@ This is the only notification the app has. It stays inside the app, so it needs 
 
 ## The title bar on Windows
 
-On the WinUI head the bar is the title bar: the window extends into it, and the tabs share a row with the minimize, maximize and close buttons. The Uno heads keep their own window chrome, so nothing changes there.
+On the WinUI head the bar is the title bar: the window extends into it, and the tabs share a row with the minimize, maximize and close buttons. The title bar is the tall kind, 48 high, which is why the bar is exactly that: the caption buttons and their hover highlight fill it top to bottom. The Uno heads keep their own window chrome, so nothing changes there.
 
 - `DragRegion` is the empty stretch between the tabs and the buttons on the right. It's the only part handed to `Window.SetTitleBar`, so it's the only part that drags the window. A drag region swallows clicks, which is why it never overlaps a control.
 - `LeftInsetColumn` and `RightInsetColumn` take their widths from `AppWindow.TitleBar.LeftInset` and `RightInset`, converted from pixels to DIPs. They keep Settings out from under the caption buttons, on whichever side a right-to-left layout puts them.
-- When the window is too narrow to leave 64 DIPs to drag by, the tabs drop to their own row under a slim strip with the app's icon and name, and the strip becomes the drag region. `AppBarLayout.SharesRowWithCaptionButtons` in Core makes that call, and `WindowShell.ArrangeTitleBar` applies it.
+- When the tabs would leave less than 64 DIPs to drag by, they move to the bottom bar even if the window is a little wider than 640, and the app's icon and name take their place in the drag region.
 - The [compact overlay](./compact-overlay.md) collapses the bar, so it has a drag strip of its own, `OverlayDragRegion`.
 
-To add something to the bar, give it its own column and add its width to `content` in `ArrangeTitleBar`, or the tabs will crowd out the drag region before they move down.
+To add something to the bar, give it its own column and add its width to `content` in `ArrangeBars`, or the tabs will crowd out the drag region before they move down. Keep it 40 high or less.
 
 ## The customize button
 
