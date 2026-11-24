@@ -12,8 +12,6 @@ namespace MerryCountdown;
 
 public sealed partial class WindowShell : Page, IWindowShell
 {
-    private const double NarrowWidth = 480;
-
     private readonly IServiceScope _windowScope;
     private readonly Window _associatedWindow;
     private bool _isWindowClosed;
@@ -235,7 +233,7 @@ public sealed partial class WindowShell : Page, IWindowShell
         windowShellProvider.SetXamlRoot(XamlRoot ?? throw new InvalidOperationException("XamlRoot must be set."));
 
         // A move to a monitor with another scale changes the caption buttons' size in DIPs.
-        XamlRoot.Changed += (_, _) => ArrangeTitleBar();
+        XamlRoot.Changed += (_, _) => ArrangeBars();
     }
 
     public void SetTitleBar(UIElement? titleBar)
@@ -259,6 +257,7 @@ public sealed partial class WindowShell : Page, IWindowShell
         {
             _associatedWindow.ExtendsContentIntoTitleBar = true;
             _associatedWindow.SetTitleBar(DragRegion);
+            _associatedWindow.AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
             _extendsIntoTitleBar = true;
         }
 #endif
@@ -275,23 +274,9 @@ public sealed partial class WindowShell : Page, IWindowShell
     private void AppContent_Loaded(object sender, RoutedEventArgs e)
         => NavigateToSection(NavigationSection.Countdown);
 
-    private void AppContent_SizeChanged(object sender, SizeChangedEventArgs e)
-    {
-        var isNarrow = e.NewSize.Width < NarrowWidth;
-        var orientation = isNarrow ? Orientation.Vertical : Orientation.Horizontal;
+    private void AppContent_SizeChanged(object sender, SizeChangedEventArgs e) => ArrangeBars();
 
-        CountdownTabContent.Orientation = orientation;
-        CalendarTabContent.Orientation = orientation;
-        WishesTabContent.Orientation = orientation;
-
-        foreach (var tab in new[] { CountdownTab, CalendarTab, WishesTab })
-        {
-            tab.FontSize = isNarrow ? 14 : 16;
-        }
-
-        MakeRoomForDoorBadge();
-        ArrangeTitleBar();
-    }
+    private void AppBarContent_SizeChanged(object sender, SizeChangedEventArgs e) => ArrangeBars();
 
     // The badge hangs off the door's corner. Beside the label that's where the label starts, so the label moves over.
     private void MakeRoomForDoorBadge()
@@ -301,58 +286,97 @@ public sealed partial class WindowShell : Page, IWindowShell
         DoorSticker.Margin = new Thickness(0, 0, isBesideLabel && ViewModel.HasWaitingDoor ? BadgeOverhang : 0, 0);
     }
 
-    private void AppBarContent_SizeChanged(object sender, SizeChangedEventArgs e) => ArrangeTitleBar();
-
-#if WINAPPSDK
-    private const double TallCaptionHeight = 48;
     private const double AppBarColumnGaps = 28;
+    private const int TabsColumn = 2;
 
-    private bool _extendsIntoTitleBar;
+    private bool _isAtBottom;
+    private double _tabsWidthOnTop;
 
-    // Tabs beside the caption buttons while that leaves a handle to drag by, otherwise under a title strip.
-    private void ArrangeTitleBar()
+    // The tabs in the top bar while they fit there, otherwise in a bar of their own at the bottom.
+    private void ArrangeBars()
     {
-        if (!_extendsIntoTitleBar || XamlRoot is null || AppBar.ActualWidth == 0)
+        if (XamlRoot is null || AppContent.ActualWidth == 0)
         {
             return;
         }
 
-        // Insets are physical pixels, and swap sides in a right-to-left layout.
+        // Down in the bottom bar the tabs are a different width, so the last one they had up here is what counts.
+        if (!_isAtBottom && TabPanel.ActualWidth > 0)
+        {
+            _tabsWidthOnTop = TabPanel.ActualWidth;
+        }
+
+        var (leftInset, rightInset) = CaptionInsets();
+        var content = AppBar.Padding.Left + AppBar.Padding.Right + AppBarColumnGaps
+            + BackButton.ActualWidth + _tabsWidthOnTop + ChannelBadge.ActualWidth + CustomizeButton.ActualWidth + SettingsTab.ActualWidth;
+        MoveTabs(AppBarLayout.PlaceTabs(AppContent.ActualWidth, content, leftInset + rightInset) == TabsPlacement.Bottom);
+
+        LeftInsetColumn.Width = new GridLength(leftInset);
+        RightInsetColumn.Width = new GridLength(rightInset);
+    }
+
+    private void MoveTabs(bool toBottom)
+    {
+        if (_isAtBottom == toBottom)
+        {
+            return;
+        }
+
+        // Back, the palette and Settings stay up in the top bar, away from small thumbs.
+        _isAtBottom = toBottom;
+        (toBottom ? AppBar : BottomBar).Children.Remove(TabPanel);
+        (toBottom ? BottomBar : AppBar).Children.Add(TabPanel);
+        Grid.SetColumn(TabPanel, toBottom ? 0 : TabsColumn);
+        BottomBar.Visibility = toBottom ? Visibility.Visible : Visibility.Collapsed;
+
+        // At the bottom the tabs are for thumbs: sticker over label, and big. They share the width
+        // equally, so they fit the smallest phone without growing silly on a wider one.
+        TabPanel.MaxWidth = toBottom ? 420 : double.PositiveInfinity;
+        foreach (var column in TabPanel.ColumnDefinitions)
+        {
+            column.Width = toBottom ? new GridLength(1, GridUnitType.Star) : GridLength.Auto;
+        }
+
+        foreach (var content in new[] { CountdownTabContent, CalendarTabContent, WishesTabContent })
+        {
+            content.Orientation = toBottom ? Orientation.Vertical : Orientation.Horizontal;
+            content.Spacing = toBottom ? 0 : 4;
+        }
+
+        foreach (var tab in new[] { CountdownTab, CalendarTab, WishesTab })
+        {
+            tab.FontSize = toBottom ? 14 : 16;
+            tab.MinWidth = toBottom ? 0 : 72;
+            tab.Padding = toBottom ? new Thickness(4, 2, 4, 2) : new Thickness(12, 2, 12, 2);
+            tab.MinHeight = toBottom ? 56 : 40;
+            tab.CornerRadius = new CornerRadius(toBottom ? 28 : 20);
+        }
+
+        MakeRoomForDoorBadge();
+
+#if WINAPPSDK
+        // With the tabs gone from the title bar, there is room for it to say whose window it is.
+        TitleStrip.Visibility = toBottom ? Visibility.Visible : Visibility.Collapsed;
+#endif
+    }
+
+#if WINAPPSDK
+    private bool _extendsIntoTitleBar;
+
+    // Physical pixels, and they swap sides in a right-to-left layout.
+    private (double Left, double Right) CaptionInsets()
+    {
+        if (!_extendsIntoTitleBar)
+        {
+            return (0, 0);
+        }
+
         var titleBar = _associatedWindow.AppWindow.TitleBar;
         var scale = XamlRoot.RasterizationScale;
-        var leftInset = titleBar.LeftInset / scale;
-        var rightInset = titleBar.RightInset / scale;
-
-        var content = AppBar.Padding.Left + AppBar.Padding.Right + AppBarColumnGaps
-            + BackButton.ActualWidth + TabPanel.ActualWidth + ChannelBadge.ActualWidth + CustomizeButton.ActualWidth + SettingsTab.ActualWidth;
-        var sharesRow = AppBarLayout.SharesRowWithCaptionButtons(AppBar.ActualWidth, content, leftInset + rightInset);
-
-        LeftInsetColumn.Width = new GridLength(sharesRow ? leftInset : 0);
-        RightInsetColumn.Width = new GridLength(sharesRow ? rightInset : 0);
-        TitleStrip.Visibility = sharesRow ? Visibility.Collapsed : Visibility.Visible;
-        TitleStrip.Padding = new Thickness(leftInset, 0, rightInset, 0);
-
-        Grid.SetRow(DragRegion, sharesRow ? 1 : 0);
-        Grid.SetColumn(DragRegion, sharesRow ? 3 : 0);
-        Grid.SetColumnSpan(DragRegion, sharesRow ? 1 : 8);
-
-        // Out over the bar's padding, but never over the tabs: a drag region swallows their clicks.
-        var padding = AppBar.Padding;
-        DragRegion.Margin = sharesRow
-            ? new Thickness(0, -padding.Top, 0, -padding.Bottom)
-            : new Thickness(-padding.Left, -padding.Top, -padding.Right, 0);
-
-        // Tall buttons fill the bar they share; standard ones fit the strip.
-        var height = sharesRow && AppBar.ActualHeight >= TallCaptionHeight ? TitleBarHeightOption.Tall : TitleBarHeightOption.Standard;
-        if (titleBar.PreferredHeightOption != height)
-        {
-            titleBar.PreferredHeightOption = height;
-        }
+        return (titleBar.LeftInset / scale, titleBar.RightInset / scale);
     }
 #else
-    private void ArrangeTitleBar()
-    {
-    }
+    private (double Left, double Right) CaptionInsets() => (0, 0);
 #endif
 
     private void Tab_Checked(object sender, RoutedEventArgs e)

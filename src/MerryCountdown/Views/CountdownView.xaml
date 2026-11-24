@@ -28,10 +28,16 @@
             x:Name="SkyPanel"
             HorizontalAlignment="Center"
             VerticalAlignment="Top">
-            <controls:CountdownSign
-                x:Name="SignControl"
-                CalmMotion="{x:Bind ViewModel.CalmMotion, Mode=OneWay}"
-                Sign="{x:Bind ViewModel.Sign}" />
+            <!--  Shrinks rather than loses its ends on the narrowest phones.  -->
+            <Viewbox
+                x:Name="SignBox"
+                Margin="12,0"
+                StretchDirection="DownOnly">
+                <controls:CountdownSign
+                    x:Name="SignControl"
+                    CalmMotion="{x:Bind ViewModel.CalmMotion, Mode=OneWay}"
+                    Sign="{x:Bind ViewModel.Sign}" />
+            </Viewbox>
 
             <!--  Birthdays and other family countdowns (full version)  -->
             <ItemsRepeater

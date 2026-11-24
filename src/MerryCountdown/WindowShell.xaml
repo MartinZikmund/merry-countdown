@@ -19,21 +19,19 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <!--
-                On Windows this is the title bar too: the tabs share a row with the caption buttons,
-                and the inset columns keep them out from under those. See docs/app-bar.md.
+                48 high: on Windows this is the title bar too, and that is the height of its tall caption
+                buttons. The inset columns keep the bar's own buttons out from under those. See docs/app-bar.md.
             -->
             <Grid
                 x:Name="AppBar"
+                Height="48"
                 Padding="8,4"
                 Background="{ThemeResource AppBarBackgroundBrush}"
                 ColumnSpacing="4">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition x:Name="LeftInsetColumn" Width="0" />
                     <ColumnDefinition Width="Auto" />
@@ -48,16 +46,15 @@
                 <!--  The only part of the bar that drags the window, so it never sits under a control.  -->
                 <win:Border
                     x:Name="DragRegion"
-                    Grid.Row="1"
                     Grid.Column="3"
+                    Margin="0,-4"
                     Background="Transparent" />
 
-                <!--  Too narrow to leave a handle beside the tabs: they drop under a slim title strip instead.  -->
+                <!--  With the tabs down in the bottom bar, the title bar has room to say whose window it is.  -->
                 <win:StackPanel
                     x:Name="TitleStrip"
-                    Grid.ColumnSpan="8"
-                    Height="32"
-                    Margin="4,-4,0,0"
+                    Grid.Column="3"
+                    Margin="4,0,0,0"
                     IsHitTestVisible="False"
                     Orientation="Horizontal"
                     Spacing="8"
@@ -76,7 +73,6 @@
 
                 <Button
                     x:Name="BackButton"
-                    Grid.Row="1"
                     Grid.Column="1"
                     AutomationProperties.AutomationId="NavBack"
                     AutomationProperties.Name="{markup:Localize Key=NavBack}"
@@ -88,13 +84,17 @@
                     <FontIcon FontSize="20" Glyph="&#xE72B;" />
                 </Button>
 
-                <StackPanel
+                <!--  A grid, so that in the bottom bar the tabs can share a small phone's width equally.  -->
+                <Grid
                     x:Name="TabPanel"
-                    Grid.Row="1"
                     Grid.Column="2"
-                    Orientation="Horizontal"
-                    SizeChanged="AppBarContent_SizeChanged"
-                    Spacing="4">
+                    ColumnSpacing="4"
+                    SizeChanged="AppBarContent_SizeChanged">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
                     <RadioButton
                         x:Name="CountdownTab"
                         AutomationProperties.AutomationId="NavCountdown"
@@ -116,6 +116,7 @@
                     </RadioButton>
                     <RadioButton
                         x:Name="CalendarTab"
+                        Grid.Column="1"
                         AutomationProperties.AutomationId="NavCalendar"
                         AutomationProperties.Name="{x:Bind ViewModel.DoorsTabName, Mode=OneWay}"
                         Checked="Tab_Checked"
@@ -167,6 +168,7 @@
                     </RadioButton>
                     <RadioButton
                         x:Name="WishesTab"
+                        Grid.Column="2"
                         AutomationProperties.AutomationId="NavWishes"
                         AutomationProperties.Name="{markup:Localize Key=NavWishes}"
                         Checked="Tab_Checked"
@@ -184,11 +186,10 @@
                                 Text="{markup:Localize Key=NavWishes}" />
                         </StackPanel>
                     </RadioButton>
-                </StackPanel>
+                </Grid>
 
                 <controls:DevChannelBadge
                     x:Name="ChannelBadge"
-                    Grid.Row="1"
                     Grid.Column="4"
                     Margin="0,0,4,0"
                     VerticalAlignment="Center"
@@ -197,7 +198,6 @@
                 <!--  Home's look and its display modes: one button, in the bar, out of the scene's way.  -->
                 <Button
                     x:Name="CustomizeButton"
-                    Grid.Row="1"
                     Grid.Column="5"
                     AutomationProperties.AutomationId="CustomizeButton"
                     AutomationProperties.Name="{markup:Localize Key=Customize}"
@@ -220,9 +220,8 @@
                 <!--  For the grown-ups, so it stays out of the way: no sticker, no label.  -->
                 <RadioButton
                     x:Name="SettingsTab"
-                    Grid.Row="1"
                     Grid.Column="6"
-                    MinWidth="44"
+                    MinWidth="40"
                     Padding="0"
                     VerticalAlignment="Center"
                     AutomationProperties.AutomationId="SettingsItem"
@@ -238,6 +237,13 @@
 
             <Frame x:Name="InnerFrame" Grid.Row="1" />
 
+            <!--  On a phone, or a window shaped like one, the tabs move down here, under the thumb.  -->
+            <Grid
+                x:Name="BottomBar"
+                Grid.Row="2"
+                Padding="8,4"
+                Background="{ThemeResource AppBarBackgroundBrush}"
+                Visibility="Collapsed" />
         </Grid>
 
         <!--  The Family Display covers the whole window, navigation included.  -->
