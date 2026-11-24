@@ -20,6 +20,7 @@ public partial class SettingsViewModel : ViewModelBase
     private readonly INavigationService _navigation;
     private readonly IDisplayModeService _display;
     private readonly ILauncherService _launcher;
+    private readonly IScreenWake _screenWake;
     private bool _isInitializing;
 
     public SettingsViewModel(
@@ -32,7 +33,8 @@ public partial class SettingsViewModel : ViewModelBase
         IParentGateService gate,
         INavigationService navigation,
         IDisplayModeService display,
-        ILauncherService launcher)
+        ILauncherService launcher,
+        IScreenWake screenWake)
     {
         _localizer = localizer;
         _appPreferences = appPreferences;
@@ -44,6 +46,7 @@ public partial class SettingsViewModel : ViewModelBase
         _navigation = navigation;
         _display = display;
         _launcher = launcher;
+        _screenWake = screenWake;
         PageTitle = _localizer["Settings"];
     }
 
@@ -54,6 +57,7 @@ public partial class SettingsViewModel : ViewModelBase
         {
             _isInitializing = true;
             Theme = _appPreferences.Theme;
+            KeepScreenOn = _screenWake.KeepScreenOn;
             var settings = _family.Settings;
             IsChristmasEve = settings.BigDay == BigDay.ChristmasEve;
             IsJezisek = settings.GiftBringer == GiftBringer.Jezisek;
@@ -126,6 +130,17 @@ public partial class SettingsViewModel : ViewModelBase
 
     [ObservableProperty]
     public partial bool StartInFamilyDisplay { get; set; }
+
+    [ObservableProperty]
+    public partial bool KeepScreenOn { get; set; }
+
+    partial void OnKeepScreenOnChanged(bool value)
+    {
+        if (!_isInitializing)
+        {
+            _screenWake.KeepScreenOn = value;
+        }
+    }
 
     partial void OnThemeChanged(ElementTheme value)
     {

@@ -424,6 +424,12 @@
   <data name="CalmDescription" xml:space="preserve">
     <value>Slower animations for sensitive eyes and old devices.</value>
   </data>
+  <data name="KeepScreenOnHeader" xml:space="preserve">
+    <value>Keep the screen on</value>
+  </data>
+  <data name="KeepScreenOnDescription" xml:space="preserve">
+    <value>Stops the screen going to sleep while the app is open. Uses more battery.</value>
+  </data>
   <data name="FamilyDisplayDescription" xml:space="preserve">
     <value>Full screen for a TV or tablet left on all advent. Stays awake and moves gently so nothing burns in.</value>
   </data>

@@ -89,6 +89,15 @@ internal sealed class FakeNavigation : INavigationService
     }
 }
 
+internal sealed class FakeScreenWake : IScreenWake
+{
+    public bool KeepScreenOn { get; set; }
+
+    public void SetWindowVisible(bool isVisible)
+    {
+    }
+}
+
 internal sealed class FakeDisplayMode : IDisplayModeService
 {
     public bool IsActive { get; private set; }

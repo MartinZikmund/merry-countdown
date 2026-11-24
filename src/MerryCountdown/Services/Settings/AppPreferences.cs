@@ -39,6 +39,13 @@ public sealed class AppPreferences : IAppPreferences
         set => _preferences.Set(OfferUserRatingKey, value);
     }
 
+    private const string KeepScreenOnKey = "KeepScreenOn";
+    public bool KeepScreenOn
+    {
+        get => _preferences.Get(KeepScreenOnKey, false);
+        set => _preferences.Set(KeepScreenOnKey, value);
+    }
+
     private const string ThemeKey = "AppTheme";
     public ElementTheme Theme
     {

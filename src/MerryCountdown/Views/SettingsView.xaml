@@ -95,6 +95,16 @@
                     IsOn="{x:Bind ViewModel.SoundEnabled, Mode=TwoWay}" />
             </toolkit:SettingsCard>
 
+            <toolkit:SettingsCard Description="{markup:Localize Key=KeepScreenOnDescription}" Header="{markup:Localize Key=KeepScreenOnHeader}">
+                <toolkit:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE706;" />
+                </toolkit:SettingsCard.HeaderIcon>
+                <ToggleSwitch
+                    AutomationProperties.AutomationId="KeepScreenOnToggle"
+                    AutomationProperties.Name="{markup:Localize Key=KeepScreenOnHeader}"
+                    IsOn="{x:Bind ViewModel.KeepScreenOn, Mode=TwoWay}" />
+            </toolkit:SettingsCard>
+
             <!--  Family Display  -->
             <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{markup:Localize Key=FamilyDisplay}" />
 
