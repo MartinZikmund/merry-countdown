@@ -50,7 +50,7 @@ public sealed partial class SceneCanvas : Grid
 
     private readonly Stopwatch _clock = new();
     private readonly Action _invalidate;
-    private Scene? _scene;
+    private readonly SceneSlot _slot = new();
     private SKImage? _photoImage;
     private TimeSpan _lastFrame;
     private float _sceneTime;
@@ -151,8 +151,16 @@ public sealed partial class SceneCanvas : Grid
     public static SceneCanvas CreateConfetti() =>
         new(isTransparent: true) { IsHitTestVisible = false, SceneId = "confetti" };
 
+    private Scene? Current => _slot.Scene;
+
     private void Start()
     {
+        // Back on screen after its scene was freed.
+        if (Current is null && SceneId is not null)
+        {
+            ReplaceScene();
+        }
+
         if (_isRunning)
         {
             return;
@@ -164,11 +172,13 @@ public sealed partial class SceneCanvas : Grid
         CompositionTarget.Rendering += OnRendering;
     }
 
+    // Pages are built afresh on every visit. A scene left behind would hold its images until a full GC.
     private void Stop()
     {
         _isRunning = false;
         _clock.Stop();
         CompositionTarget.Rendering -= OnRendering;
+        _slot.Replace(null);
     }
 
     // Left running on a TV all month, so it's throttled well below the display's refresh rate.
@@ -200,14 +210,14 @@ public sealed partial class SceneCanvas : Grid
             _pixelsPerDip = (float)(pixelWidth / ActualWidth);
         }
 
-        _scene?.Render(canvas, (int)pixelWidth, (int)pixelHeight, _sceneTime);
+        _slot.Render(canvas, (int)pixelWidth, (int)pixelHeight, _sceneTime);
         canvas.Flush();
     }
 
     private void OnTapped(object sender, TappedRoutedEventArgs e)
     {
         var point = e.GetPosition(this);
-        _scene?.Tap(
+        Current?.Tap(
             (float)point.X * _pixelsPerDip,
             (float)point.Y * _pixelsPerDip,
             (int)(ActualWidth * _pixelsPerDip),
@@ -219,14 +229,13 @@ public sealed partial class SceneCanvas : Grid
     {
         if (shake is not null && !IsPaused)
         {
-            _scene?.Shake((float)shake.Strength, _sceneTime);
+            Current?.Shake((float)shake.Strength, _sceneTime);
         }
     }
 
     private void ReplaceScene()
     {
-        // Not disposed here: a frame may still be painting it on another thread. The GC gets its images.
-        _scene = SceneId == "confetti" ? new ConfettiScene() : Scene.Create(SceneId);
+        _slot.Replace(SceneId == "confetti" ? new ConfettiScene() : Scene.Create(SceneId));
         ApplySnow();
         ApplyCalmMotion();
         ApplyCover();
@@ -242,27 +251,27 @@ public sealed partial class SceneCanvas : Grid
 
     private void ApplyCalmMotion()
     {
-        if (_scene is not null)
+        if (Current is { } scene)
         {
-            _scene.CalmMotion = CalmMotion;
+            scene.CalmMotion = CalmMotion;
         }
     }
 
     private void ApplyCover()
     {
-        if (_scene is not null)
+        if (Current is { } scene)
         {
-            _scene.CoveredTop = (float)CoveredTop;
+            scene.CoveredTop = (float)CoveredTop;
         }
     }
 
-    private void ApplyPhoto() => _scene?.SetPhoto(_photoImage, ShowForeground);
+    private void ApplyPhoto() => Current?.SetPhoto(_photoImage, ShowForeground);
 
     private void ApplySnow()
     {
-        if (_scene is not null)
+        if (Current is { } scene)
         {
-            _scene.Snow = Snow switch
+            scene.Snow = Snow switch
             {
                 SnowLevel.Off => SnowAmount.None,
                 SnowLevel.Blizzard => SnowAmount.Blizzard,
