@@ -26,10 +26,9 @@ Both install. Both run. Neither can see the other's settings.
 | Android launcher | `Merry Countdown Dev` | `Merry Countdown Dev [Iden]` |
 | iOS home screen | `Merry Countdown Dev` | `Merry Countdown Dev [Iden]` |
 
-The worktree rides along with the existing `DEV` badge in the title bar rather than being spliced
-into the app name, so the chrome stays readable. On the Windows head the badge lives in
-`TitleBar.RightHeader`, which the control positions *before* the system caption buttons — a corner
-overlay sits on top of the close button.
+The worktree rides along with the existing `DEV` badge in the app bar rather than being spliced
+into the app name, so the chrome stays readable. The badge has its own column there, before the
+caption-button inset on the Windows head — a corner overlay sits on top of the close button.
 
 **On mobile the channel now reaches the label too.** `ApplicationTitle` never gets there — those
 names are resource-driven — so a Dev build used to read plain `Merry Countdown`, contradicting what

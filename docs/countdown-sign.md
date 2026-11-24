@@ -1,6 +1,6 @@
 # The countdown sign
 
-To change how the home screen counts down, open the palette button at the top right of the scene. Families pick a **sign** (snowy plank, gingerbread, parcel tag, station sign or bauble garland) and a **countdown style** (number plates or sleeps and a clock). Family Display follows the same two settings.
+To change how the home screen counts down, open the palette button in the app bar. Families pick a **sign** (snowy plank, gingerbread, parcel tag, station sign or bauble garland) and a **countdown style** (number plates or sleeps and a clock). Family Display follows the same two settings.
 
 Both are saved in `FamilySettings.Sign` and `FamilySettings.CountdownStyle`. Number plates on the snowy plank are the default, and families who saved data before signs existed get that default too.
 
