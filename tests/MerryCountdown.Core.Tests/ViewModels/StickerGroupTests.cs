@@ -56,4 +56,26 @@ public class StickerGroupTests
 
         vm.SelectedSticker.Should().BeNull();
     }
+
+    [TestMethod]
+    public void ChooseSticker_MarksOnlyThePickedOneAsSelected()
+    {
+        var vm = Create();
+
+        vm.ChooseStickerCommand.Execute(vm.Stickers[0]);
+        vm.ChooseStickerCommand.Execute(vm.Stickers[1]);
+
+        vm.Stickers.Where(s => s.IsSelected).Should().Equal(vm.Stickers[1]);
+    }
+
+    [TestMethod]
+    public void AddWish_ClearsTheSelectedMark()
+    {
+        var vm = Create();
+        vm.ChooseStickerCommand.Execute(vm.Stickers[0]);
+
+        vm.AddWishCommand.Execute(null);
+
+        vm.Stickers.Should().OnlyContain(s => !s.IsSelected);
+    }
 }
