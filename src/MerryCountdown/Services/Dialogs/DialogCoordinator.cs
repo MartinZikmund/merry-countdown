@@ -26,6 +26,12 @@ public sealed class DialogCoordinator : IDialogCoordinator
             var queued = _dialogQueue.Dequeue();
             try
             {
+                // A dialog lives in the popup layer, outside the shell, so it misses the theme picked in Settings.
+                if (queued.Dialog.XamlRoot?.Content is FrameworkElement shell)
+                {
+                    queued.Dialog.RequestedTheme = shell.RequestedTheme;
+                }
+
                 var result = await queued.Dialog.ShowAsync();
                 queued.CompletionSource.SetResult(result);
             }
