@@ -313,6 +313,9 @@
   <data name="WishPickPicture" xml:space="preserve">
     <value>Or pick a picture:</value>
   </data>
+  <data name="WishPickPictureButton" xml:space="preserve">
+    <value>Pick a picture</value>
+  </data>
   <data name="AddWish" xml:space="preserve">
     <value>Add to my letter</value>
   </data>
