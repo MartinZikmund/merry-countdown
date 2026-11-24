@@ -1,7 +1,8 @@
 # Wish pictures
 
-A kid who can't write yet asks for things by picking a picture. The Wishes page shows one button: it holds
-the chosen picture (or "Pick a picture") and opens a flyout with all of them, grouped by kind and scrollable.
+A kid who can't write yet asks for things by picking a picture. The Wishes page shows one button, "Pick a picture",
+that opens a flyout with all of them, grouped by kind and scrollable. Picking one adds the wish straight away; see
+[the wish letter](./wish-letter.md).
 
 ## Adding a picture
 
@@ -21,10 +22,10 @@ A group is a new `StickerGroup("key", [...])` plus `StickerGroup_<key>` in both 
 
 - `StickerCatalog` (Core): the groups and keys, in the order the flyout shows them.
 - `WishListViewModel.StickerGroups`: the same groups with localized names; `Stickers` is the flat list.
-  Picking runs `ChooseStickerCommand`, and picking the chosen one again clears it. `WishStickerViewModel.IsSelected`
-  drives the highlight.
+  Picking runs `AddPictureWishCommand`.
 - `Controls/StickerPicker`: a `UserControl` with three properties: `Groups`, `SelectedSticker` and `ChooseCommand`.
-  It knows nothing about wishes, so another page can reuse it.
+  It knows nothing about wishes, so another page can reuse it. The Wishes page leaves `SelectedSticker` unset,
+  because a picked picture goes straight onto the letter.
 
 Each picture is a 64 x 64 target at least; the flyout is at most 336 wide and shrinks to fit a 320-wide phone
 (three per row there).
