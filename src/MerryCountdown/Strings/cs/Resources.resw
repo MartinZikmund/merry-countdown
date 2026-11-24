@@ -376,6 +376,117 @@
   <data name="Sticker_candy" xml:space="preserve">
     <value>Sladkosti</value>
   </data>
+  <data name="Sticker_doll" xml:space="preserve">
+    <value>Panenka</value>
+  </data>
+  <data name="Sticker_car" xml:space="preserve">
+    <value>Autíčko</value>
+  </data>
+  <data name="Sticker_plane" xml:space="preserve">
+    <value>Letadlo</value>
+  </data>
+  <data name="Sticker_dinosaur" xml:space="preserve">
+    <value>Dinosaurus</value>
+  </data>
+  <data name="Sticker_unicorn" xml:space="preserve">
+    <value>Jednorožec</value>
+  </data>
+  <data name="Sticker_puzzle" xml:space="preserve">
+    <value>Puzzle</value>
+  </data>
+  <data name="Sticker_drum" xml:space="preserve">
+    <value>Buben</value>
+  </data>
+  <data name="Sticker_guitar" xml:space="preserve">
+    <value>Kytara</value>
+  </data>
+  <data name="Sticker_scooter" xml:space="preserve">
+    <value>Koloběžka</value>
+  </data>
+  <data name="Sticker_sledge" xml:space="preserve">
+    <value>Sáňky</value>
+  </data>
+  <data name="Sticker_kite" xml:space="preserve">
+    <value>Drak</value>
+  </data>
+  <data name="Sticker_swimming" xml:space="preserve">
+    <value>Plavací kruh</value>
+  </data>
+  <data name="Sticker_tent" xml:space="preserve">
+    <value>Stan</value>
+  </data>
+  <data name="Sticker_telescope" xml:space="preserve">
+    <value>Dalekohled</value>
+  </data>
+  <data name="Sticker_tablet" xml:space="preserve">
+    <value>Tablet</value>
+  </data>
+  <data name="Sticker_headphones" xml:space="preserve">
+    <value>Sluchátka</value>
+  </data>
+  <data name="Sticker_camera" xml:space="preserve">
+    <value>Fotoaparát</value>
+  </data>
+  <data name="Sticker_shoes" xml:space="preserve">
+    <value>Boty</value>
+  </data>
+  <data name="Sticker_hat" xml:space="preserve">
+    <value>Zimní čepice</value>
+  </data>
+  <data name="Sticker_backpack" xml:space="preserve">
+    <value>Batoh</value>
+  </data>
+  <data name="Sticker_watch" xml:space="preserve">
+    <value>Hodinky</value>
+  </data>
+  <data name="Sticker_mitten" xml:space="preserve">
+    <value>Rukavice</value>
+  </data>
+  <data name="Sticker_horse" xml:space="preserve">
+    <value>Kůň</value>
+  </data>
+  <data name="Sticker_rabbit" xml:space="preserve">
+    <value>Králíček</value>
+  </data>
+  <data name="Sticker_fish" xml:space="preserve">
+    <value>Rybička</value>
+  </data>
+  <data name="Sticker_hamster" xml:space="preserve">
+    <value>Křeček</value>
+  </data>
+  <data name="Sticker_cookie" xml:space="preserve">
+    <value>Sušenka</value>
+  </data>
+  <data name="Sticker_gingerbread" xml:space="preserve">
+    <value>Perníček</value>
+  </data>
+  <data name="Sticker_cake" xml:space="preserve">
+    <value>Dort</value>
+  </data>
+  <data name="Sticker_sweetsbox" xml:space="preserve">
+    <value>Bonboniéra</value>
+  </data>
+  <data name="Sticker_gift" xml:space="preserve">
+    <value>Překvapení</value>
+  </data>
+  <data name="StickerGroup_toys" xml:space="preserve">
+    <value>Hračky</value>
+  </data>
+  <data name="StickerGroup_play" xml:space="preserve">
+    <value>Hry a zábava</value>
+  </data>
+  <data name="StickerGroup_gadgets" xml:space="preserve">
+    <value>Elektronika</value>
+  </data>
+  <data name="StickerGroup_wear" xml:space="preserve">
+    <value>Oblečení</value>
+  </data>
+  <data name="StickerGroup_animals" xml:space="preserve">
+    <value>Zvířátka</value>
+  </data>
+  <data name="StickerGroup_treats" xml:space="preserve">
+    <value>Dobroty a překvapení</value>
+  </data>
   <data name="SettingsChristmas" xml:space="preserve">
     <value>Vánoce</value>
   </data>
