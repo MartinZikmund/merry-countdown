@@ -325,8 +325,11 @@
   <data name="SendLetter" xml:space="preserve">
     <value>Send my letter!</value>
   </data>
-  <data name="LetterSentMessage" xml:space="preserve">
-    <value>Whoosh! Your letter is on its way to {0}!</value>
+  <data name="LetterSent_Santa" xml:space="preserve">
+    <value>Whoosh! Your letter is on its way to Santa!</value>
+  </data>
+  <data name="LetterSent_Jezisek" xml:space="preserve">
+    <value>Whoosh! Your letter is on its way to Je&#382;&#237;&#353;ek!</value>
   </data>
   <data name="WriteMore" xml:space="preserve">
     <value>I forgot something!</value>
@@ -769,10 +772,22 @@
   <data name="PhotoIntervalHeader" xml:space="preserve">
     <value>Change the photo every</value>
   </data>
-  <data name="PhotoIntervalSeconds" xml:space="preserve">
+  <data name="PhotoIntervalSeconds_One" xml:space="preserve">
+    <value>{0} second</value>
+  </data>
+  <data name="PhotoIntervalSeconds_Few" xml:space="preserve">
     <value>{0} seconds</value>
   </data>
-  <data name="PhotoIntervalMinutes" xml:space="preserve">
+  <data name="PhotoIntervalSeconds_Many" xml:space="preserve">
+    <value>{0} seconds</value>
+  </data>
+  <data name="PhotoIntervalMinutes_One" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="PhotoIntervalMinutes_Few" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="PhotoIntervalMinutes_Many" xml:space="preserve">
     <value>{0} min</value>
   </data>
   <data name="RemovePhotoTitle" xml:space="preserve">
