@@ -587,3 +587,36 @@ public class ParentZoneViewModelTests
         family.Events.Should().ContainSingle(e => e.Name == "Birthday" && e.Month == 3 && e.Day == 14);
     }
 }
+
+[TestClass]
+public class LocalizedCountTests
+{
+    [TestMethod]
+    public void PhotoIntervals_UseTheFormForTheirCount()
+    {
+        FakeStringLocalizer localizer = new(new Dictionary<string, string>
+        {
+            ["PhotoIntervalSeconds_One"] = "s1", ["PhotoIntervalSeconds_Few"] = "sF", ["PhotoIntervalSeconds_Many"] = "{0} sM",
+            ["PhotoIntervalMinutes_One"] = "{0} m1", ["PhotoIntervalMinutes_Few"] = "mF", ["PhotoIntervalMinutes_Many"] = "{0} mM",
+        });
+        FamilyService family = new(new FakeFamilyStore(), "cs-CZ");
+        ParentZoneViewModel vm = new(family, new FakeFullVersion(true), localizer, new FakeMessages(), new FakeClock(new DateTime(2026, 11, 5)), new FakePhotoLibrary());
+
+        vm.PhotoIntervalOptions.Should().Equal("30 sM", "1 m1", "5 mM", "15 mM", "30 mM", "60 mM");
+    }
+
+    [DataRow("Jezisek")]
+    [DataRow("Santa")]
+    [TestMethod]
+    public void SentMessage_IsWrittenOutForTheChosenGiftBringer(string bringer)
+    {
+        FamilyService family = new(new FakeFamilyStore(), "cs-CZ");
+        family.Settings.GiftBringer = Enum.Parse<GiftBringer>(bringer);
+        FakeStringLocalizer localizer = new();
+        WishListViewModel vm = new(family, new FakeClock(new DateTime(2026, 11, 5)), localizer, new FakeGate(), new FakeShare(), new KidPickerViewModel(family, localizer), new FakeSounds());
+
+        vm.ViewLoaded();
+
+        vm.SentMessage.Should().Be($"LetterSent_{bringer}");
+    }
+}
