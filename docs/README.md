@@ -16,7 +16,8 @@ One page per topic. Keep it that way — see [`.claude/rules/docs.md`](../.claud
 - [dialogs.md](./dialogs.md) — how every dialog gets the app look and the chosen theme, and why its template is a copy.
 - [door-wall.md](./door-wall.md) — how the 24 doors are drawn, opened and fitted to the screen.
 - [json-aot-serialization.md](./json-aot-serialization.md) — `JsonSerializerContext` conventions for AOT-safe, trim-safe JSON serialization.
-- [keep-screen-on.md](./keep-screen-on.md) � the setting that stops the screen sleeping, how it combines with Family Display and window visibility, and what each head uses.
+- [keep-screen-on.md](./keep-screen-on.md) — the setting that stops the screen sleeping, how it combines with Family Display and window visibility, and what each head uses.
+- [localization.md](./localization.md) — adding strings, plural forms for counted things, names in Czech, and the Czech house style.
 - [scene-taps.md](./scene-taps.md) — what each scene does when tapped, and how to make something tappable.
 - [sound-effects.md](./sound-effects.md) — which taps make which sounds, what plays them on each head, how to add one, and who made them.
 - [views.md](./views.md) — `ViewBase<TViewModel>`, `IViewBase`, and how views resolve their view models.

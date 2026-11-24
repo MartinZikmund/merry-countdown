@@ -1,5 +1,6 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using MerryCountdown.Core.Family;
+using MerryCountdown.Core.Infrastructure;
 using MerryCountdown.Core.Season;
 using MerryCountdown.Core.Store;
 
@@ -36,7 +37,7 @@ public partial class ParentZoneViewModel : ViewModelBase
         _clock = clock;
         _photos = photos;
         ForegroundOptions = [localizer["PhotoForegroundNone"], .. SceneCatalog.All.Select(scene => localizer[$"Scene_{scene.Id}"].Value)];
-        PhotoIntervalOptions = [.. PhotoIntervals.Select(seconds => seconds < 60 ? localizer["PhotoIntervalSeconds", seconds].Value : localizer["PhotoIntervalMinutes", seconds / 60].Value)];
+        PhotoIntervalOptions = [.. PhotoIntervals.Select(seconds => seconds < 60 ? localizer.Plural("PhotoIntervalSeconds", seconds) : localizer.Plural("PhotoIntervalMinutes", seconds / 60))];
         PageTitle = localizer["ParentZoneTitle"];
         NewEventDate = new DateTimeOffset(clock.Now.Date);
         Load();

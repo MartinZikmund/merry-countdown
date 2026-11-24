@@ -127,7 +127,7 @@
     <value>Motiv</value>
   </data>
   <data name="About" xml:space="preserve">
-    <value>O aplikaci</value>
+    <value>O&#160;aplikaci</value>
   </data>
   <data name="WorktreeFormat" xml:space="preserve">
     <value>Pracovn&#237; strom: {0}</value>
@@ -152,7 +152,7 @@
     <value>Ne</value>
   </data>
   <data name="ElementTheme_Default" xml:space="preserve">
-    <value>Syst&#233;mov&#253; v&#253;choz&#237;</value>
+    <value>Podle syst&#233;mu</value>
   </data>
   <data name="ElementTheme_Light" xml:space="preserve">
     <value>Sv&#283;tl&#253;</value>
@@ -164,13 +164,13 @@
     <value>L&#237;b&#237; se v&#225;m aplikace?</value>
   </data>
   <data name="RateAppMessage" xml:space="preserve">
-    <value>Pokud r&#225;di pou&#382;&#237;v&#225;te tuto aplikaci, nev&#225;hejte ji ohodnotit. Va&#353;e zp&#283;tn&#225; vazba n&#225;m pom&#225;h&#225;!</value>
+    <value>Pokud se v&#225;m aplikace l&#237;b&#237;, ohodno&#357;te ji pros&#237;m. Pom&#367;&#382;e n&#225;m to!</value>
   </data>
   <data name="ApplicationName" xml:space="preserve">
     <value>Veselé odpočítávání</value>
   </data>
   <data name="AboutAppDescription" xml:space="preserve">
-    <value>Vánoční odpočítávání, adventní kalendář a seznam přání pro děti a rodiny. Vyrobil v Praze Martin Zikmund.</value>
+    <value>Vánoční odpočítávání, adventní kalendář a&#160;seznam přání pro děti a&#160;rodiny. Vyrobil v&#160;Praze Martin Zikmund.</value>
   </data>
   <data name="NavCountdown" xml:space="preserve">
     <value>Domů</value>
@@ -182,7 +182,7 @@
     <value>Přání</value>
   </data>
   <data name="NavDoorWaiting" xml:space="preserve">
-    <value>Okénka: okénko {0} čeká na otevření</value>
+    <value>Okénka: okénko {0}&#160;čeká na otevření</value>
   </data>
   <data name="NavBack" xml:space="preserve">
     <value>Zpět</value>
@@ -227,7 +227,7 @@
     <value>Zasněžená vesnička</value>
   </data>
   <data name="Scene_globe" xml:space="preserve">
-    <value>Sněhové těžítko (klepnutím zatřes!)</value>
+    <value>Sn&#283;&#382;&#237;tko (klepni a&#160;zat&#345;es!)</value>
   </data>
   <data name="Scene_aurora" xml:space="preserve">
     <value>Polární záře</value>
@@ -242,28 +242,28 @@
     <value>dnes!</value>
   </data>
   <data name="EventInSleeps_One" xml:space="preserve">
-    <value>za {0} spaní</value>
+    <value>za {0}&#160;spaní</value>
   </data>
   <data name="EventInSleeps_Few" xml:space="preserve">
-    <value>za {0} spaní</value>
+    <value>za {0}&#160;spaní</value>
   </data>
   <data name="EventInSleeps_Many" xml:space="preserve">
-    <value>za {0} spaní</value>
+    <value>za {0}&#160;spaní</value>
   </data>
   <data name="CalendarTitle" xml:space="preserve">
     <value>Adventní okénka</value>
   </data>
   <data name="CalendarProgress" xml:space="preserve">
-    <value>otevřeno {0} z {1}</value>
+    <value>Otev&#345;eno {0}&#160;z&#160;{1}</value>
   </data>
   <data name="DoorLockedHint_One" xml:space="preserve">
-    <value>Ještě ne! Toto okénko se otevře po {0} spaní.</value>
+    <value>Je&#353;t&#283; ne! Tohle ok&#233;nko se otev&#345;e za {0}&#160;span&#237;.</value>
   </data>
   <data name="DoorLockedHint_Few" xml:space="preserve">
-    <value>Ještě ne! Toto okénko se otevře po {0} spaních.</value>
+    <value>Je&#353;t&#283; ne! Tohle ok&#233;nko se otev&#345;e za {0}&#160;span&#237;.</value>
   </data>
   <data name="DoorLockedHint_Many" xml:space="preserve">
-    <value>Ještě ne! Toto okénko se otevře po {0} spaních.</value>
+    <value>Je&#353;t&#283; ne! Tohle ok&#233;nko se otev&#345;e za {0}&#160;span&#237;.</value>
   </data>
   <data name="DoorAccessible_Locked" xml:space="preserve">
     <value>Okénko {0}, ještě zavřené</value>
@@ -278,7 +278,7 @@
     <value>Řekni mi to!</value>
   </data>
   <data name="WatchWithGrownUp" xml:space="preserve">
-    <value>Dívej se s dospělým</value>
+    <value>Pod&#237;vat se s&#160;dosp&#283;l&#253;m</value>
   </data>
   <data name="CloseDoor" xml:space="preserve">
     <value>Zavřít</value>
@@ -290,10 +290,10 @@
     <value>Můj seznam přání</value>
   </data>
   <data name="LetterIntro" xml:space="preserve">
-    <value>Letos bych si moc přál(a):</value>
+    <value>Letos si moc p&#345;eju:</value>
   </data>
   <data name="LetterSignOff" xml:space="preserve">
-    <value>S láskou,</value>
+    <value>S&#160;láskou,</value>
   </data>
   <data name="YourName" xml:space="preserve">
     <value>Tvoje jméno</value>
@@ -305,7 +305,7 @@
     <value>Milý Ježíšku,</value>
   </data>
   <data name="WishPrompt" xml:space="preserve">
-    <value>Co by sis přál(a)?</value>
+    <value>Co si p&#345;eje&#353;?</value>
   </data>
   <data name="WishPlaceholder" xml:space="preserve">
     <value>Červené sáňky</value>
@@ -320,16 +320,19 @@
     <value>Přidat do dopisu</value>
   </data>
   <data name="RemoveWish" xml:space="preserve">
-    <value>Odebrat toto přání</value>
+    <value>Odebrat p&#345;&#225;n&#237;</value>
   </data>
   <data name="SendLetter" xml:space="preserve">
-    <value>Odeslat dopis!</value>
+    <value>Poslat dopis!</value>
   </data>
-  <data name="LetterSentMessage" xml:space="preserve">
-    <value>Fíí! Tvůj dopis letí za tím, komu patří: {0}!</value>
+  <data name="LetterSent_Santa" xml:space="preserve">
+    <value>F&#237;&#237;! Dopis u&#382; let&#237; k&#160;Santovi!</value>
+  </data>
+  <data name="LetterSent_Jezisek" xml:space="preserve">
+    <value>F&#237;&#237;! Dopis u&#382; let&#237; k&#160;Je&#382;&#237;&#353;kovi!</value>
   </data>
   <data name="WriteMore" xml:space="preserve">
-    <value>Na něco jsem zapomněl(a)!</value>
+    <value>N&#283;co m&#283; je&#353;t&#283; napadlo!</value>
   </data>
   <data name="ShareWishes" xml:space="preserve">
     <value>Ukázat dospělému</value>
@@ -497,16 +500,16 @@
     <value>Náš velký den</value>
   </data>
   <data name="BigDayDescription" xml:space="preserve">
-    <value>Kdy u vás doma přichází dárky?</value>
+    <value>Kdy se u&#160;v&#225;s doma rozd&#225;vaj&#237; d&#225;rky?</value>
   </data>
   <data name="BringerHeader" xml:space="preserve">
     <value>Kdo nosí dárky?</value>
   </data>
   <data name="BringerDescription" xml:space="preserve">
-    <value>Použije se v dopisech a zprávách.</value>
+    <value>Použije se v&#160;dopisech a&#160;zprávách.</value>
   </data>
   <data name="SettingsLook" xml:space="preserve">
-    <value>Vzhled a pohyb</value>
+    <value>Vzhled a&#160;pohyb</value>
   </data>
   <data name="SnowHeader" xml:space="preserve">
     <value>Sněžení</value>
@@ -524,19 +527,19 @@
     <value>Zvuky</value>
   </data>
   <data name="SoundDescription" xml:space="preserve">
-    <value>Vrzání dveří, zvonění a třpyt při klepnutí.</value>
+    <value>Vrz&#225;n&#237; dv&#237;&#345;ek, zvon&#283;n&#237; a&#160;cink&#225;n&#237; p&#345;i klepnut&#237;.</value>
   </data>
   <data name="SoundCreditsHeader" xml:space="preserve">
     <value>Autoři zvuků</value>
   </data>
   <data name="SoundCreditsDescription" xml:space="preserve">
-    <value>Zvuky vytvořili Kenney (kenney.nl), laleksic, The Midnite Wolf, Asud12, haeldb, fvcalderan, wubitog, pyranostudios. Všechny jsou uvolněny pod licencí CC0.</value>
+    <value>Zvuky od Kenney (kenney.nl), laleksic, The Midnite Wolf, Asud12, haeldb, fvcalderan, wubitog, pyranostudios. V&#353;echny jsou pod licenc&#237; CC0.</value>
   </data>
   <data name="CalmHeader" xml:space="preserve">
     <value>Klidný pohyb</value>
   </data>
   <data name="CalmDescription" xml:space="preserve">
-    <value>Pomalejší animace pro citlivé oči a starší zařízení.</value>
+    <value>Pomalejší animace pro citlivé oči a&#160;starší zařízení.</value>
   </data>
   <data name="KeepScreenOnHeader" xml:space="preserve">
     <value>Nechat displej svítit</value>
@@ -545,7 +548,7 @@
     <value>Displej při otevřené aplikaci nezhasne. Víc vybíjí baterii.</value>
   </data>
   <data name="FamilyDisplayDescription" xml:space="preserve">
-    <value>Celá obrazovka pro televizi nebo tablet zapnutý po celý advent. Nezhasíná a jemně se pohybuje, aby se nic nevypálilo.</value>
+    <value>Na celou obrazovku pro televizi nebo tablet, kter&#253; cel&#253; advent sv&#237;t&#237;. Nezhas&#237;n&#225; a&#160;jemn&#283; se h&#253;be, aby se obraz nevyp&#225;lil.</value>
   </data>
   <data name="FamilyDisplayStart" xml:space="preserve">
     <value>Spustit</value>
@@ -554,10 +557,10 @@
     <value>Měnit obrázek každých 30 minut</value>
   </data>
   <data name="DisplayAutostart" xml:space="preserve">
-    <value>Vždy začít rodinnou obrazovkou</value>
+    <value>V&#382;dy za&#269;&#237;t na rodinn&#233; obrazovce</value>
   </data>
   <data name="DisplayAutostartDescription" xml:space="preserve">
-    <value>Tip: spusťte desktopovou aplikaci s parametrem --display nebo otevřete webovou s ?display=1.</value>
+    <value>Tip: aplikaci pro po&#269;&#237;ta&#269; spus&#357;te s&#160;parametrem --display, webovou verzi otev&#345;ete s&#160;?display=1.</value>
   </data>
   <data name="SettingsGrownUps" xml:space="preserve">
     <value>Dospělí</value>
@@ -566,22 +569,22 @@
     <value>Koutek pro dospělé</value>
   </data>
   <data name="ParentZoneDescription" xml:space="preserve">
-    <value>Děti, plná verze, osobní vzkazy a rodinné události.</value>
+    <value>Děti, plná verze, osobní vzkazy a&#160;rodinné události.</value>
   </data>
   <data name="PrivacyHeader" xml:space="preserve">
     <value>Soukromí</value>
   </data>
   <data name="PrivacyDescription" xml:space="preserve">
-    <value>Vše zůstává v tomto zařízení. Žádné účty, reklamy ani sledování. Nic se nikam neposílá, pokud to nesdílí dospělý.</value>
+    <value>V&#353;e z&#367;st&#225;v&#225; v&#160;tomto za&#345;&#237;zen&#237;. &#381;&#225;dn&#233; &#250;&#269;ty, reklamy ani sledov&#225;n&#237;. Nic se nikam nepos&#237;l&#225;, dokud to n&#283;kdo z&#160;dosp&#283;l&#253;ch nepo&#353;le d&#225;l.</value>
   </data>
   <data name="ParentGateTitle" xml:space="preserve">
     <value>Jen pro dospělé</value>
   </data>
   <data name="ParentGateMessage" xml:space="preserve">
-    <value>Pro pokračování prosím odpovězte.</value>
+    <value>Pro pokra&#269;ov&#225;n&#237; pros&#237;m odpov&#283;zte na ot&#225;zku.</value>
   </data>
   <data name="ParentGateQuestion" xml:space="preserve">
-    <value>Kolik je {0} krát {1}?</value>
+    <value>Kolik je {0}&#160;krát {1}?</value>
   </data>
   <data name="ParentGatePlaceholder" xml:space="preserve">
     <value>Odpověď číslem</value>
@@ -635,13 +638,13 @@
     <value>To se nepovedlo</value>
   </data>
   <data name="PurchaseFailedMessage" xml:space="preserve">
-    <value>Obchod nákup nedokončil a nic jste nezaplatili. Zkuste to prosím později.</value>
+    <value>N&#225;kup se nepoda&#345;ilo dokon&#269;it a&#160;nic v&#225;m nebylo &#250;&#269;tov&#225;no. Zkuste to pros&#237;m pozd&#283;ji.</value>
   </data>
   <data name="RestoreNothingTitle" xml:space="preserve">
     <value>Není co obnovit</value>
   </data>
   <data name="RestoreNothingMessage" xml:space="preserve">
-    <value>Obchod u tohoto účtu nákup plné verze nenašel.</value>
+    <value>K&#160;tomuto &#250;&#269;tu obchod nena&#353;el &#382;&#225;dn&#253; n&#225;kup pln&#233; verze.</value>
   </data>
   <data name="KidsHeader" xml:space="preserve">
     <value>Děti</value>
@@ -659,13 +662,13 @@
     <value>Odebrat: {0}?</value>
   </data>
   <data name="RemoveKidMessage" xml:space="preserve">
-    <value>Seznam přání a otevřená okénka se nenávratně smažou.</value>
+    <value>Seznam přání a&#160;otevřená okénka se nenávratně smažou.</value>
   </data>
   <data name="FullVersionLockedTitle" xml:space="preserve">
     <value>Součást plné verze</value>
   </data>
   <data name="FullVersionLockedMessage" xml:space="preserve">
-    <value>Nastavení níže odemkne plná verze výše.</value>
+    <value>Nastaven&#237; n&#237;&#382;e se odemknou s&#160;plnou verz&#237; v&#253;&#353;e.</value>
   </data>
   <data name="FullVersionPrompt" xml:space="preserve">
     <value>Tohle je součást plné verze. Má se na to podívat někdo dospělý?</value>
@@ -677,7 +680,7 @@
     <value>Přesný čas</value>
   </data>
   <data name="ArrivalDescription" xml:space="preserve">
-    <value>Kdy odpočet ve velký den dojde k nule.</value>
+    <value>V&#160;kolik hodin ve velk&#253; den odpo&#269;et dojde k&#160;nule.</value>
   </data>
   <data name="MessagesHeader" xml:space="preserve">
     <value>Osobní vzkazy za okénky</value>
@@ -707,13 +710,13 @@
     <value>Přidat událost</value>
   </data>
   <data name="EventsDescription" xml:space="preserve">
-    <value>Narozeniny a další. Každý rok se opakují a ukazují se na obrazovce odpočtu.</value>
+    <value>Narozeniny a&#160;dal&#353;&#237;. Opakuj&#237; se ka&#382;d&#253; rok a&#160;zobrazuj&#237; se na obrazovce odpo&#269;tu.</value>
   </data>
   <data name="EventName" xml:space="preserve">
     <value>Název události</value>
   </data>
   <data name="DisplayHint" xml:space="preserve">
-    <value>Esc nebo Zpět pro odchod. Šipky mění obrázek.</value>
+    <value>Zav&#345;ete kl&#225;vesou Esc nebo Zp&#283;t. &#352;ipky m&#283;n&#237; obr&#225;zek.</value>
   </data>
   <data name="CompactOverlay" xml:space="preserve">
     <value>Malé okno navrchu</value>
@@ -725,19 +728,19 @@
     <value>Opustit rodinnou obrazovku</value>
   </data>
   <data name="DisplayDoorOpened" xml:space="preserve">
-    <value>okénko {0} otevřeno</value>
+    <value>okénko {0}&#160;otevřeno</value>
   </data>
   <data name="DisplayDoorWaiting" xml:space="preserve">
-    <value>okénko {0} čeká!</value>
+    <value>okénko {0}&#160;čeká!</value>
   </data>
   <data name="DisplayWishes_One" xml:space="preserve">
-    <value>{0} přání</value>
+    <value>{0}&#160;přání</value>
   </data>
   <data name="DisplayWishes_Few" xml:space="preserve">
-    <value>{0} přání</value>
+    <value>{0}&#160;přání</value>
   </data>
   <data name="DisplayWishes_Many" xml:space="preserve">
-    <value>{0} přání</value>
+    <value>{0}&#160;přání</value>
   </data>
   <data name="KidNamePlaceholder" xml:space="preserve">
     <value>Jméno</value>
@@ -746,13 +749,13 @@
     <value>Moje fotky</value>
   </data>
   <data name="PhotosHeader" xml:space="preserve">
-    <value>Vaše vlastní fotky</value>
+    <value>Va&#353;e fotky</value>
   </data>
   <data name="PhotosToggle" xml:space="preserve">
     <value>Zobrazovat naše fotky</value>
   </data>
   <data name="PhotosDescription" xml:space="preserve">
-    <value>Rodina, stromeček, zasněžená ulice: vyplní obrazovku za odpočtem. Zůstávají jen v tomto zařízení.</value>
+    <value>Rodina, stromeček, zasněžená ulice: vyplní obrazovku za odpočtem. Zůstávají jen v&#160;tomto zařízení.</value>
   </data>
   <data name="PhotosAdd" xml:space="preserve">
     <value>Přidat fotky</value>
@@ -761,34 +764,46 @@
     <value>Před fotkami</value>
   </data>
   <data name="PhotoForegroundDescription" xml:space="preserve">
-    <value>Nechte vpředu domky, krb nebo vláček z obrázku, nebo zobrazte jen fotku.</value>
+    <value>Nechte vpředu domky, krb nebo vláček z&#160;obrázku, nebo zobrazte jen fotku.</value>
   </data>
   <data name="PhotoForegroundNone" xml:space="preserve">
     <value>Jen fotka</value>
   </data>
   <data name="PhotoIntervalHeader" xml:space="preserve">
-    <value>Měnit fotku každých</value>
+    <value>Zm&#283;na fotky</value>
   </data>
-  <data name="PhotoIntervalSeconds" xml:space="preserve">
-    <value>{0} sekund</value>
+  <data name="PhotoIntervalSeconds_One" xml:space="preserve">
+    <value>po {0}&#160;sekund&#283;</value>
   </data>
-  <data name="PhotoIntervalMinutes" xml:space="preserve">
-    <value>{0} minut</value>
+  <data name="PhotoIntervalSeconds_Few" xml:space="preserve">
+    <value>po {0}&#160;sekund&#225;ch</value>
+  </data>
+  <data name="PhotoIntervalSeconds_Many" xml:space="preserve">
+    <value>po {0}&#160;sekund&#225;ch</value>
+  </data>
+  <data name="PhotoIntervalMinutes_One" xml:space="preserve">
+    <value>po {0}&#160;minut&#283;</value>
+  </data>
+  <data name="PhotoIntervalMinutes_Few" xml:space="preserve">
+    <value>po {0}&#160;minut&#225;ch</value>
+  </data>
+  <data name="PhotoIntervalMinutes_Many" xml:space="preserve">
+    <value>po {0}&#160;minut&#225;ch</value>
   </data>
   <data name="RemovePhotoTitle" xml:space="preserve">
-    <value>Odebrat tuto fotku</value>
+    <value>Odebrat fotku</value>
   </data>
   <data name="RemovePhotoMessage" xml:space="preserve">
-    <value>Smaže se z aplikace. Originál zůstane, kde byl.</value>
+    <value>Smaže se z&#160;aplikace. Originál zůstane, kde byl.</value>
   </data>
   <data name="PhotoFailedTitle" xml:space="preserve">
     <value>Některé fotky se nepodařilo přidat</value>
   </data>
   <data name="PhotoFailedMessage" xml:space="preserve">
-    <value>Možná jsou ve formátu, který toto zařízení neumí přečíst. JPEG a PNG fungují všude.</value>
+    <value>Možná jsou ve formátu, který toto zařízení neumí přečíst. JPEG a&#160;PNG fungují všude.</value>
   </data>
   <data name="FullVersionPitch" xml:space="preserve">
-    <value>Jeden nákup navždy, žádné předplatné. Odemkne tři další animované obrázky, vlastní fotky jako prezentaci, osobní vzkazy za okénky, odpočet do narozenin a dalších rodinných událostí a přesný čas velkého okamžiku.</value>
+    <value>Jednor&#225;zov&#253; n&#225;kup, &#382;&#225;dn&#233; p&#345;edplatn&#233;. Odemkne t&#345;i dal&#353;&#237; animovan&#233; obr&#225;zky, vlastn&#237; fotky jako prezentaci, osobn&#237; vzkazy za ok&#233;nky, odpo&#269;et do narozenin a&#160;dal&#353;&#237;ch rodinn&#253;ch ud&#225;lost&#237; a&#160;p&#345;esn&#253; &#269;as velk&#233;ho okam&#382;iku.</value>
   </data>
   <data name="UnitDays_One" xml:space="preserve">
     <value>den</value>
@@ -827,16 +842,16 @@
     <value>sekund</value>
   </data>
   <data name="SignNextChange" xml:space="preserve">
-    <value>než bude {0}</value>
+    <value>ne&#382; se zm&#283;n&#237; na {0}</value>
   </data>
   <data name="SignNextChangeLastSleep" xml:space="preserve">
-    <value>a je {0}!</value>
+    <value>a&#160;je tu {0}!</value>
   </data>
   <data name="SignNextChangeBigDay" xml:space="preserve">
-    <value>a pak dárky!</value>
+    <value>a&#160;pak dárky!</value>
   </data>
   <data name="SignAccessible_Plates" xml:space="preserve">
-    <value>{6}: {0} {1}, {2} {3} a {4} {5}</value>
+    <value>{6}: {0} {1}, {2} {3}&#160;a&#160;{4} {5}</value>
   </data>
   <data name="SignAccessible_Sleeps" xml:space="preserve">
     <value>{2}: {0} {1}</value>
@@ -854,7 +869,7 @@
     <value>Dny, hodiny, minuty</value>
   </data>
   <data name="Style_SleepsAndClock" xml:space="preserve">
-    <value>Spaní a hodiny</value>
+    <value>Spaní a&#160;hodiny</value>
   </data>
   <data name="Sign_Plank" xml:space="preserve">
     <value>Zasněžené prkno</value>
@@ -869,6 +884,6 @@
     <value>Nádražní cedule</value>
   </data>
   <data name="Sign_Baubles" xml:space="preserve">
-    <value>Girlanda s baňkami</value>
+    <value>Girlanda s&#160;baňkami</value>
   </data>
 </root>

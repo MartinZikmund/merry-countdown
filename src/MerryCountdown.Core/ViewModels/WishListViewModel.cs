@@ -1,4 +1,4 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using MerryCountdown.Core.Family;
 using MerryCountdown.Core.Infrastructure;
 using MerryCountdown.Core.Parents;
@@ -199,7 +199,7 @@ public partial class WishListViewModel : ViewModelBase
 
         Salutation = _localizer[$"LetterDear_{bringer}"];
         KidName = kid.Name;
-        SentMessage = _localizer["LetterSentMessage", _localizer.BringerName(bringer)];
+        SentMessage = _localizer[$"LetterSent_{bringer}"];
 
         Wishes.Clear();
         foreach (var wish in kid.Wishes)
