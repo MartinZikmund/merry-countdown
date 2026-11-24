@@ -37,6 +37,8 @@
             <SolidColorBrush x:Key="ScrimBrush" Color="#99161A3A" />
             <SolidColorBrush x:Key="FullVersionCardBrush" Color="#FDE9B8" />
             <SolidColorBrush x:Key="FullVersionCardForegroundBrush" Color="#2A2F55" />
+            <SolidColorBrush x:Key="DialogBackgroundBrush" Color="#FFFDF7" />
+            <SolidColorBrush x:Key="DialogBorderBrush" Color="#E3C98A" />
             <StaticResource x:Key="PageTextBrush" ResourceKey="TextFillColorPrimaryBrush" />
         </ResourceDictionary>
 
@@ -76,6 +78,8 @@
             <SolidColorBrush x:Key="ScrimBrush" Color="#BB060A1E" />
             <SolidColorBrush x:Key="FullVersionCardBrush" Color="#3A2F7A" />
             <SolidColorBrush x:Key="FullVersionCardForegroundBrush" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="DialogBackgroundBrush" Color="#1B2150" />
+            <SolidColorBrush x:Key="DialogBorderBrush" Color="#99FFC95C" />
             <StaticResource x:Key="PageTextBrush" ResourceKey="TextFillColorPrimaryBrush" />
         </ResourceDictionary>
 
@@ -104,6 +108,8 @@
             <StaticResource x:Key="ScrimBrush" ResourceKey="SystemColorWindowColorBrush" />
             <StaticResource x:Key="FullVersionCardBrush" ResourceKey="SystemColorWindowColorBrush" />
             <StaticResource x:Key="FullVersionCardForegroundBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+            <StaticResource x:Key="DialogBackgroundBrush" ResourceKey="SystemColorWindowColorBrush" />
+            <StaticResource x:Key="DialogBorderBrush" ResourceKey="SystemColorWindowTextColorBrush" />
             <StaticResource x:Key="PageTextBrush" ResourceKey="SystemColorWindowTextColorBrush" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>

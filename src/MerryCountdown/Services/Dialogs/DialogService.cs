@@ -21,6 +21,7 @@ public sealed class DialogService : IDialogService
             Title = title,
             Content = content,
             PrimaryButtonText = Localizer.Instance.GetString("Ok"),
+            DefaultButton = ContentDialogButton.Primary,
             XamlRoot = _xamlRootProvider.XamlRoot,
         };
         return await _dialogCoordinator.ShowAsync(dialog);
