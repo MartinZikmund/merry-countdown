@@ -5,7 +5,7 @@ using SkiaSharp;
 
 // Usage:
 //   SceneBench frames [frames-per-run] [out.csv]
-//   SceneBench memory <scenario> [out.csv]    scenarios: steady, swap, swap-dispose, resize, photos, photos-dispose, taps
+//   SceneBench memory <scenario> [out.csv]    scenarios: steady, swap, swap-dispose, swap-slot, resize, photos, photos-dispose, taps
 //   SceneBench render <subject> <dir> [w h]       PNGs of a few frames, to check a speed-up didn't change the picture
 //   SceneBench compare <dirA> <dirB>          how far apart two sets of those PNGs are
 // Run a Release build, one memory scenario per process, so one doesn't inherit another's heap.
@@ -269,6 +269,9 @@ internal static class Memory
             case "swap-dispose":
                 Swap(canvas, sampler, dispose: scenario == "swap-dispose");
                 break;
+            case "swap-slot":
+                SwapThroughSlot(canvas, sampler);
+                break;
             case "resize":
                 Resize(surface, sampler);
                 break;
@@ -324,6 +327,23 @@ internal static class Memory
         }
 
         current?.Dispose();
+    }
+
+    // What SceneCanvas does now: the slot frees the scene it replaces.
+    private static void SwapThroughSlot(SKCanvas canvas, Sampler sampler)
+    {
+        using SceneSlot slot = new();
+        var time = 0f;
+        for (var i = 1; i <= 500; i++)
+        {
+            slot.Replace(Scene.Create(Scene.AllIds[i % Scene.AllIds.Count]));
+            for (var f = 0; f < 5; f++)
+            {
+                slot.Render(canvas, Width, Height, time += Subjects.FrameSeconds);
+            }
+
+            sampler.Every(i, 10);
+        }
     }
 
     // A window being dragged: every frame a new size, so every frame a new backdrop.
