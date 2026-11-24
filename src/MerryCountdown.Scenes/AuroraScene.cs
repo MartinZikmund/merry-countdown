@@ -10,6 +10,8 @@ public sealed class AuroraScene : Scene
 
     private float _lightsTapped = float.NegativeInfinity;
     private float _cabinTapped = float.NegativeInfinity;
+    private SKPoint[] _ribbonPoints = [];
+    private SKColor[] _ribbonColors = [];
 
     public override string Id => "aurora";
 
@@ -52,29 +54,52 @@ public sealed class AuroraScene : Scene
     private static (float X, float Ground, float Size) Cabin(int width, int height) =>
         (width * 0.5f, height * 0.875f, Math.Min(width, height) * 0.3f);
 
-    private static void Ribbon(SKCanvas canvas, int width, int height, float time, float centre, float swing, float tall, SKColor color, float phase, float reach, float glow)
+    // Each ribbon is one mesh of 12-pixel columns, drawn in a single call: a draw per column was most of the frame on the GPU.
+    private void Ribbon(SKCanvas canvas, int width, int height, float time, float centre, float swing, float tall, SKColor color, float phase, float reach, float glow)
     {
         const int Step = 12;
+        const int PerColumn = 12;
 
-        // One gradient for the whole ribbon, stretched onto each column by the canvas and dimmed by the paint.
-        // A shader per column made 80 KB of garbage a frame.
-        using var shader = SKShader.CreateLinearGradient(new SKPoint(0, 0), new SKPoint(0, 1), [color.WithAlpha(0), color, color.WithAlpha(0)], [0f, 0.75f, 1f], SKShaderTileMode.Clamp);
-        using SKPaint paint = new() { IsAntialias = false, BlendMode = SKBlendMode.Plus, Shader = shader };
-        for (var x = 0; x < width; x += Step)
+        var columns = (width + Step - 1) / Step;
+        if (_ribbonPoints.Length != columns * PerColumn)
         {
+            _ribbonPoints = new SKPoint[columns * PerColumn];
+            _ribbonColors = new SKColor[columns * PerColumn];
+        }
+
+        var clear = color.WithAlpha(0);
+        for (var i = 0; i < columns; i++)
+        {
+            var x = i * Step;
             var t = x / (float)width;
             var wave = MathF.Sin((t * 5f) + (time * 0.18f) + phase) + (0.5f * MathF.Sin((t * 11f) - (time * 0.13f) + (phase * 1.7f)));
             var y = height * (centre + (wave * swing * 0.5f));
             var column = height * tall * (0.75f + (0.25f * MathF.Sin((t * 23f) + (time * 0.4f) + phase))) * (1 + (reach * 0.7f));
             var strength = (0.6f + (0.4f * MathF.Sin((t * 7f) + (time * 0.25f) + phase))) * (1 + (glow * 1.1f));
-            paint.Color = SKColors.White.WithAlpha((byte)Math.Min(255, 115 * strength));
+            var bright = color.WithAlpha((byte)Math.Min(255, 115 * strength));
 
-            canvas.Save();
-            canvas.Translate(x, y - column);
-            canvas.Scale(1, column * 1.25f);
-            canvas.DrawRect(0, 0, Step, 1, paint);
-            canvas.Restore();
+            // Fades in over the top three quarters, out over the last quarter.
+            var (top, peak, bottom) = (y - column, y - (column * 0.0625f), y + (column * 0.25f));
+            var at = i * PerColumn;
+            Quad(at, x, x + Step, top, peak, clear, bright);
+            Quad(at + 6, x, x + Step, peak, bottom, bright, clear);
         }
+
+        using var vertices = SKVertices.CreateCopy(SKVertexMode.Triangles, _ribbonPoints, _ribbonColors);
+        using SKPaint paint = new() { IsAntialias = false, BlendMode = SKBlendMode.Plus, Color = SKColors.White };
+        canvas.DrawVertices(vertices, SKBlendMode.Modulate, paint);
+    }
+
+    private void Quad(int at, float left, float right, float top, float bottom, SKColor upper, SKColor lower)
+    {
+        _ribbonPoints[at] = new SKPoint(left, top);
+        _ribbonPoints[at + 1] = new SKPoint(right, top);
+        _ribbonPoints[at + 2] = new SKPoint(right, bottom);
+        _ribbonPoints[at + 3] = new SKPoint(left, top);
+        _ribbonPoints[at + 4] = new SKPoint(right, bottom);
+        _ribbonPoints[at + 5] = new SKPoint(left, bottom);
+        _ribbonColors[at] = _ribbonColors[at + 1] = _ribbonColors[at + 3] = upper;
+        _ribbonColors[at + 2] = _ribbonColors[at + 4] = _ribbonColors[at + 5] = lower;
     }
 
     private static void PaintLand(SKCanvas canvas, int width, int height)
