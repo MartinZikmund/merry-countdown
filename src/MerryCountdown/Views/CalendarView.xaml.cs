@@ -31,6 +31,9 @@ public sealed partial class CalendarView : CalendarViewBase
             {
                 ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
             }
+
+            // The kid picker outlives this page, and its x:Bind subscription would keep the view model alive with it.
+            Bindings.StopTracking();
         };
     }
 

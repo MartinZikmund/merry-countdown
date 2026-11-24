@@ -17,7 +17,13 @@ public sealed partial class DisplayView : UserControl
             ViewModel.Start();
             Focus(FocusState.Programmatic);
         };
-        Unloaded += (_, _) => ViewModel.Stop();
+        Unloaded += (_, _) =>
+        {
+            ViewModel.Stop();
+
+            // The backdrop outlives this view, and its x:Bind subscription would keep the view model alive with it.
+            Bindings.StopTracking();
+        };
     }
 
     public DisplayViewModel ViewModel { get; }
