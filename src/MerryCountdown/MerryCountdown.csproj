@@ -14,7 +14,9 @@
         <!-- Application metadata -->
         <ApplicationPublisher>Martin Zikmund</ApplicationPublisher>
         <Description>A joyful Christmas countdown, advent calendar and wish list for kids and families.</Description>
-        <UnoFeatures>$(UnoFeatures);SkiaRenderer;MediaPlayerElement</UnoFeatures>
+        <UnoFeatures>$(UnoFeatures);SkiaRenderer</UnoFeatures>
+        <!-- Only the desktop head still plays its sounds through MediaPlayer. See docs/sound-effects.md. -->
+        <UnoFeatures Condition="'$(IsDesktop)' == 'true'">$(UnoFeatures);MediaPlayerElement</UnoFeatures>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
@@ -64,6 +66,11 @@
     <ItemGroup>
         <ProjectReference Include="..\MerryCountdown.Scenes\MerryCountdown.Scenes.csproj" />
         <ProjectReference Include="..\MerryCountdown.Core\MerryCountdown.Core.csproj" />
+    </ItemGroup>
+
+    <!-- Uno.Sdk embeds AppManifest.js by itself. Any other script for the page has to be listed. -->
+    <ItemGroup Condition="'$(IsBrowserWasm)' == 'true'">
+        <EmbeddedResource Include="Platforms\WebAssembly\WasmScripts\MerrySounds.js" />
     </ItemGroup>
 
     <PropertyGroup Condition="'$(IsWinAppSdk)' == 'true'">
