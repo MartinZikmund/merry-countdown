@@ -17,7 +17,13 @@ public sealed partial class CompactOverlayView : UserControl
             ViewModel.Start();
             Focus(FocusState.Programmatic);
         };
-        Unloaded += (_, _) => ViewModel.Stop();
+        Unloaded += (_, _) =>
+        {
+            ViewModel.Stop();
+
+            // The backdrop outlives this view, and its x:Bind subscription would keep the view model alive with it.
+            Bindings.StopTracking();
+        };
 
         Root.SizeChanged += (_, _) => TellSceneAboutSign();
         SignBox.SizeChanged += (_, _) => TellSceneAboutSign();

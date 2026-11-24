@@ -20,6 +20,9 @@ public sealed partial class CountdownView : CountdownViewBase
             TellSceneAboutSign();
         };
         SignBox.SizeChanged += (_, _) => TellSceneAboutSign();
+
+        // The backdrop outlives this view, and its x:Bind subscription would keep the view model alive with it.
+        Unloaded += (_, _) => Bindings.StopTracking();
     }
 
     private void TellSceneAboutSign() =>
