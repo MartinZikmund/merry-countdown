@@ -376,6 +376,117 @@
   <data name="Sticker_candy" xml:space="preserve">
     <value>Sweets</value>
   </data>
+  <data name="Sticker_doll" xml:space="preserve">
+    <value>Doll</value>
+  </data>
+  <data name="Sticker_car" xml:space="preserve">
+    <value>Toy car</value>
+  </data>
+  <data name="Sticker_plane" xml:space="preserve">
+    <value>Toy plane</value>
+  </data>
+  <data name="Sticker_dinosaur" xml:space="preserve">
+    <value>Dinosaur</value>
+  </data>
+  <data name="Sticker_unicorn" xml:space="preserve">
+    <value>Unicorn</value>
+  </data>
+  <data name="Sticker_puzzle" xml:space="preserve">
+    <value>Puzzle</value>
+  </data>
+  <data name="Sticker_drum" xml:space="preserve">
+    <value>Drum</value>
+  </data>
+  <data name="Sticker_guitar" xml:space="preserve">
+    <value>Guitar</value>
+  </data>
+  <data name="Sticker_scooter" xml:space="preserve">
+    <value>Scooter</value>
+  </data>
+  <data name="Sticker_sledge" xml:space="preserve">
+    <value>Sledge</value>
+  </data>
+  <data name="Sticker_kite" xml:space="preserve">
+    <value>Kite</value>
+  </data>
+  <data name="Sticker_swimming" xml:space="preserve">
+    <value>Swim ring</value>
+  </data>
+  <data name="Sticker_tent" xml:space="preserve">
+    <value>Tent</value>
+  </data>
+  <data name="Sticker_telescope" xml:space="preserve">
+    <value>Telescope</value>
+  </data>
+  <data name="Sticker_tablet" xml:space="preserve">
+    <value>Tablet</value>
+  </data>
+  <data name="Sticker_headphones" xml:space="preserve">
+    <value>Headphones</value>
+  </data>
+  <data name="Sticker_camera" xml:space="preserve">
+    <value>Camera</value>
+  </data>
+  <data name="Sticker_shoes" xml:space="preserve">
+    <value>Shoes</value>
+  </data>
+  <data name="Sticker_hat" xml:space="preserve">
+    <value>Woolly hat</value>
+  </data>
+  <data name="Sticker_backpack" xml:space="preserve">
+    <value>Backpack</value>
+  </data>
+  <data name="Sticker_watch" xml:space="preserve">
+    <value>Watch</value>
+  </data>
+  <data name="Sticker_mitten" xml:space="preserve">
+    <value>Mittens</value>
+  </data>
+  <data name="Sticker_horse" xml:space="preserve">
+    <value>Horse</value>
+  </data>
+  <data name="Sticker_rabbit" xml:space="preserve">
+    <value>Rabbit</value>
+  </data>
+  <data name="Sticker_fish" xml:space="preserve">
+    <value>Fish</value>
+  </data>
+  <data name="Sticker_hamster" xml:space="preserve">
+    <value>Hamster</value>
+  </data>
+  <data name="Sticker_cookie" xml:space="preserve">
+    <value>Cookie</value>
+  </data>
+  <data name="Sticker_gingerbread" xml:space="preserve">
+    <value>Gingerbread</value>
+  </data>
+  <data name="Sticker_cake" xml:space="preserve">
+    <value>Cake</value>
+  </data>
+  <data name="Sticker_sweetsbox" xml:space="preserve">
+    <value>Box of chocolates</value>
+  </data>
+  <data name="Sticker_gift" xml:space="preserve">
+    <value>A surprise</value>
+  </data>
+  <data name="StickerGroup_toys" xml:space="preserve">
+    <value>Toys</value>
+  </data>
+  <data name="StickerGroup_play" xml:space="preserve">
+    <value>Fun and games</value>
+  </data>
+  <data name="StickerGroup_gadgets" xml:space="preserve">
+    <value>Gadgets</value>
+  </data>
+  <data name="StickerGroup_wear" xml:space="preserve">
+    <value>Things to wear</value>
+  </data>
+  <data name="StickerGroup_animals" xml:space="preserve">
+    <value>Animals</value>
+  </data>
+  <data name="StickerGroup_treats" xml:space="preserve">
+    <value>Treats and surprises</value>
+  </data>
   <data name="SettingsChristmas" xml:space="preserve">
     <value>Christmas</value>
   </data>

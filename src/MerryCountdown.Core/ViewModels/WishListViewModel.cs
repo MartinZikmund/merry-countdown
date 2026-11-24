@@ -38,17 +38,21 @@ public partial class WishListViewModel : ViewModelBase
         KidPicker = kidPicker;
         PageTitle = localizer["NavWishes"];
 
-        foreach (var key in WishStickers)
+        foreach (var group in StickerCatalog.Groups)
         {
-            Stickers.Add(new WishStickerViewModel(key, localizer[$"Sticker_{key}"]));
+            WishStickerGroupViewModel groupViewModel = new(localizer[$"StickerGroup_{group.Key}"]);
+            foreach (var key in group.Stickers)
+            {
+                WishStickerViewModel sticker = new(key, localizer[$"Sticker_{key}"]);
+                groupViewModel.Stickers.Add(sticker);
+                Stickers.Add(sticker);
+            }
+
+            StickerGroups.Add(groupViewModel);
         }
 
         Load();
     }
-
-    /// <summary>Picture wishes, so kids who can't write yet can still ask for a puppy.</summary>
-    public static IReadOnlyList<string> WishStickers { get; } =
-        ["teddy", "bike", "ball", "game", "puppy", "kitten", "bricks", "train", "robot", "crown", "book", "paints", "skates", "candy"];
 
     public KidPickerViewModel KidPicker { get; }
 
@@ -56,7 +60,10 @@ public partial class WishListViewModel : ViewModelBase
 
     public ObservableCollection<WishItemViewModel> Wishes { get; } = [];
 
+    /// <summary>Picture wishes, so kids who can't write yet can still ask for a puppy.</summary>
     public ObservableCollection<WishStickerViewModel> Stickers { get; } = [];
+
+    public IList<WishStickerGroupViewModel> StickerGroups { get; } = [];
 
     [ObservableProperty]
     public partial string Salutation { get; set; } = "";
@@ -201,6 +208,13 @@ public partial class WishListViewModel : ViewModelBase
 }
 
 public sealed partial record WishStickerViewModel(string Key, string Name);
+
+public sealed class WishStickerGroupViewModel(string name)
+{
+    public string Name { get; } = name;
+
+    public IList<WishStickerViewModel> Stickers { get; } = [];
+}
 
 public sealed class WishItemViewModel(Wish wish, string label)
 {
