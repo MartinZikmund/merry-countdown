@@ -106,7 +106,8 @@
                         Style="{StaticResource AppBarTabStyle}"
                         Tag="Calendar">
                         <StackPanel x:Name="CalendarTabContent" Style="{StaticResource AppBarTabContentStyle}">
-                            <Grid Height="28">
+                            <!--  Centered, or it stretches to the label's width when stacked and the door slides left.  -->
+                            <Grid Height="28" HorizontalAlignment="Center">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
