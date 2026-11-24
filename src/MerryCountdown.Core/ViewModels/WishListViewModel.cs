@@ -102,6 +102,12 @@ public partial class WishListViewModel : ViewModelBase
 
     public override void ViewUnloaded() => _family.Changed -= OnFamilyChanged;
 
+    partial void OnSelectedStickerChanged(WishStickerViewModel? oldValue, WishStickerViewModel? newValue)
+    {
+        oldValue?.IsSelected = false;
+        newValue?.IsSelected = true;
+    }
+
     partial void OnKidNameChanged(string value)
     {
         if (!_isLoading)
@@ -207,7 +213,15 @@ public partial class WishListViewModel : ViewModelBase
     }
 }
 
-public sealed partial record WishStickerViewModel(string Key, string Name);
+public sealed partial class WishStickerViewModel(string key, string name) : ObservableObject
+{
+    public string Key { get; } = key;
+
+    public string Name { get; } = name;
+
+    [ObservableProperty]
+    public partial bool IsSelected { get; set; }
+}
 
 public sealed class WishStickerGroupViewModel(string name)
 {
