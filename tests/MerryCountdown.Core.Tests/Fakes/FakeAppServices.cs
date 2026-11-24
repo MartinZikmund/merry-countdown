@@ -178,5 +178,11 @@ internal sealed class FakeMessages : ISnackService
         return Task.CompletedTask;
     }
 
-    public Task<bool> ConfirmAsync(string title, string message) => Task.FromResult(ConfirmResult);
+    public List<(string Title, string Message)> Confirmations { get; } = [];
+
+    public Task<bool> ConfirmAsync(string title, string message)
+    {
+        Confirmations.Add((title, message));
+        return Task.FromResult(ConfirmResult);
+    }
 }
