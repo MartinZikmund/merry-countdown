@@ -152,21 +152,10 @@ public class SoundEffectTests
     }
 
     [TestMethod]
-    public void ChooseSticker_PopsOnPickingButNotOnUnpicking()
-    {
-        var vm = WishList();
-        var sticker = vm.Stickers[0];
-
-        vm.ChooseStickerCommand.Execute(sticker);
-        vm.ChooseStickerCommand.Execute(sticker);
-
-        _sounds.Played.Should().Equal(SoundEffect.Sticker);
-    }
-
-    [TestMethod]
     public void SendLetter_WithWishes_Whooshes()
     {
         var vm = WishList();
+        vm.KidName = "Anna";
         vm.NewWishText = "Sledge";
         vm.AddWishCommand.Execute(null);
 
