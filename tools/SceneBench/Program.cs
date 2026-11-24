@@ -287,9 +287,9 @@ internal static class Memory
                 return 1;
         }
 
-        sampler.Sample(-1, "end, before GC");
+        sampler.Sample(-1, "end before GC");
         Sampler.Settle();
-        sampler.Sample(-1, "end, after full GC");
+        sampler.Sample(-1, "end after full GC");
         sampler.Save(outPath);
         return 0;
     }
