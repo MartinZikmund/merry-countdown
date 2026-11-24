@@ -28,7 +28,7 @@ public partial class SoundFilesTests
         }
     }
 
-    // Android packaging turns "-" into "_" but Uno's MediaPlayer opens the original name, so the sound silently fails.
+    // Android packaging turns "-" into "_" but the player opens the original name, so the sound silently fails.
     [TestMethod]
     public void SoundFolder_FileNames_SurviveAndroidPackaging()
     {
