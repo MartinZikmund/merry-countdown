@@ -147,14 +147,17 @@ public sealed class DisplayModeService(IWindowShellProvider shells, IDisplayRequ
 
 public sealed class CompactOverlayService(IWindowShellProvider shells, IXamlRootProvider xamlRoots) : ICompactOverlayService
 {
-    // Windows sizes the overlay from the work area, which on an ultrawide means a very wide "small" window.
     private const int WidthInDips = 420;
     private const int HeightInDips = 236;
+    private const int SmallestWidthInDips = 240;
+    private const int SmallestHeightInDips = 150;
 
     private AppWindowPresenter? _previous;
+    private Windows.Graphics.RectInt32 _previousBounds;
+    private bool _wasMaximized;
     private Windows.UI.Color? _previousCaptionColor;
 
-    // Uno's AppWindow throws NotSupportedException for CompactOverlay on every non-Windows target.
+    // Uno's AppWindow has no always-on-top window on most targets, so the option is only offered on Windows.
 #if WINAPPSDK
     public bool IsSupported => true;
 #else
@@ -172,16 +175,34 @@ public sealed class CompactOverlayService(IWindowShellProvider shells, IXamlRoot
             return;
         }
 
+#if WINAPPSDK
         var window = shells.Window.AppWindow;
         _previous = window.Presenter;
-        window.SetPresenter(AppWindowPresenterKind.CompactOverlay);
 
+        // Kept by hand: Windows remembers one set of bounds per kind of presenter, and both of these are Overlapped.
+        _wasMaximized = _previous is OverlappedPresenter { State: OverlappedPresenterState.Maximized };
+        if (_wasMaximized)
+        {
+            ((OverlappedPresenter)_previous).Restore();
+        }
+
+        _previousBounds = new(window.Position.X, window.Position.Y, window.Size.Width, window.Size.Height);
+
+        // Not the CompactOverlay presenter: its window has no sizing frame, so nobody can drag it bigger or smaller.
         var scale = xamlRoots.XamlRoot.RasterizationScale;
+        var mini = OverlappedPresenter.Create();
+        mini.IsAlwaysOnTop = true;
+        mini.IsMaximizable = false;
+        mini.IsMinimizable = false;
+        mini.PreferredMinimumWidth = (int)(SmallestWidthInDips * scale);
+        mini.PreferredMinimumHeight = (int)(SmallestHeightInDips * scale);
+        window.SetPresenter(mini);
         window.ResizeClient(new Windows.Graphics.SizeInt32((int)(WidthInDips * scale), (int)(HeightInDips * scale)));
 
         // The caption buttons sit on the scene here, not on the themed page, so the theme's colour may vanish into it.
         _previousCaptionColor = window.TitleBar.ButtonForegroundColor;
         window.TitleBar.ButtonForegroundColor = Microsoft.UI.Colors.White;
+#endif
 
         IsActive = true;
         Changed?.Invoke(this, EventArgs.Empty);
@@ -194,11 +215,22 @@ public sealed class CompactOverlayService(IWindowShellProvider shells, IXamlRoot
             return;
         }
 
-        // The same presenter, not a new default one, so a maximized window comes back maximized.
+#if WINAPPSDK
         var window = shells.Window.AppWindow;
         window.SetPresenter(_previous);
+        if (_previous is OverlappedPresenter overlapped)
+        {
+            window.MoveAndResize(_previousBounds);
+            if (_wasMaximized)
+            {
+                overlapped.Maximize();
+            }
+        }
+
         window.TitleBar.ButtonForegroundColor = _previousCaptionColor;
         _previous = null;
+#endif
+
         IsActive = false;
         Changed?.Invoke(this, EventArgs.Empty);
     }
