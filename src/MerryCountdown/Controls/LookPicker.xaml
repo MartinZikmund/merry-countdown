@@ -39,7 +39,10 @@
             x:Name="LookBody"
             Orientation="Horizontal"
             Spacing="24">
-            <StackPanel x:Name="LookOptions" Spacing="8">
+            <StackPanel
+                x:Name="LookOptions"
+                HorizontalAlignment="Left"
+                Spacing="8">
                 <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="{markup:Localize Key=ChooseStyleHeader}" />
                 <ItemsRepeater ItemsSource="{x:Bind ViewModel.StyleOptions}">
                     <ItemsRepeater.Layout>
