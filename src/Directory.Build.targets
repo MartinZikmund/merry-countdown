@@ -20,6 +20,60 @@
                  Namespaces="&lt;Namespace Prefix='m' Uri='http://schemas.microsoft.com/appx/manifest/foundation/windows10' /&gt;" />
     </Target>
 
+    <!--
+        Windows display name (Start, taskbar, Settings > Apps) in the user's language.
+
+        The MSIX manifest takes ms-resource: references, but Uno writes the plain ApplicationTitle.
+        So: (1) generate one tiny resw per language holding "<ApplicationName from Strings/*>
+        + channel/worktree suffix", (2) point the generated manifest at it.
+        Suffix rules match WorktreeIdentity.targets. See docs/app-name.md.
+    -->
+    <PropertyGroup Condition="'$(MSBuildProjectName)' == 'MerryCountdown' and '$(TargetPlatformIdentifier)' == 'windows'">
+        <_WinNameSuffix Condition="'$(AppChannel)' == 'Dev'"> Dev</_WinNameSuffix>
+        <_WinNameSuffix Condition="'$(_WorktreeIdentityAllowed)' == 'true'">$(_WinNameSuffix) ($(_WtLongTag))</_WinNameSuffix>
+        <_WinNameDir>$(IntermediateOutputPath)appname/</_WinNameDir>
+    </PropertyGroup>
+
+    <ItemGroup Condition="'$(MSBuildProjectName)' == 'MerryCountdown' and '$(TargetPlatformIdentifier)' == 'windows'">
+        <_WinNameLang Include="en;cs" />
+    </ItemGroup>
+
+    <Target Name="GenerateWindowsAppNames"
+            Condition="'$(MSBuildProjectName)' == 'MerryCountdown' and '$(TargetPlatformIdentifier)' == 'windows'"
+            BeforeTargets="BeforeGenerateProjectPriFile">
+        <XmlPeek XmlInputPath="$(MSBuildProjectDirectory)/Strings/%(_WinNameLang.Identity)/Resources.resw"
+                 Query="/root/data[@name='ApplicationName']/value/text()">
+            <Output TaskParameter="Result" PropertyName="_WinNameBase_%(_WinNameLang.Identity)" />
+        </XmlPeek>
+
+        <WriteLinesToFile File="$(_WinNameDir)%(_WinNameLang.Identity)/AppName.resw"
+                          Overwrite="true"
+                          WriteOnlyWhenDifferent="true"
+                          Lines="&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;;&lt;root&gt;;  &lt;data name=&quot;AppDisplayName&quot; xml:space=&quot;preserve&quot;&gt;;    &lt;value&gt;$(_WinNameBase_%(_WinNameLang.Identity))$(_WinNameSuffix)&lt;/value&gt;;  &lt;/data&gt;;&lt;/root&gt;" />
+
+        <ItemGroup>
+            <PRIResource Include="$(_WinNameDir)%(_WinNameLang.Identity)/AppName.resw" />
+            <FileWrites Include="$(_WinNameDir)%(_WinNameLang.Identity)/AppName.resw" />
+        </ItemGroup>
+    </Target>
+
+    <Target Name="LocalizeWindowsAppName"
+            Condition="'$(MSBuildProjectName)' == 'MerryCountdown' and '$(TargetPlatformIdentifier)' == 'windows'"
+            AfterTargets="UnoGeneratePackageAppxManifest">
+        <XmlPoke XmlInputPath="$(_UnoIntermediateManifest)Package.appxmanifest"
+                 Query="/m:Package/m:Properties/m:DisplayName"
+                 Value="ms-resource:AppName/AppDisplayName"
+                 Namespaces="&lt;Namespace Prefix='m' Uri='http://schemas.microsoft.com/appx/manifest/foundation/windows10' /&gt;" />
+        <XmlPoke XmlInputPath="$(_UnoIntermediateManifest)Package.appxmanifest"
+                 Query="/m:Package/m:Applications/m:Application/u:VisualElements/@DisplayName"
+                 Value="ms-resource:AppName/AppDisplayName"
+                 Namespaces="&lt;Namespace Prefix='m' Uri='http://schemas.microsoft.com/appx/manifest/foundation/windows10' /&gt;&lt;Namespace Prefix='u' Uri='http://schemas.microsoft.com/appx/manifest/uap/windows10' /&gt;" />
+        <XmlPoke XmlInputPath="$(_UnoIntermediateManifest)Package.appxmanifest"
+                 Query="/m:Package/m:Applications/m:Application/u:VisualElements/u:DefaultTile/@ShortName"
+                 Value="ms-resource:AppName/AppDisplayName"
+                 Namespaces="&lt;Namespace Prefix='m' Uri='http://schemas.microsoft.com/appx/manifest/foundation/windows10' /&gt;&lt;Namespace Prefix='u' Uri='http://schemas.microsoft.com/appx/manifest/uap/windows10' /&gt;" />
+    </Target>
+
     <!-- Per-worktree app identity (applies the suffix + generates the in-app name).
          Must be a .targets import: the suffix layers on top of the ApplicationId the project
          sets per AppChannel. See docs/worktree-identity.md. -->

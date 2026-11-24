@@ -1,3 +1,4 @@
 /* App icon label - displayed under the app icon on home screen */
-"CFBundleDisplayName" = "Merry Countdown";
-"CFBundleName" = "Merry Countdown";
+"CFBundleDisplayName" = "Vánoční odpočítávání";
+/* Short name, Apple wants under 16 characters */
+"CFBundleName" = "Vánoční odpočet";
