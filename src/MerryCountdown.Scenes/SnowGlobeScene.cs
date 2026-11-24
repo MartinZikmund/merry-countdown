@@ -54,9 +54,10 @@ public sealed class SnowGlobeScene : Scene
     {
     }
 
-    private static (float X, float Y, float Radius) Geometry(int width, int height)
+    private (float X, float Y, float Radius) Geometry(int width, int height)
     {
-        var radius = Math.Min(width * 0.36f, height * 0.27f);
+        // Glass and base together stand 2.62 radii tall. The rest is air between the globe and the sign.
+        var radius = Math.Min(Math.Min(width * 0.36f, height * 0.27f), height * ClearPart / 2.8f);
         return (width / 2f, height - (radius * 1.62f), radius);
     }
 

@@ -7,9 +7,17 @@
     IsTabStop="True"
     KeyDown="OnKeyDown">
 
-    <Grid Background="{StaticResource SceneGlassStrongBrush}">
+    <Grid x:Name="Root" Background="{StaticResource SceneGlassStrongBrush}">
+        <!--  The sign gets the top of the window and no more, so there is always scene left to see.  -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="9*" />
+            <RowDefinition Height="11*" />
+        </Grid.RowDefinitions>
+
         <!--  Always calm: it floats over someone's work, so it shouldn't fidget or spend their battery.  -->
         <controls:SceneCanvas
+            x:Name="Scene"
+            Grid.RowSpan="2"
             AutomationProperties.AutomationId="CompactOverlayScene"
             AutomationProperties.Name="{markup:Localize Key=SceneAccessibleName}"
             CalmMotion="True"
@@ -21,7 +29,8 @@
 
         <!--  Scaled to the window, with side margins that keep it out from under the close button.  -->
         <Viewbox
-            Margin="48,0,48,8"
+            x:Name="SignBox"
+            Margin="48,0,48,0"
             HorizontalAlignment="Center"
             VerticalAlignment="Top"
             Stretch="Uniform">
@@ -29,6 +38,7 @@
         </Viewbox>
 
         <Button
+            Grid.Row="1"
             Width="40"
             Height="40"
             Margin="8"
