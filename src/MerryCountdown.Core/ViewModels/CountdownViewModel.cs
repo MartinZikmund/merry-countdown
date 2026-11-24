@@ -22,6 +22,7 @@ public partial class CountdownViewModel : ViewModelBase
     private readonly IParentGateService _gate;
     private readonly ISoundService _sounds;
     private readonly ICompactOverlayService _overlay;
+    private readonly ISnackService _messages;
 
     public CountdownViewModel(
         IFamilyService family,
@@ -34,8 +35,10 @@ public partial class CountdownViewModel : ViewModelBase
         PhotoBackdrop backdrop,
         IParentGateService gate,
         ISoundService sounds,
-        ICompactOverlayService overlay)
+        ICompactOverlayService overlay,
+        ISnackService messages)
     {
+        _messages = messages;
         _sounds = sounds;
         _overlay = overlay;
         _family = family;
@@ -130,7 +133,7 @@ public partial class CountdownViewModel : ViewModelBase
 
         if (option.IsLocked)
         {
-            _navigation.Navigate<SettingsViewModel>();
+            await OfferFullVersionAsync();
             return;
         }
 
@@ -141,14 +144,28 @@ public partial class CountdownViewModel : ViewModelBase
 
     private async Task SelectPhotosAsync()
     {
-        if (_fullVersion.IsFull && _family.Settings.PhotoIds.Count > 0)
+        if (!_fullVersion.IsFull)
+        {
+            await OfferFullVersionAsync();
+        }
+        else if (_family.Settings.PhotoIds.Count > 0)
         {
             _family.Settings.UsesPhotos = true;
             _family.SaveSettings();
         }
         else if (await _gate.PassAsync())
         {
-            // Nothing to show yet, or not bought yet. Both are for a grown-up.
+            // Nothing to show yet, and adding photos is for a grown-up.
+            _navigation.Navigate<ParentZoneViewModel>();
+        }
+    }
+
+    // Says why first, so a locked tap doesn't just land a kid on a maths question.
+    private async Task OfferFullVersionAsync()
+    {
+        if (await _messages.ConfirmAsync(_localizer["FullVersionLockedTitle"], _localizer["FullVersionPrompt"])
+            && await _gate.PassAsync())
+        {
             _navigation.Navigate<ParentZoneViewModel>();
         }
     }

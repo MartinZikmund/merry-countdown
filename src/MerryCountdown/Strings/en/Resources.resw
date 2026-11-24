@@ -547,6 +547,9 @@
   <data name="FullVersionLockedMessage" xml:space="preserve">
     <value>The settings below unlock with the full version above.</value>
   </data>
+  <data name="FullVersionPrompt" xml:space="preserve">
+    <value>This one comes with the full version. Shall a grown-up take a look?</value>
+  </data>
   <data name="ArrivalHeaderSection" xml:space="preserve">
     <value>The big moment</value>
   </data>
