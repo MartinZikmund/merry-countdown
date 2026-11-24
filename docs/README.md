@@ -10,7 +10,7 @@ One page per topic. Keep it that way — see [`.claude/rules/docs.md`](../.claud
 
 ## Architecture
 
-- [app-bar.md](./app-bar.md) — the sticker tabs at the top of the app, and the badge that says a new door is waiting.
+- [app-bar.md](./app-bar.md) — the sticker tabs at the top of the app, how they share the title bar on Windows, the customize button, and the badge that says a new door is waiting.
 - [compact-overlay.md](./compact-overlay.md) — the small always-on-top countdown window, and why only WinUI offers it.
 - [countdown-sign.md](./countdown-sign.md) — the choosable signs and countdown styles on Home and Family Display, and how to add a sign.
 - [door-wall.md](./door-wall.md) — how the 24 doors are drawn, opened and fitted to the screen.
