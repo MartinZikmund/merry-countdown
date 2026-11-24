@@ -313,6 +313,9 @@
   <data name="WishPickPicture" xml:space="preserve">
     <value>Nebo vyber obrázek:</value>
   </data>
+  <data name="WishPickPictureButton" xml:space="preserve">
+    <value>Vyber obrázek</value>
+  </data>
   <data name="AddWish" xml:space="preserve">
     <value>Přidat do dopisu</value>
   </data>

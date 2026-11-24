@@ -1,0 +1,113 @@
+﻿<UserControl
+    x:Class="MerryCountdown.Controls.StickerPicker"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:MerryCountdown.Controls"
+    xmlns:markup="using:MerryCountdown.Markup"
+    xmlns:vm="using:MerryCountdown.Core.ViewModels">
+
+    <Button
+        x:Name="PickerButton"
+        MinHeight="64"
+        Padding="8,4,16,4"
+        HorizontalAlignment="Stretch"
+        HorizontalContentAlignment="Left"
+        AutomationProperties.AutomationId="StickerPickerButton"
+        CornerRadius="16">
+        <Grid ColumnSpacing="12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Border
+                Width="48"
+                Height="48"
+                Background="{ThemeResource LetterPaperBrush}"
+                CornerRadius="12">
+                <Grid>
+                    <FontIcon
+                        x:Name="InviteIcon"
+                        FontSize="24"
+                        Foreground="{ThemeResource BrandBrush}"
+                        Glyph="&#xE710;" />
+                    <Image
+                        x:Name="ChosenImage"
+                        Width="40"
+                        Height="40"
+                        Visibility="Collapsed" />
+                </Grid>
+            </Border>
+            <TextBlock
+                x:Name="Caption"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Style="{StaticResource FriendlyStrongTextStyle}"
+                Text="{markup:Localize Key=WishPickPictureButton}" />
+            <FontIcon
+                Grid.Column="2"
+                FontSize="12"
+                Glyph="&#xE70D;" />
+        </Grid>
+        <Button.Flyout>
+            <Flyout
+                x:Name="PickerFlyout"
+                Opening="Flyout_Opening"
+                Placement="Bottom">
+                <ScrollViewer
+                    x:Name="FlyoutScroller"
+                    MaxHeight="340"
+                    HorizontalScrollMode="Disabled">
+                    <ItemsRepeater x:Name="GroupsRepeater">
+                        <ItemsRepeater.Layout>
+                            <StackLayout Orientation="Vertical" Spacing="12" />
+                        </ItemsRepeater.Layout>
+                        <ItemsRepeater.ItemTemplate>
+                            <DataTemplate x:DataType="vm:WishStickerGroupViewModel">
+                                <StackPanel Spacing="4">
+                                    <TextBlock
+                                        Margin="4,0,0,0"
+                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{x:Bind Name}" />
+                                    <ItemsRepeater ItemsSource="{x:Bind Stickers}">
+                                        <ItemsRepeater.Layout>
+                                            <UniformGridLayout
+                                                ItemsStretch="Fill"
+                                                MinColumnSpacing="4"
+                                                MinItemHeight="64"
+                                                MinItemWidth="64"
+                                                MinRowSpacing="4" />
+                                        </ItemsRepeater.Layout>
+                                        <ItemsRepeater.ItemTemplate>
+                                            <DataTemplate x:DataType="vm:WishStickerViewModel">
+                                                <Button
+                                                    Height="64"
+                                                    Padding="0"
+                                                    HorizontalAlignment="Stretch"
+                                                    AutomationProperties.AutomationId="{x:Bind Key}"
+                                                    AutomationProperties.Name="{x:Bind Name}"
+                                                    Background="{ThemeResource LetterPaperBrush}"
+                                                    BorderBrush="{x:Bind controls:Stickers.SelectionBrush(IsSelected), Mode=OneWay}"
+                                                    BorderThickness="3"
+                                                    Click="Sticker_Click"
+                                                    CornerRadius="16"
+                                                    Tag="{x:Bind}"
+                                                    ToolTipService.ToolTip="{x:Bind Name}">
+                                                    <Image
+                                                        Width="48"
+                                                        Height="48"
+                                                        Source="{x:Bind controls:Stickers.Image(Key)}" />
+                                                </Button>
+                                            </DataTemplate>
+                                        </ItemsRepeater.ItemTemplate>
+                                    </ItemsRepeater>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsRepeater.ItemTemplate>
+                    </ItemsRepeater>
+                </ScrollViewer>
+            </Flyout>
+        </Button.Flyout>
+    </Button>
+</UserControl>

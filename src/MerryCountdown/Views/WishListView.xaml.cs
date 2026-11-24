@@ -42,15 +42,6 @@ public sealed partial class WishListView : WishListViewBase
         }
     }
 
-    private void Sticker_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is RadioButton { Tag: WishStickerViewModel sticker } radio && ViewModel is { } viewModel)
-        {
-            viewModel.ChooseStickerCommand.Execute(sticker);
-            radio.IsChecked = viewModel.SelectedSticker == sticker;
-        }
-    }
-
     private void NewWish_KeyDown(object sender, KeyRoutedEventArgs e)
     {
         if (e.Key == VirtualKey.Enter && ViewModel?.AddWishCommand.CanExecute(null) == true)

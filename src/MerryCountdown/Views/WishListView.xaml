@@ -142,34 +142,10 @@
                             Foreground="{ThemeResource PageTextBrush}"
                             Style="{StaticResource FriendlyStrongTextStyle}"
                             Text="{markup:Localize Key=WishPickPicture}" />
-                        <ItemsRepeater ItemsSource="{x:Bind ViewModel.Stickers}">
-                            <ItemsRepeater.Layout>
-                                <UniformGridLayout
-                                    MinColumnSpacing="4"
-                                    MinItemHeight="64"
-                                    MinItemWidth="64"
-                                    MinRowSpacing="4" />
-                            </ItemsRepeater.Layout>
-                            <ItemsRepeater.ItemTemplate>
-                                <DataTemplate x:DataType="vm:WishStickerViewModel">
-                                    <RadioButton
-                                        Width="64"
-                                        Height="64"
-                                        AutomationProperties.AutomationId="{x:Bind Key}"
-                                        AutomationProperties.Name="{x:Bind Name}"
-                                        Click="Sticker_Click"
-                                        GroupName="WishStickers"
-                                        Style="{StaticResource StickerRadioStyle}"
-                                        Tag="{x:Bind}"
-                                        ToolTipService.ToolTip="{x:Bind Name}">
-                                        <Image
-                                            Width="48"
-                                            Height="48"
-                                            Source="{x:Bind controls:Stickers.Image(Key)}" />
-                                    </RadioButton>
-                                </DataTemplate>
-                            </ItemsRepeater.ItemTemplate>
-                        </ItemsRepeater>
+                        <controls:StickerPicker
+                            ChooseCommand="{x:Bind ViewModel.ChooseStickerCommand}"
+                            Groups="{x:Bind ViewModel.StickerGroups}"
+                            SelectedSticker="{x:Bind ViewModel.SelectedSticker, Mode=OneWay}" />
 
                         <Button
                             MinHeight="48"
