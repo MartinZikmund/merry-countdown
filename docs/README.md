@@ -19,6 +19,7 @@ One page per topic. Keep it that way — see [`.claude/rules/docs.md`](../.claud
 - [scene-taps.md](./scene-taps.md) — what each scene does when tapped, and how to make something tappable.
 - [sound-effects.md](./sound-effects.md) — which taps make which sounds, what plays them on each head, how to add one, and who made them.
 - [views.md](./views.md) — `ViewBase<TViewModel>`, `IViewBase`, and how views resolve their view models.
+- [wish-pictures.md](./wish-pictures.md) — the picture picker on the Wishes page, and how to add a picture to it.
 
 ## Release
 
