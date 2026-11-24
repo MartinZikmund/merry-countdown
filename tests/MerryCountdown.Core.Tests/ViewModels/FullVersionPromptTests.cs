@@ -16,7 +16,7 @@ public class FullVersionPromptTests
         FakeNavigation nav = new();
         FakeGate gate = new();
         FakeMessages messages = new();
-        return (new CountdownViewModel(family, full, new FakeClock(new DateTime(2026, 11, 5)), ticker, new FakeStringLocalizer(), nav, new FakeDisplayMode(), new PhotoBackdrop(family, full, new FakePhotoLibrary(), ticker), gate, new FakeSounds(), new FakeCompactOverlay(), messages), nav, gate, messages);
+        return (new CountdownViewModel(family, full, new FakeClock(new DateTime(2026, 11, 5)), ticker, new FakeStringLocalizer(), nav, new FakeDisplayMode(), new PhotoBackdrop(family, full, new FakePhotoLibrary(), ticker), gate, new FakeSounds(), new FakeCompactOverlay(), messages, new FakeShakes()), nav, gate, messages);
     }
 
     private static SceneOptionViewModel LockedScene(CountdownViewModel vm) =>

@@ -129,7 +129,7 @@ public class HomeChoicesAndDoorTests
         FakeTicker ticker = new();
         FakeNavigation nav = new();
         FakeFullVersion full = new();
-        return (new CountdownViewModel(family, full, new FakeClock(now), ticker, localizer ?? new FakeStringLocalizer(), nav, new FakeDisplayMode(), new PhotoBackdrop(family, full, new FakePhotoLibrary(), ticker), new FakeGate(), new FakeSounds(), new FakeCompactOverlay(), new FakeMessages()), family, nav);
+        return (new CountdownViewModel(family, full, new FakeClock(now), ticker, localizer ?? new FakeStringLocalizer(), nav, new FakeDisplayMode(), new PhotoBackdrop(family, full, new FakePhotoLibrary(), ticker), new FakeGate(), new FakeSounds(), new FakeCompactOverlay(), new FakeMessages(), new FakeShakes()), family, nav);
     }
 
     [TestMethod]

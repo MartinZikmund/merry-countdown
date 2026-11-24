@@ -16,12 +16,13 @@ public sealed class CompactOverlayTests
     private readonly FakeClock _clock = new(Now);
     private readonly FakeFullVersion _full = new();
     private readonly FakeSounds _sounds = new();
+    private readonly FakeShakes _shakes = new();
 
     private CountdownViewModel Home(ICompactOverlayService overlay) =>
-        new(_family, _full, _clock, _ticker, new FakeStringLocalizer(), new FakeNavigation(), new FakeDisplayMode(), new PhotoBackdrop(_family, _full, new FakePhotoLibrary(), _ticker), new FakeGate(), _sounds, overlay, new FakeMessages());
+        new(_family, _full, _clock, _ticker, new FakeStringLocalizer(), new FakeNavigation(), new FakeDisplayMode(), new PhotoBackdrop(_family, _full, new FakePhotoLibrary(), _ticker), new FakeGate(), _sounds, overlay, new FakeMessages(), _shakes);
 
     private CompactOverlayViewModel Overlay(ICompactOverlayService overlay) =>
-        new(_family, _full, _clock, _ticker, new FakeStringLocalizer(), overlay, new PhotoBackdrop(_family, _full, new FakePhotoLibrary(), _ticker), _sounds);
+        new(_family, _full, _clock, _ticker, new FakeStringLocalizer(), overlay, new PhotoBackdrop(_family, _full, new FakePhotoLibrary(), _ticker), _sounds, _shakes);
 
     [TestMethod]
     [DataRow(true)]
@@ -122,5 +123,80 @@ public sealed class CompactOverlayTests
         Overlay(overlay).ExitCommand.Execute(null);
 
         overlay.IsActive.Should().BeFalse();
+    }
+
+    [TestMethod]
+    public void Home_ShakenWhileShowing_PassesTheShakeToTheScene()
+    {
+        var vm = Home(new FakeCompactOverlay());
+        vm.ViewLoaded();
+
+        _shakes.Shake(0.7);
+
+        vm.Shake.Should().NotBeNull();
+        vm.Shake!.Strength.Should().Be(0.7);
+    }
+
+    [TestMethod]
+    public void Home_EveryPushOfAShake_ReachesTheScene()
+    {
+        var vm = Home(new FakeCompactOverlay());
+        vm.ViewLoaded();
+        _shakes.Shake(0.5);
+        var first = vm.Shake;
+
+        _shakes.Shake(0.5);
+
+        vm.Shake.Should().NotBeSameAs(first);
+    }
+
+    [TestMethod]
+    public void Home_ListensOnlyWhileShowing()
+    {
+        var vm = Home(new FakeCompactOverlay());
+        _shakes.IsListening.Should().BeFalse("the accelerometer costs battery");
+
+        vm.ViewLoaded();
+        _shakes.IsListening.Should().BeTrue();
+
+        vm.ViewUnloaded();
+        _shakes.IsListening.Should().BeFalse();
+    }
+
+    [TestMethod]
+    public void Home_ShakenWhileTheOverlayCoversIt_LeavesItsHiddenSceneAlone()
+    {
+        FakeCompactOverlay overlay = new();
+        var vm = Home(overlay);
+        vm.ViewLoaded();
+        overlay.Enter();
+
+        _shakes.Shake(0.7);
+
+        vm.Shake.Should().BeNull();
+    }
+
+    [TestMethod]
+    public void Overlay_ShakenWhileStarted_PassesTheShakeToTheScene()
+    {
+        var vm = Overlay(new FakeCompactOverlay());
+        vm.Start();
+
+        _shakes.Shake(0.4);
+
+        vm.Shake!.Strength.Should().Be(0.4);
+    }
+
+    [TestMethod]
+    public void Overlay_ListensOnlyWhileStarted()
+    {
+        var vm = Overlay(new FakeCompactOverlay());
+        _shakes.IsListening.Should().BeFalse();
+
+        vm.Start();
+        _shakes.IsListening.Should().BeTrue();
+
+        vm.Stop();
+        _shakes.IsListening.Should().BeFalse();
     }
 }
