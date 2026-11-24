@@ -308,10 +308,7 @@
     <value>Co si p&#345;eje&#353;?</value>
   </data>
   <data name="WishPlaceholder" xml:space="preserve">
-    <value>Červené sáňky</value>
-  </data>
-  <data name="WishPickPicture" xml:space="preserve">
-    <value>Nebo vyber obrázek:</value>
+    <value>Nebo přání napiš</value>
   </data>
   <data name="WishPickPictureButton" xml:space="preserve">
     <value>Vyber obrázek</value>
@@ -324,6 +321,24 @@
   </data>
   <data name="SendLetter" xml:space="preserve">
     <value>Poslat dopis!</value>
+  </data>
+  <data name="WishRemoved" xml:space="preserve">
+    <value>{0} už v dopise není.</value>
+  </data>
+  <data name="UndoRemoveWish" xml:space="preserve">
+    <value>Vrátit zpátky</value>
+  </data>
+  <data name="EmptyLetterInvite" xml:space="preserve">
+    <value>Sem patří tvoje první přání</value>
+  </data>
+  <data name="SendNeedsWish" xml:space="preserve">
+    <value>Nejdřív přidej nějaké přání.</value>
+  </data>
+  <data name="SendNeedsName" xml:space="preserve">
+    <value>Podepiš se pod dopis. Dospělý ti může pomoct.</value>
+  </data>
+  <data name="SendReady" xml:space="preserve">
+    <value>Hotovo? Tak ho pošli!</value>
   </data>
   <data name="LetterSent_Santa" xml:space="preserve">
     <value>F&#237;&#237;! Dopis u&#382; let&#237; k&#160;Santovi!</value>

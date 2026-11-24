@@ -42,6 +42,8 @@ public sealed partial class StickerPicker : UserControl
         set => SetValue(ChooseCommandProperty, value);
     }
 
+    public void Open() => PickerFlyout.ShowAt(PickerButton);
+
     private void ShowSelection()
     {
         var sticker = SelectedSticker;

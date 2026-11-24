@@ -259,18 +259,6 @@ public class WishListViewModelTests
     }
 
     [TestMethod]
-    public void AddWish_NeedsTextOrAPicture()
-    {
-        var (vm, _, _, _) = Create();
-
-        vm.AddWishCommand.CanExecute(null).Should().BeFalse();
-
-        vm.ChooseStickerCommand.Execute(vm.Stickers[0]);
-
-        vm.AddWishCommand.CanExecute(null).Should().BeTrue();
-    }
-
-    [TestMethod]
     public void SwitchingKid_ShowsTheirOwnList()
     {
         var (vm, family, _, _) = Create();
@@ -293,6 +281,7 @@ public class WishListViewModelTests
     public void SendLetter_MarksItSentAndWriteMoreReopensIt()
     {
         var (vm, _, _, _) = Create();
+        vm.KidName = "Ema";
         vm.NewWishText = "Sáně";
         vm.AddWishCommand.Execute(null);
 

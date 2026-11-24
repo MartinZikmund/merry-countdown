@@ -308,10 +308,7 @@
     <value>What would you like?</value>
   </data>
   <data name="WishPlaceholder" xml:space="preserve">
-    <value>A red sledge</value>
-  </data>
-  <data name="WishPickPicture" xml:space="preserve">
-    <value>Or pick a picture:</value>
+    <value>Or write a wish</value>
   </data>
   <data name="WishPickPictureButton" xml:space="preserve">
     <value>Pick a picture</value>
@@ -324,6 +321,24 @@
   </data>
   <data name="SendLetter" xml:space="preserve">
     <value>Send my letter!</value>
+  </data>
+  <data name="WishRemoved" xml:space="preserve">
+    <value>{0} is gone from your letter.</value>
+  </data>
+  <data name="UndoRemoveWish" xml:space="preserve">
+    <value>Put it back</value>
+  </data>
+  <data name="EmptyLetterInvite" xml:space="preserve">
+    <value>Your first wish goes here</value>
+  </data>
+  <data name="SendNeedsWish" xml:space="preserve">
+    <value>Add a wish first.</value>
+  </data>
+  <data name="SendNeedsName" xml:space="preserve">
+    <value>Write your name under the letter. A grown-up can help.</value>
+  </data>
+  <data name="SendReady" xml:space="preserve">
+    <value>All done? Send it!</value>
   </data>
   <data name="LetterSent_Santa" xml:space="preserve">
     <value>Whoosh! Your letter is on its way to Santa!</value>

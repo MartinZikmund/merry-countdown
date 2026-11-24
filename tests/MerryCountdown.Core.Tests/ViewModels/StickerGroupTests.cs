@@ -38,44 +38,9 @@ public class StickerGroupTests
         var vm = Create(family);
         var unicorn = vm.Stickers.Single(s => s.Key == "unicorn");
 
-        vm.ChooseStickerCommand.Execute(unicorn);
-        vm.AddWishCommand.Execute(null);
+        vm.AddPictureWishCommand.Execute(unicorn);
 
         vm.Wishes.Should().ContainSingle(w => w.Sticker == "unicorn" && w.Label == "Sticker_unicorn");
         family.ActiveKid.Wishes.Single().Sticker.Should().Be("unicorn");
-    }
-
-    [TestMethod]
-    public void SelectedSticker_IsCleared_WhenTheSameStickerIsChosenAgain()
-    {
-        var vm = Create();
-        var sticker = vm.Stickers[0];
-
-        vm.ChooseStickerCommand.Execute(sticker);
-        vm.ChooseStickerCommand.Execute(sticker);
-
-        vm.SelectedSticker.Should().BeNull();
-    }
-
-    [TestMethod]
-    public void ChooseSticker_MarksOnlyThePickedOneAsSelected()
-    {
-        var vm = Create();
-
-        vm.ChooseStickerCommand.Execute(vm.Stickers[0]);
-        vm.ChooseStickerCommand.Execute(vm.Stickers[1]);
-
-        vm.Stickers.Where(s => s.IsSelected).Should().Equal(vm.Stickers[1]);
-    }
-
-    [TestMethod]
-    public void AddWish_ClearsTheSelectedMark()
-    {
-        var vm = Create();
-        vm.ChooseStickerCommand.Execute(vm.Stickers[0]);
-
-        vm.AddWishCommand.Execute(null);
-
-        vm.Stickers.Should().OnlyContain(s => !s.IsSelected);
     }
 }

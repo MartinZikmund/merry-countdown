@@ -19,6 +19,7 @@ public partial class WishListViewModel : ViewModelBase
     private readonly ISoundService _sounds;
     private Kid? _shownKid;
     private bool _isLoading;
+    private (Wish Wish, int Index)? _removed;
 
     public WishListViewModel(
         IFamilyService family,
@@ -69,6 +70,8 @@ public partial class WishListViewModel : ViewModelBase
     public partial string Salutation { get; set; } = "";
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanSend), nameof(SendHint))]
+    [NotifyCanExecuteChangedFor(nameof(SendLetterCommand))]
     public partial string KidName { get; set; } = "";
 
     [ObservableProperty]
@@ -79,20 +82,36 @@ public partial class WishListViewModel : ViewModelBase
     public partial string NewWishText { get; set; } = "";
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(AddWishCommand))]
-    public partial WishStickerViewModel? SelectedSticker { get; set; }
-
-    [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsWriting))]
     public partial bool IsSent { get; set; }
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(CanSend))]
+    [NotifyPropertyChangedFor(nameof(CanSend), nameof(SendHint), nameof(IsEmpty))]
+    [NotifyCanExecuteChangedFor(nameof(SendLetterCommand))]
     public partial bool HasWishes { get; set; }
+
+    /// <summary>The line that has just landed on the letter, for the page to scroll to and show off.</summary>
+    [ObservableProperty]
+    public partial WishItemViewModel? ArrivedWish { get; set; }
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(UndoRemoveCommand))]
+    public partial bool CanUndoRemove { get; set; }
+
+    [ObservableProperty]
+    public partial string RemovedMessage { get; set; } = "";
+
+    [ObservableProperty]
+    public partial bool CalmMotion { get; set; }
 
     public bool IsWriting => !IsSent;
 
-    public bool CanSend => HasWishes;
+    public bool IsEmpty => !HasWishes;
+
+    public bool CanSend => HasWishes && !string.IsNullOrWhiteSpace(KidName);
+
+    /// <summary>What still stands between the kid and sending, or a nudge to send.</summary>
+    public string SendHint => _localizer[!HasWishes ? "SendNeedsWish" : CanSend ? "SendReady" : "SendNeedsName"];
 
     public override void ViewLoaded()
     {
@@ -101,12 +120,6 @@ public partial class WishListViewModel : ViewModelBase
     }
 
     public override void ViewUnloaded() => _family.Changed -= OnFamilyChanged;
-
-    partial void OnSelectedStickerChanged(WishStickerViewModel? oldValue, WishStickerViewModel? newValue)
-    {
-        oldValue?.IsSelected = false;
-        newValue?.IsSelected = true;
-    }
 
     partial void OnKidNameChanged(string value)
     {
@@ -117,44 +130,70 @@ public partial class WishListViewModel : ViewModelBase
     }
 
     [RelayCommand(CanExecute = nameof(CanAddWish))]
-    private void AddWish()
+    private void AddWish() => Add(null);
+
+    private bool CanAddWish() => !string.IsNullOrWhiteSpace(NewWishText);
+
+    /// <summary>Picking a picture is the whole job for a kid who can't write, so it adds the wish straight away.</summary>
+    [RelayCommand]
+    private void AddPictureWish(WishStickerViewModel sticker)
     {
-        var wish = _family.AddWish(NewWishText, SelectedSticker?.Key);
+        _sounds.Play(SoundEffect.Sticker);
+        Add(sticker.Key);
+    }
+
+    private void Add(string? sticker)
+    {
+        var wish = _family.AddWish(NewWishText, sticker);
         if (wish is null)
         {
             return;
         }
 
         NewWishText = "";
-        SelectedSticker = null;
+        ForgetRemoved();
         Load();
-    }
-
-    private bool CanAddWish() => !string.IsNullOrWhiteSpace(NewWishText) || SelectedSticker is not null;
-
-    [RelayCommand]
-    private void ChooseSticker(WishStickerViewModel sticker)
-    {
-        SelectedSticker = SelectedSticker == sticker ? null : sticker;
-        if (SelectedSticker is not null)
-        {
-            _sounds.Play(SoundEffect.Sticker);
-        }
+        ArrivedWish = Wishes.FirstOrDefault(w => w.Wish == wish);
     }
 
     [RelayCommand]
     private void RemoveWish(WishItemViewModel item)
     {
+        var index = _family.ActiveKid.Wishes.IndexOf(item.Wish);
         _family.RemoveWish(item.Wish);
+        _removed = (item.Wish, index);
+        RemovedMessage = _localizer["WishRemoved", item.Label];
+        CanUndoRemove = true;
         Load();
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanUndoRemove))]
+    private void UndoRemove()
+    {
+        if (_removed is not { } removed)
+        {
+            return;
+        }
+
+        _family.RestoreWish(removed.Wish, removed.Index);
+        ForgetRemoved();
+        Load();
+        ArrivedWish = Wishes.FirstOrDefault(w => w.Wish == removed.Wish);
+    }
+
+    private void ForgetRemoved()
+    {
+        _removed = null;
+        CanUndoRemove = false;
+    }
+
+    [RelayCommand(CanExecute = nameof(CanSend))]
     private void SendLetter()
     {
-        if (_family.SendLetter(AdventCalendar.SeasonYear(_clock.Now)))
+        if (CanSend && _family.SendLetter(AdventCalendar.SeasonYear(_clock.Now)))
         {
             _sounds.Play(SoundEffect.Letter);
+            ForgetRemoved();
             Load();
         }
     }
@@ -181,7 +220,7 @@ public partial class WishListViewModel : ViewModelBase
         if (_family.ActiveKid != _shownKid)
         {
             NewWishText = "";
-            SelectedSticker = null;
+            ForgetRemoved();
             Load();
         }
         else
@@ -198,6 +237,8 @@ public partial class WishListViewModel : ViewModelBase
         var bringer = _family.Settings.GiftBringer;
 
         Salutation = _localizer[$"LetterDear_{bringer}"];
+        CalmMotion = _family.Settings.CalmMotion;
+        ArrivedWish = null;
         KidName = kid.Name;
         SentMessage = _localizer[$"LetterSent_{bringer}"];
 
