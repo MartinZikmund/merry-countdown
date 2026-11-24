@@ -2,12 +2,13 @@ using SkiaSharp;
 
 namespace MerryCountdown.Scenes;
 
-/// <summary>Tap the glass to shake it: the snow inside whirls up, then slowly settles again.</summary>
+/// <summary>Tap the glass, or shake the device, and the snow inside whirls up, then slowly settles again.</summary>
 public sealed class SnowGlobeScene : Scene
 {
     private const int Flakes = 180;
     private const float ShakeDecay = 0.45f;
     private const float CalmShake = 0.4f;
+    private const float SettleSeconds = 5f;
 
     private float _lastShake = -100;
 
@@ -126,7 +127,8 @@ public sealed class SnowGlobeScene : Scene
 
     private void PaintGlobeSnow(SKCanvas canvas, float cx, float cy, float radius, float time)
     {
-        var shake = MathF.Exp(-Math.Max(0, time - _lastShake) * ShakeDecay) * (CalmMotion ? CalmShake : 1);
+        var tapped = MathF.Exp(-Math.Max(0, time - _lastShake) * ShakeDecay);
+        var shake = Math.Max(tapped, Shaken(time, SettleSeconds)) * (CalmMotion ? CalmShake : 1);
 
         canvas.Save();
         using SKPath clip = new();

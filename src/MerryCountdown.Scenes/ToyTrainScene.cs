@@ -6,6 +6,7 @@ public sealed class ToyTrainScene : Scene
 {
     private const float LapSeconds = 26f;
     private const float WhistleSeconds = 2f;
+    private const float ShakeSettle = 2f;
 
     private float _trainTapped = float.NegativeInfinity;
 
@@ -45,8 +46,12 @@ public sealed class ToyTrainScene : Scene
     protected override void PaintForegroundLife(SKCanvas canvas, int width, int height, float time)
     {
         var (head, rail, carLength) = Train(width, height, time);
-        var whistle = Remaining(_trainTapped, time, WhistleSeconds);
-        var age = (1 - whistle) * WhistleSeconds;
+        var tapped = Remaining(_trainTapped, time, WhistleSeconds);
+        var shaken = Shaken(time, ShakeSettle);
+        var whistle = Math.Max(tapped, shaken);
+
+        // A tap bounces the cars from the moment of the tap; a shake keeps them bouncing for as long as it lasts.
+        var age = tapped >= shaken ? (1 - tapped) * WhistleSeconds : time;
 
         // The engine's lamp flashes either way. Only without Calm motion do the cars bounce and the steam billow.
         if (whistle > 0)

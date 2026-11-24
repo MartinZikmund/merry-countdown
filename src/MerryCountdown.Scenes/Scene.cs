@@ -23,6 +23,8 @@ public abstract class Scene : IDisposable
     private const byte ShadeAlpha = 140;
     private const float TapMargin = 0.025f;
     private const float MostCovered = 0.6f;
+    private const float FlurrySeconds = 2.5f;
+    private const int FlurryFlakes = 160;
 
     private SKImage? _backdrop;
     private SKSizeI _backdropSize;
@@ -35,6 +37,8 @@ public abstract class Scene : IDisposable
     private SKImage? _fadingOut;
     private float? _fadeStart;
     private PhotoChange? _pendingPhotoSlot;
+    private float _shakenAt = float.NegativeInfinity;
+    private float _shakeStrength;
 
     public abstract string Id { get; }
 
@@ -91,6 +95,9 @@ public abstract class Scene : IDisposable
         return age >= 0 && age < seconds ? 1 - (age / seconds) : 0;
     }
 
+    /// <summary>How much of a shake is left: its strength while it lasts, down to 0 the given time after the last push.</summary>
+    protected float Shaken(float time, float seconds) => _shakeStrength * Remaining(_shakenAt, time, seconds);
+
     public void Render(SKCanvas canvas, int width, int height, float time)
     {
         if (width <= 0 || height <= 0)
@@ -117,6 +124,7 @@ public abstract class Scene : IDisposable
         if (_photo is not null && !_showForeground)
         {
             _snow.Paint(canvas, width, height, time, Snow);
+            PaintFlurry(canvas, width, height, time);
         }
         else
         {
@@ -138,6 +146,20 @@ public abstract class Scene : IDisposable
 
         ThrowSparkles(x, y, time);
         return false;
+    }
+
+    /// <summary>
+    /// The device or the window is being shaken. Called for every push of the shake, so the scene follows it while
+    /// it lasts and settles once the pushes stop.
+    /// </summary>
+    /// <param name="strength">From just over 0 for a gentle shake to 1 for a wild one.</param>
+    public void Shake(float strength, float time)
+    {
+        strength = float.IsFinite(strength) ? Math.Clamp(strength, 0, 1) : 0;
+
+        // Within one shake it only ever gets wilder, so a weaker push doesn't make the scene flinch.
+        _shakeStrength = Remaining(_shakenAt, time, 1) > 0 ? Math.Max(_shakeStrength, strength) : strength;
+        _shakenAt = time;
     }
 
     internal SceneElement? ElementAt(float x, float y, int width, int height, float time)
@@ -279,6 +301,34 @@ public abstract class Scene : IDisposable
 
         using SKPaint paint = new() { Color = SKColors.White.WithAlpha((byte)(255 * (1 - progress))) };
         canvas.DrawImage(_fadingOut, 0, 0, paint);
+    }
+
+    // A bare photo has nothing of its own to shake, so it gets a burst of snow.
+    private void PaintFlurry(SKCanvas canvas, int width, int height, float time)
+    {
+        var shake = Shaken(time, FlurrySeconds);
+        if (shake <= 0)
+        {
+            return;
+        }
+
+        var unit = Math.Min(width, height);
+        var count = (int)(FlurryFlakes * shake);
+        var swirl = CalmMotion ? 0 : 1;
+        Random random = new(25);
+        using SKPaint paint = new() { IsAntialias = true };
+        for (var i = 0; i < count; i++)
+        {
+            var (seedX, seedY) = (random.NextSingle(), random.NextSingle());
+            var speed = 0.15f + (random.NextSingle() * 0.35f);
+            var phase = random.NextSingle() * MathF.Tau;
+            var size = unit * (0.003f + (random.NextSingle() * 0.006f));
+
+            var x = (seedX + (swirl * 0.08f * MathF.Sin((time * 3) + phase))) * width;
+            var y = ((seedY + (time * speed * (CalmMotion ? 0.3f : 1))) % 1f) * height;
+            paint.Color = SKColors.White.WithAlpha((byte)(230 * Math.Min(1, shake * 1.5f) * (CalmMotion ? 0.5f : 1)));
+            canvas.DrawCircle(x, y, size, paint);
+        }
     }
 
     private void PaintSparkles(SKCanvas canvas, int width, int height, float time)

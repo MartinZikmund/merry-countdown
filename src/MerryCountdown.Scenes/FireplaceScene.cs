@@ -8,6 +8,7 @@ public sealed class FireplaceScene : Scene
     private const float StockingReaction = 1.6f;
     private const float PresentReaction = 1.1f;
     private const float StockingSwingDegrees = 16;
+    private const float ShakeSettle = 2f;
 
     private readonly float[] _stockingTapped = [float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity];
     private readonly float[] _presentTapped = [float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity];
@@ -60,11 +61,16 @@ public sealed class FireplaceScene : Scene
         PaintStockings(canvas, width, height, time);
         PaintPresents(canvas, width, height, time);
 
-        var roar = Remaining(_flamesTapped, time, FlamesReaction);
+        var shaken = Shaken(time, ShakeSettle);
+        var roar = Math.Max(Remaining(_flamesTapped, time, FlamesReaction), shaken * 0.6f);
         var glow = (byte)(95 + (roar * (CalmMotion ? 45 : 90)));
         Painter.Glow(canvas, cx, floor - (opening * 0.2f), hearth * 1.5f * flicker, Palette.Ember, glow);
         PaintFlames(canvas, cx, floor - (opening * 0.07f), opening, time, CalmMotion ? 0 : roar);
         PaintEmbers(canvas, cx, floor, opening, time);
+        if (!CalmMotion)
+        {
+            PaintSparks(canvas, cx, floor, opening, time, shaken);
+        }
     }
 
     protected override IEnumerable<SceneElement> ForegroundElements(int width, int height, float time)
@@ -197,6 +203,30 @@ public sealed class FireplaceScene : Scene
         }
     }
 
+    // Sparks fly out of the fire, more and faster the harder it's shaken.
+    private static void PaintSparks(SKCanvas canvas, float cx, float floor, float opening, float time, float shaken)
+    {
+        if (shaken <= 0)
+        {
+            return;
+        }
+
+        Random random = new(57);
+        using SKPaint paint = new() { IsAntialias = true };
+        var count = (int)(40 * shaken);
+        for (var i = 0; i < count; i++)
+        {
+            var offset = random.NextSingle();
+            var spread = (random.NextSingle() - 0.5f) * 2;
+            var speed = 0.9f + (random.NextSingle() * 0.9f);
+            var progress = ((time * speed) + offset) % 1f;
+            var x = cx + (spread * opening * (0.15f + (0.45f * progress)));
+            var y = floor - (opening * 0.15f) - (opening * 0.75f * progress) + (opening * 0.5f * progress * progress);
+            paint.Color = (i % 3 == 0 ? Palette.Candle : Palette.Ember).WithAlpha((byte)(255 * (1 - progress) * Math.Min(1, shaken * 1.5f)));
+            canvas.DrawCircle(x, y, opening * (0.006f + (0.006f * (1 - progress))), paint);
+        }
+    }
+
     private (float X, float Y, float Width, float Height, SKColor Color)[] Stockings(int width, int height)
     {
         var (cx, floor, hearth) = Geometry(width, height);
@@ -212,17 +242,24 @@ public sealed class FireplaceScene : Scene
         for (var i = 0; i < stockings.Length; i++)
         {
             var (x, y, w, h, color) = stockings[i];
-            var left = Remaining(_stockingTapped[i], time, StockingReaction);
+            var tapped = Remaining(_stockingTapped[i], time, StockingReaction);
+            var shaken = Shaken(time, ShakeSettle);
+            var left = Math.Max(tapped, shaken);
 
             canvas.Save();
             if (left > 0 && CalmMotion)
             {
                 Painter.Glow(canvas, x, y + (h / 2), h * 0.7f, Palette.Candle, (byte)(90 * left));
             }
-            else if (left > 0)
+            else if (tapped >= shaken && tapped > 0)
             {
-                var age = (1 - left) * StockingReaction;
-                canvas.RotateDegrees(StockingSwingDegrees * left * MathF.Sin(age * 7f), x, y);
+                var age = (1 - tapped) * StockingReaction;
+                canvas.RotateDegrees(StockingSwingDegrees * tapped * MathF.Sin(age * 7f), x, y);
+            }
+            else if (shaken > 0)
+            {
+                // Each on its own hook, so they swing out of step.
+                canvas.RotateDegrees(StockingSwingDegrees * 1.3f * shaken * MathF.Sin((time * 9f) + (i * 1.9f)), x, y);
             }
 
             using SKPath sock = new();
@@ -278,16 +315,22 @@ public sealed class FireplaceScene : Scene
         for (var i = 0; i < presents.Length; i++)
         {
             var (x, bottom, size, color) = presents[i];
-            var left = Remaining(_presentTapped[i], time, PresentReaction);
+            var tapped = Remaining(_presentTapped[i], time, PresentReaction);
+            var shaken = Shaken(time, ShakeSettle);
+            var left = Math.Max(tapped, shaken);
             var hop = 0f;
             if (left > 0 && CalmMotion)
             {
                 Painter.Glow(canvas, x, bottom - (size / 2), size * 0.75f, Palette.Candle, (byte)(90 * left));
             }
-            else if (left > 0)
+            else if (tapped >= shaken && tapped > 0)
             {
-                var age = (1 - left) * PresentReaction;
-                hop = MathF.Abs(MathF.Sin(age * 6f)) * size * 0.4f * left;
+                var age = (1 - tapped) * PresentReaction;
+                hop = MathF.Abs(MathF.Sin(age * 6f)) * size * 0.4f * tapped;
+            }
+            else if (shaken > 0)
+            {
+                hop = MathF.Abs(MathF.Sin((time * 8f) + (i * 2.3f))) * size * 0.3f * shaken;
             }
 
             Box(canvas, x, bottom - hop, size, color);
