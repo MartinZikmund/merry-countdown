@@ -214,8 +214,8 @@
   <data name="GiftBringer_Jezisek" xml:space="preserve">
     <value>Ježíšek</value>
   </data>
-  <data name="ChooseScene" xml:space="preserve">
-    <value>Změnit vzhled</value>
+  <data name="Customize" xml:space="preserve">
+    <value>Přizpůsobit</value>
   </data>
   <data name="FamilyDisplay" xml:space="preserve">
     <value>Rodinná obrazovka</value>

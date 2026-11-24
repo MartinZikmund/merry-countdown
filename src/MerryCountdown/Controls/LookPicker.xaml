@@ -1,0 +1,160 @@
+﻿<UserControl
+    x:Class="MerryCountdown.Controls.LookPicker"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:MerryCountdown.Controls"
+    xmlns:markup="using:MerryCountdown.Markup"
+    xmlns:vm="using:MerryCountdown.Core.ViewModels">
+
+    <StackPanel Spacing="16">
+        <!--  With labels, unlike the old round buttons: an arrow icon alone never said "big screen".  -->
+        <StackPanel
+            x:Name="Modes"
+            Orientation="Horizontal"
+            Spacing="8">
+            <Button
+                MinHeight="48"
+                AutomationProperties.AutomationId="FamilyDisplayButton"
+                AutomationProperties.Name="{markup:Localize Key=FamilyDisplay}"
+                Click="FamilyDisplay_Click">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <FontIcon FontSize="16" Glyph="&#xE740;" />
+                    <TextBlock Text="{markup:Localize Key=FamilyDisplay}" />
+                </StackPanel>
+            </Button>
+            <Button
+                MinHeight="48"
+                AutomationProperties.AutomationId="CompactOverlayButton"
+                AutomationProperties.Name="{markup:Localize Key=CompactOverlay}"
+                Click="CompactOverlay_Click"
+                Visibility="{x:Bind ViewModel.CanUseCompactOverlay}">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <FontIcon FontSize="16" Glyph="&#xE944;" />
+                    <TextBlock Text="{markup:Localize Key=CompactOverlay}" />
+                </StackPanel>
+            </Button>
+        </StackPanel>
+
+        <StackPanel
+            x:Name="LookBody"
+            Orientation="Horizontal"
+            Spacing="24">
+            <StackPanel x:Name="LookOptions" Spacing="8">
+                <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="{markup:Localize Key=ChooseStyleHeader}" />
+                <ItemsRepeater ItemsSource="{x:Bind ViewModel.StyleOptions}">
+                    <ItemsRepeater.Layout>
+                        <UniformGridLayout
+                            MaximumRowsOrColumns="3"
+                            MinColumnSpacing="8"
+                            MinItemHeight="112"
+                            MinItemWidth="148"
+                            MinRowSpacing="8"
+                            Orientation="Horizontal" />
+                    </ItemsRepeater.Layout>
+                    <ItemsRepeater.ItemTemplate>
+                        <DataTemplate x:DataType="vm:StyleOptionViewModel">
+                            <Button
+                                Width="148"
+                                Height="112"
+                                Padding="4"
+                                AutomationProperties.AutomationId="{x:Bind Style}"
+                                AutomationProperties.Name="{x:Bind Name}"
+                                BorderBrush="{x:Bind controls:Stickers.SelectionBrush(IsSelected), Mode=OneWay}"
+                                BorderThickness="2"
+                                Click="StyleOption_Click"
+                                Tag="{x:Bind}">
+                                <StackPanel Spacing="4">
+                                    <Viewbox Width="128" Height="56">
+                                        <controls:CountdownSign IsPreview="True" Sign="{x:Bind Preview}" />
+                                    </Viewbox>
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{x:Bind Name}"
+                                        TextAlignment="Center"
+                                        TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Button>
+                        </DataTemplate>
+                    </ItemsRepeater.ItemTemplate>
+                </ItemsRepeater>
+
+                <TextBlock
+                    Margin="0,8,0,0"
+                    Style="{StaticResource BodyStrongTextBlockStyle}"
+                    Text="{markup:Localize Key=ChooseSignHeader}" />
+                <ItemsRepeater ItemsSource="{x:Bind ViewModel.SignOptions}">
+                    <ItemsRepeater.Layout>
+                        <UniformGridLayout
+                            MaximumRowsOrColumns="3"
+                            MinColumnSpacing="8"
+                            MinItemHeight="104"
+                            MinItemWidth="148"
+                            MinRowSpacing="8"
+                            Orientation="Horizontal" />
+                    </ItemsRepeater.Layout>
+                    <ItemsRepeater.ItemTemplate>
+                        <DataTemplate x:DataType="vm:SignOptionViewModel">
+                            <Button
+                                Width="148"
+                                Height="104"
+                                Padding="4"
+                                AutomationProperties.AutomationId="{x:Bind Design}"
+                                AutomationProperties.Name="{x:Bind Name}"
+                                BorderBrush="{x:Bind controls:Stickers.SelectionBrush(IsSelected), Mode=OneWay}"
+                                BorderThickness="2"
+                                Click="SignOption_Click"
+                                Tag="{x:Bind}">
+                                <StackPanel Spacing="4">
+                                    <Viewbox Width="128" Height="56">
+                                        <controls:CountdownSign IsPreview="True" Sign="{x:Bind Preview}" />
+                                    </Viewbox>
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{x:Bind Name}" />
+                                </StackPanel>
+                            </Button>
+                        </DataTemplate>
+                    </ItemsRepeater.ItemTemplate>
+                </ItemsRepeater>
+            </StackPanel>
+
+            <StackPanel Spacing="8">
+                <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="{markup:Localize Key=ChooseSceneHeader}" />
+                <ItemsRepeater ItemsSource="{x:Bind ViewModel.Scenes}">
+                    <ItemsRepeater.Layout>
+                        <StackLayout Orientation="Vertical" Spacing="4" />
+                    </ItemsRepeater.Layout>
+                    <ItemsRepeater.ItemTemplate>
+                        <DataTemplate x:DataType="vm:SceneOptionViewModel">
+                            <Button
+                                MinWidth="240"
+                                MinHeight="48"
+                                HorizontalContentAlignment="Stretch"
+                                AutomationProperties.AutomationId="{x:Bind Id}"
+                                BorderBrush="{x:Bind controls:Stickers.SelectionBrush(IsSelected)}"
+                                BorderThickness="2"
+                                Click="SceneOption_Click"
+                                Tag="{x:Bind}">
+                                <Grid ColumnSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock VerticalAlignment="Center" Text="{x:Bind Name}" />
+                                    <Image
+                                        Grid.Column="1"
+                                        Width="20"
+                                        Height="20"
+                                        Source="ms-appx:///Assets/Stickers/lock.png"
+                                        Visibility="{x:Bind IsLocked}" />
+                                </Grid>
+                            </Button>
+                        </DataTemplate>
+                    </ItemsRepeater.ItemTemplate>
+                </ItemsRepeater>
+            </StackPanel>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

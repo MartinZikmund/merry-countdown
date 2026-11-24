@@ -12,33 +12,8 @@
     mc:Ignorable="not_win">
 
     <Grid toolkit:VisibleBoundsPadding.PaddingMask="All">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-
-        <!--  WinUI title bar (Windows head only; stripped on Uno heads, collapsing this row).  -->
-        <win:TitleBar
-            x:Name="AppTitleBar"
-            Title="{markup:Localize Key=ApplicationName}"
-            BackRequested="AppTitleBar_BackRequested"
-            IsBackButtonVisible="{x:Bind ViewModel.CanGoBack, Mode=OneWay}"
-            IsPaneToggleButtonVisible="False">
-            <win:TitleBar.IconSource>
-                <ImageIconSource ImageSource="ms-appx:///Assets/Icons/icon_foreground.png" />
-            </win:TitleBar.IconSource>
-            <!--
-                RightHeader sits before the system caption buttons and the min drag region, so the
-                badge can never overlap the close button the way a corner overlay does.
-            -->
-            <win:TitleBar.RightHeader>
-                <controls:DevChannelBadge Margin="0,0,8,0" VerticalAlignment="Center" />
-            </win:TitleBar.RightHeader>
-        </win:TitleBar>
-
         <Grid
             x:Name="AppContent"
-            Grid.Row="1"
             Loaded="AppContent_Loaded"
             SizeChanged="AppContent_SizeChanged">
             <Grid.RowDefinitions>
@@ -46,37 +21,79 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
+            <!--
+                On Windows this is the title bar too: the tabs share a row with the caption buttons,
+                and the inset columns keep them out from under those. See docs/app-bar.md.
+            -->
             <Grid
+                x:Name="AppBar"
                 Padding="8,4"
                 Background="{ThemeResource AppBarBackgroundBrush}"
                 ColumnSpacing="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition x:Name="LeftInsetColumn" Width="0" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition x:Name="RightInsetColumn" Width="0" />
                 </Grid.ColumnDefinitions>
 
-                <!--  Windows goes back from its title bar instead.  -->
-                <not_win:Button
-                    Width="44"
-                    Height="44"
-                    Padding="0"
-                    VerticalAlignment="Center"
+                <!--  The only part of the bar that drags the window, so it never sits under a control.  -->
+                <win:Border
+                    x:Name="DragRegion"
+                    Grid.Row="1"
+                    Grid.Column="3"
+                    Background="Transparent" />
+
+                <!--  Too narrow to leave a handle beside the tabs: they drop under a slim title strip instead.  -->
+                <win:StackPanel
+                    x:Name="TitleStrip"
+                    Grid.ColumnSpan="8"
+                    Height="32"
+                    Margin="4,-4,0,0"
+                    IsHitTestVisible="False"
+                    Orientation="Horizontal"
+                    Spacing="8"
+                    Visibility="Collapsed">
+                    <Image
+                        Width="16"
+                        Height="16"
+                        VerticalAlignment="Center"
+                        Source="ms-appx:///Assets/Icons/icon_foreground.png" />
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        Foreground="{ThemeResource PageTextBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Text="{markup:Localize Key=ApplicationName}" />
+                </win:StackPanel>
+
+                <Button
+                    x:Name="BackButton"
+                    Grid.Row="1"
+                    Grid.Column="1"
                     AutomationProperties.AutomationId="NavBack"
                     AutomationProperties.Name="{markup:Localize Key=NavBack}"
-                    Background="Transparent"
-                    BorderThickness="0"
                     Click="Back_Click"
-                    CornerRadius="22"
-                    Foreground="{ThemeResource PageTextBrush}"
+                    SizeChanged="AppBarContent_SizeChanged"
+                    Style="{StaticResource AppBarIconButtonStyle}"
+                    ToolTipService.ToolTip="{markup:Localize Key=NavBack}"
                     Visibility="{x:Bind ViewModel.CanGoBack, Mode=OneWay}">
                     <FontIcon FontSize="20" Glyph="&#xE72B;" />
-                </not_win:Button>
+                </Button>
 
                 <StackPanel
                     x:Name="TabPanel"
-                    Grid.Column="1"
+                    Grid.Row="1"
+                    Grid.Column="2"
                     Orientation="Horizontal"
+                    SizeChanged="AppBarContent_SizeChanged"
                     Spacing="4">
                     <RadioButton
                         x:Name="CountdownTab"
@@ -163,22 +180,42 @@
                     </RadioButton>
                 </StackPanel>
 
-                <!--
-                    Dev-channel indicator for heads with no WinUI TitleBar (the Windows head hosts the
-                    same control in TitleBar.RightHeader above). The not_win wrapper is mc:Ignorable, so
-                    this whole subtree is dropped on Windows.
-                -->
-                <not_win:Border
-                    Grid.Column="1"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Center">
-                    <controls:DevChannelBadge />
-                </not_win:Border>
+                <controls:DevChannelBadge
+                    x:Name="ChannelBadge"
+                    Grid.Row="1"
+                    Grid.Column="4"
+                    Margin="0,0,4,0"
+                    VerticalAlignment="Center"
+                    SizeChanged="AppBarContent_SizeChanged" />
+
+                <!--  Home's look and its display modes: one button, in the bar, out of the scene's way.  -->
+                <Button
+                    x:Name="CustomizeButton"
+                    Grid.Row="1"
+                    Grid.Column="5"
+                    AutomationProperties.AutomationId="CustomizeButton"
+                    AutomationProperties.Name="{markup:Localize Key=Customize}"
+                    SizeChanged="AppBarContent_SizeChanged"
+                    Style="{StaticResource AppBarIconButtonStyle}"
+                    ToolTipService.ToolTip="{markup:Localize Key=Customize}"
+                    Visibility="Collapsed">
+                    <FontIcon FontSize="20" Glyph="&#xE790;" />
+                    <Button.Flyout>
+                        <Flyout x:Name="CustomizeFlyout" Placement="BottomEdgeAlignedRight">
+                            <Flyout.FlyoutPresenterStyle>
+                                <Style TargetType="FlyoutPresenter">
+                                    <Setter Property="MaxWidth" Value="800" />
+                                </Style>
+                            </Flyout.FlyoutPresenterStyle>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
 
                 <!--  For the grown-ups, so it stays out of the way: no sticker, no label.  -->
                 <RadioButton
                     x:Name="SettingsTab"
-                    Grid.Column="2"
+                    Grid.Row="1"
+                    Grid.Column="6"
                     MinWidth="44"
                     Padding="0"
                     VerticalAlignment="Center"
@@ -197,20 +234,26 @@
 
         </Grid>
 
-        <!--  The Family Display covers the whole window, title bar and navigation included.  -->
+        <!--  The Family Display covers the whole window, navigation included.  -->
         <ContentControl
             x:Name="DisplayHost"
-            Grid.RowSpan="2"
             HorizontalContentAlignment="Stretch"
             VerticalContentAlignment="Stretch"
             Visibility="Collapsed" />
 
-        <!--  So does the compact overlay. The title bar underneath still drags the window.  -->
+        <!--  So does the compact overlay.  -->
         <ContentControl
             x:Name="CompactOverlayHost"
-            Grid.RowSpan="2"
             HorizontalContentAlignment="Stretch"
             VerticalContentAlignment="Stretch"
+            Visibility="Collapsed" />
+
+        <!--  The app bar is collapsed under the overlay, so this strip is what drags the little window.  -->
+        <win:Border
+            x:Name="OverlayDragRegion"
+            Height="40"
+            VerticalAlignment="Top"
+            Background="Transparent"
             Visibility="Collapsed" />
     </Grid>
 </Page>
