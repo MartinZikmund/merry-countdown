@@ -8,6 +8,7 @@ public sealed class VillageScene : Scene
     private const float TreeReaction = 2.5f;
     private const float HouseReaction = 2f;
     private const int MostHouses = 64;
+    private const float ShakeSettle = 2.5f;
 
     private readonly float[] _houseTapped = Enumerable.Repeat(float.NegativeInfinity, MostHouses).ToArray();
     private float _treeTapped = float.NegativeInfinity;
@@ -44,6 +45,7 @@ public sealed class VillageScene : Scene
     {
         PaintLitHouses(canvas, width, height, time);
         PaintTreeLights(canvas, width, height, time);
+        PaintSlidingSnow(canvas, width, height, time);
     }
 
     protected override IEnumerable<SceneElement> ForegroundElements(int width, int height, float time)
@@ -91,9 +93,12 @@ public sealed class VillageScene : Scene
     private void PaintLitHouses(SKCanvas canvas, int width, int height, float time)
     {
         List<House>? houses = null;
+
+        // Shaken calmly, every window glows softly instead of the snow sliding off.
+        var shaken = CalmMotion ? Shaken(time, ShakeSettle) * 0.3f : 0;
         for (var i = 0; i < MostHouses; i++)
         {
-            var left = Remaining(_houseTapped[i], time, HouseReaction);
+            var left = Math.Max(Remaining(_houseTapped[i], time, HouseReaction), shaken);
             if (left <= 0)
             {
                 continue;
@@ -112,6 +117,54 @@ public sealed class VillageScene : Scene
                 Painter.Glow(canvas, window.MidX, window.MidY, window.Width * 3.4f, Palette.Candle, alpha);
                 Painter.Glow(canvas, window.MidX, window.MidY, window.Width * 1.2f, SKColors.White, alpha);
             }
+        }
+    }
+
+    // Clumps of snow slide off the roofs and the tree's branches for as long as the shake lasts.
+    private void PaintSlidingSnow(SKCanvas canvas, int width, int height, float time)
+    {
+        var shaken = Shaken(time, ShakeSettle);
+        if (shaken <= 0 || CalmMotion)
+        {
+            return;
+        }
+
+        using SKPaint paint = new() { IsAntialias = true };
+        var unit = Math.Min(width, height);
+        var alpha = Math.Min(1, shaken * 1.5f);
+        var houses = LayOutHouses(width, height);
+        for (var i = 0; i < houses.Count; i++)
+        {
+            var house = houses[i];
+            var eave = house.Ground - house.Height;
+            var reach = (house.Width / 2) + (house.Width * 0.14f);
+            for (var side = -1; side <= 1; side += 2)
+            {
+                Clumps(canvas, paint, house.X + (side * reach * 0.9f), eave, house.Height, house.Width * 0.07f, time, (i * 2) + side, alpha);
+            }
+        }
+
+        var (x, ground, treeHeight) = Tree(width, height);
+        for (var tier = 0; tier < 3; tier++)
+        {
+            var y = ground - (treeHeight * (0.7f - (tier * 0.22f)));
+            var halfWidth = treeHeight * (0.1f + (tier * 0.07f));
+            for (var side = -1; side <= 1; side += 2)
+            {
+                Clumps(canvas, paint, x + (side * halfWidth), y, treeHeight * 0.2f, unit * 0.008f, time, 100 + (tier * 2) + side, alpha);
+            }
+        }
+    }
+
+    private static void Clumps(SKCanvas canvas, SKPaint paint, float x, float y, float fall, float size, float time, int seed, float alpha)
+    {
+        Random random = new(seed);
+        for (var i = 0; i < 4; i++)
+        {
+            var progress = ((time * (1.4f + random.NextSingle())) + random.NextSingle()) % 1f;
+            var drift = (random.NextSingle() - 0.5f) * size * 3;
+            paint.Color = Palette.Snow.WithAlpha((byte)(255 * alpha * (1 - (progress * progress))));
+            canvas.DrawCircle(x + (drift * progress), y + (progress * progress * fall), size * (1 - (progress * 0.4f)), paint);
         }
     }
 
@@ -151,8 +204,10 @@ public sealed class VillageScene : Scene
         // The town tree stands in the front so the sky stays clear for the big number.
         var unit = Math.Min(width, height);
         var (x, ground, treeHeight) = Tree(width, height);
-        var left = Remaining(_treeTapped, time, TreeReaction);
+        var shaken = Shaken(time, ShakeSettle);
+        var left = Math.Max(Remaining(_treeTapped, time, TreeReaction), shaken);
         var growth = 1 + (left * (CalmMotion ? 0.35f : 1f));
+        var jingle = CalmMotion ? 0 : shaken * unit * 0.005f;
 
         Painter.Glow(canvas, x, ground - (treeHeight * 0.5f), treeHeight * 0.85f, Palette.Candle, 40);
         Painter.Pine(canvas, x, ground, treeHeight, Palette.Pine, Palette.Snow);
@@ -164,7 +219,7 @@ public sealed class VillageScene : Scene
             var along = random.NextSingle();
             var side = (random.NextSingle() * 2) - 1;
             var ly = ground - (treeHeight * 0.92f) + (along * treeHeight * 0.74f);
-            var lx = x + (side * along * treeHeight * 0.24f);
+            var lx = x + (side * along * treeHeight * 0.24f) + (jingle * MathF.Sin((time * 31f) + (i * 2.3f)));
             var color = Palette.Lights[i % Palette.Lights.Length];
             var speed = left > 0 && !CalmMotion ? 14f : 2.1f;
             var pulse = 0.55f + (0.45f * MathF.Sin((time * speed) + (i * 1.7f)));

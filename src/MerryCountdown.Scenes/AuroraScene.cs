@@ -6,6 +6,7 @@ public sealed class AuroraScene : Scene
 {
     private const float LightsReaction = 4f;
     private const float CabinReaction = 2f;
+    private const float ShakeSettle = 3f;
 
     private float _lightsTapped = float.NegativeInfinity;
     private float _cabinTapped = float.NegativeInfinity;
@@ -21,7 +22,7 @@ public sealed class AuroraScene : Scene
     protected override void PaintSkyLife(SKCanvas canvas, int width, int height, float time)
     {
         Painter.Twinkles(canvas, width, height, 0.5f, time, 8, 12);
-        var flare = Remaining(_lightsTapped, time, LightsReaction);
+        var flare = Math.Max(Remaining(_lightsTapped, time, LightsReaction), Shaken(time, ShakeSettle));
         var reach = CalmMotion ? 0 : flare;
         var glow = flare * (CalmMotion ? 0.35f : 1f);
         Ribbon(canvas, width, height, time, 0.24f, 0.17f, 0.22f, Palette.Mint, 0f, reach, glow);
@@ -87,8 +88,8 @@ public sealed class AuroraScene : Scene
         Painter.Window(canvas, cabinX - (cabin * 0.28f), cabinGround - (cabin * 0.38f), cabin * 0.17f, cabin * 0.2f, light);
         Painter.Window(canvas, cabinX + (cabin * 0.11f), cabinGround - (cabin * 0.38f), cabin * 0.17f, cabin * 0.2f, light);
 
-        // Someone inside turns the lamps up.
-        var lamps = Remaining(_cabinTapped, time, CabinReaction);
+        // Someone inside turns the lamps up. A shake does it too, so there's still an answer under a photo.
+        var lamps = Math.Max(Remaining(_cabinTapped, time, CabinReaction), Shaken(time, ShakeSettle));
         if (lamps > 0)
         {
             var alpha = (byte)((CalmMotion ? 110 : 235) * lamps);
