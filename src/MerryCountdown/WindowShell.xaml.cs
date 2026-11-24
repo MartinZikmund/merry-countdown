@@ -20,6 +20,7 @@ public sealed partial class WindowShell : Page, IWindowShell
     private ViewModelBase? _currentPageViewModel;
     private readonly IDisplayModeService _display;
     private readonly ICompactOverlayService _compactOverlay;
+    private Controls.LookPicker? _lookPicker;
 
     public WindowShell(IServiceProvider serviceProvider, Window associatedWindow)
     {
@@ -97,6 +98,11 @@ public sealed partial class WindowShell : Page, IWindowShell
 
         // Collapsed as well as covered, so Tab can't wander into a page nobody can see.
         AppContent.Visibility = isActive ? Visibility.Collapsed : Visibility.Visible;
+
+#if WINAPPSDK
+        OverlayDragRegion.Visibility = isActive ? Visibility.Visible : Visibility.Collapsed;
+        _associatedWindow.SetTitleBar(isActive ? OverlayDragRegion : DragRegion);
+#endif
     }
 
     public WindowShellViewModel ViewModel { get; }
@@ -125,15 +131,36 @@ public sealed partial class WindowShell : Page, IWindowShell
 
     private void InnerFrame_Navigated(object sender, Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
     {
-        // Unsubscribe from previous page's ViewModel
+        TrackPageViewModel(e.Content);
+
+        // The very first page has no XamlRoot yet, so it only gets its view model while loading.
+        if (_currentPageViewModel is null && e.Content is FrameworkElement page)
+        {
+            page.Loaded += OnPageLoadedLate;
+        }
+
+        ViewModel.NotifyCanGoBackChanged();
+        UpdateTabSelection();
+    }
+
+    private void OnPageLoadedLate(object sender, RoutedEventArgs e)
+    {
+        ((FrameworkElement)sender).Loaded -= OnPageLoadedLate;
+        if (ReferenceEquals(InnerFrame.Content, sender))
+        {
+            TrackPageViewModel(sender);
+        }
+    }
+
+    private void TrackPageViewModel(object? page)
+    {
         if (_currentPageViewModel is not null)
         {
             _currentPageViewModel.PropertyChanged -= PageViewModel_PropertyChanged;
             _currentPageViewModel = null;
         }
 
-        // Subscribe to new page's ViewModel for title updates
-        if (e.Content is FrameworkElement { DataContext: ViewModelBase pageViewModel })
+        if (page is FrameworkElement { DataContext: ViewModelBase pageViewModel })
         {
             _currentPageViewModel = pageViewModel;
             _currentPageViewModel.PropertyChanged += PageViewModel_PropertyChanged;
@@ -144,9 +171,29 @@ public sealed partial class WindowShell : Page, IWindowShell
             ViewModel.Title = ServiceProvider.GetRequiredService<IStringLocalizer>()["ApplicationName"];
         }
 
-        ViewModel.NotifyCanGoBackChanged();
-        UpdateTabSelection();
+        OfferCustomizing(_currentPageViewModel as CountdownViewModel);
     }
+
+    // Only Home has a look to change. Each visit gets its own view model, so the picker is rebuilt with it.
+    private void OfferCustomizing(CountdownViewModel? home)
+    {
+        if (_lookPicker is not null)
+        {
+            _lookPicker.CloseRequested -= OnLookPickerCloseRequested;
+        }
+
+        _lookPicker = home is null ? null : new Controls.LookPicker(home);
+        if (_lookPicker is not null)
+        {
+            _lookPicker.CloseRequested += OnLookPickerCloseRequested;
+        }
+
+        CustomizeFlyout.Hide();
+        CustomizeFlyout.Content = _lookPicker;
+        CustomizeButton.Visibility = home is null ? Visibility.Collapsed : Visibility.Visible;
+    }
+
+    private void OnLookPickerCloseRequested(object? sender, EventArgs e) => CustomizeFlyout.Hide();
 
     private void PageViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
@@ -182,6 +229,9 @@ public sealed partial class WindowShell : Page, IWindowShell
     {
         var windowShellProvider = (WindowShellProvider)ServiceProvider.GetRequiredService<IWindowShellProvider>();
         windowShellProvider.SetXamlRoot(XamlRoot ?? throw new InvalidOperationException("XamlRoot must be set."));
+
+        // A move to a monitor with another scale changes the caption buttons' size in DIPs.
+        XamlRoot.Changed += (_, _) => ArrangeTitleBar();
     }
 
     public void SetTitleBar(UIElement? titleBar)
@@ -191,8 +241,8 @@ public sealed partial class WindowShell : Page, IWindowShell
             return;
         }
 
-#if !HAS_UNO
-        _associatedWindow.SetTitleBar(titleBar ?? AppTitleBar);
+#if WINAPPSDK
+        _associatedWindow.SetTitleBar(titleBar ?? DragRegion);
 #else
         _associatedWindow.SetTitleBar(titleBar);
 #endif
@@ -200,12 +250,12 @@ public sealed partial class WindowShell : Page, IWindowShell
 
     private void CustomizeWindow()
     {
-#if !HAS_UNO
+#if WINAPPSDK
         if (AppWindowTitleBar.IsCustomizationSupported())
         {
             _associatedWindow.ExtendsContentIntoTitleBar = true;
-            _associatedWindow.AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
-            _associatedWindow.SetTitleBar(AppTitleBar);
+            _associatedWindow.SetTitleBar(DragRegion);
+            _extendsIntoTitleBar = true;
         }
 #endif
 
@@ -234,7 +284,63 @@ public sealed partial class WindowShell : Page, IWindowShell
         {
             tab.FontSize = isNarrow ? 14 : 16;
         }
+
+        ArrangeTitleBar();
     }
+
+    private void AppBarContent_SizeChanged(object sender, SizeChangedEventArgs e) => ArrangeTitleBar();
+
+#if WINAPPSDK
+    private const double TallCaptionHeight = 48;
+    private const double AppBarColumnGaps = 28;
+
+    private bool _extendsIntoTitleBar;
+
+    // Tabs beside the caption buttons while that leaves a handle to drag by, otherwise under a title strip.
+    private void ArrangeTitleBar()
+    {
+        if (!_extendsIntoTitleBar || XamlRoot is null || AppBar.ActualWidth == 0)
+        {
+            return;
+        }
+
+        // Insets are physical pixels, and swap sides in a right-to-left layout.
+        var titleBar = _associatedWindow.AppWindow.TitleBar;
+        var scale = XamlRoot.RasterizationScale;
+        var leftInset = titleBar.LeftInset / scale;
+        var rightInset = titleBar.RightInset / scale;
+
+        var content = AppBar.Padding.Left + AppBar.Padding.Right + AppBarColumnGaps
+            + BackButton.ActualWidth + TabPanel.ActualWidth + ChannelBadge.ActualWidth + CustomizeButton.ActualWidth + SettingsTab.ActualWidth;
+        var sharesRow = AppBarLayout.SharesRowWithCaptionButtons(AppBar.ActualWidth, content, leftInset + rightInset);
+
+        LeftInsetColumn.Width = new GridLength(sharesRow ? leftInset : 0);
+        RightInsetColumn.Width = new GridLength(sharesRow ? rightInset : 0);
+        TitleStrip.Visibility = sharesRow ? Visibility.Collapsed : Visibility.Visible;
+        TitleStrip.Padding = new Thickness(leftInset, 0, rightInset, 0);
+
+        Grid.SetRow(DragRegion, sharesRow ? 1 : 0);
+        Grid.SetColumn(DragRegion, sharesRow ? 3 : 0);
+        Grid.SetColumnSpan(DragRegion, sharesRow ? 1 : 8);
+
+        // Out over the bar's padding, but never over the tabs: a drag region swallows their clicks.
+        var padding = AppBar.Padding;
+        DragRegion.Margin = sharesRow
+            ? new Thickness(0, -padding.Top, 0, -padding.Bottom)
+            : new Thickness(-padding.Left, -padding.Top, -padding.Right, 0);
+
+        // Tall buttons fill the bar they share; standard ones fit the strip.
+        var height = sharesRow && AppBar.ActualHeight >= TallCaptionHeight ? TitleBarHeightOption.Tall : TitleBarHeightOption.Standard;
+        if (titleBar.PreferredHeightOption != height)
+        {
+            titleBar.PreferredHeightOption = height;
+        }
+    }
+#else
+    private void ArrangeTitleBar()
+    {
+    }
+#endif
 
     private void Tab_Checked(object sender, RoutedEventArgs e)
     {
@@ -280,11 +386,7 @@ public sealed partial class WindowShell : Page, IWindowShell
         }
     }
 
-#if HAS_UNO
     private void Back_Click(object sender, RoutedEventArgs e) => GoBack();
-#else
-    private void AppTitleBar_BackRequested(TitleBar sender, object args) => GoBack();
-#endif
 
     private void UpdateTabSelection()
     {

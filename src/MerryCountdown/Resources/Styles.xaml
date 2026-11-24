@@ -123,6 +123,20 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <!--  The plain round buttons in the app bar. Same size and icon weight as the settings tab beside them.  -->
+    <Style
+        x:Key="AppBarIconButtonStyle"
+        BasedOn="{StaticResource DefaultButtonStyle}"
+        TargetType="Button">
+        <Setter Property="Width" Value="44" />
+        <Setter Property="Height" Value="44" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="CornerRadius" Value="22" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Foreground" Value="{ThemeResource PageTextBrush}" />
+    </Style>
     <Style x:Key="SceneRoundButtonStyle" TargetType="Button">
         <Setter Property="Width" Value="56" />
         <Setter Property="Height" Value="56" />
