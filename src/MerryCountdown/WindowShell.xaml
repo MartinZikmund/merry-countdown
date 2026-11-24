@@ -123,23 +123,29 @@
                         Style="{StaticResource AppBarTabStyle}"
                         Tag="Calendar">
                         <StackPanel x:Name="CalendarTabContent" Style="{StaticResource AppBarTabContentStyle}">
-                            <!--  Centered, or it stretches to the label's width when stacked and the door slides left.  -->
-                            <Grid Height="28" HorizontalAlignment="Center">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
+                            <!--
+                                As wide as the door alone and centered, so the door sits over its label whether or
+                                not the badge is showing. Stretched, it slid to the left of a stacked tab.
+                            -->
+                            <Grid
+                                x:Name="DoorSticker"
+                                Width="28"
+                                Height="28"
+                                HorizontalAlignment="Center">
                                 <Image
                                     Width="28"
                                     Height="28"
                                     Source="ms-appx:///Assets/Stickers/door.png" />
-                                <!--  Says there's a new door to open, from every page, without standing in the way.  -->
+                                <!--
+                                    Says there's a new door to open, from every page, without standing in the way.
+                                    It hangs off the door's corner: the negative margin is the room to do that in.
+                                -->
                                 <Border
-                                    Grid.Column="1"
                                     Height="18"
                                     MinWidth="18"
-                                    Margin="-6,0,0,0"
+                                    Margin="22,0,-40,0"
                                     Padding="4,0"
+                                    HorizontalAlignment="Left"
                                     VerticalAlignment="Top"
                                     AutomationProperties.AutomationId="WaitingDoorBadge"
                                     Background="{StaticResource DoorBadgeBrush}"

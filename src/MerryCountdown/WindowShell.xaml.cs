@@ -115,6 +115,10 @@ public sealed partial class WindowShell : Page, IWindowShell
         {
             UpdateWindowTitle();
         }
+        else if (e.PropertyName == nameof(WindowShellViewModel.HasWaitingDoor))
+        {
+            MakeRoomForDoorBadge();
+        }
     }
 
     private void UpdateWindowTitle()
@@ -285,7 +289,16 @@ public sealed partial class WindowShell : Page, IWindowShell
             tab.FontSize = isNarrow ? 14 : 16;
         }
 
+        MakeRoomForDoorBadge();
         ArrangeTitleBar();
+    }
+
+    // The badge hangs off the door's corner. Beside the label that's where the label starts, so the label moves over.
+    private void MakeRoomForDoorBadge()
+    {
+        const double BadgeOverhang = 12;
+        var isBesideLabel = CalendarTabContent.Orientation == Orientation.Horizontal;
+        DoorSticker.Margin = new Thickness(0, 0, isBesideLabel && ViewModel.HasWaitingDoor ? BadgeOverhang : 0, 0);
     }
 
     private void AppBarContent_SizeChanged(object sender, SizeChangedEventArgs e) => ArrangeTitleBar();
