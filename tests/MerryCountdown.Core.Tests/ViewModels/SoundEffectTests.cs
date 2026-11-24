@@ -229,7 +229,7 @@ public class SoundEffectTests
     [TestMethod]
     public void SettingsToggle_SwitchingOff_IsSaved()
     {
-        SettingsViewModel vm = new(new FakeStringLocalizer(), new FakeAppPreferences(), new FakeThemeManager(), new FakePreferences(), new FakeApplication(), _family, new FakeGate(), new FakeNavigation(), new FakeDisplayMode(), new FakeLauncher());
+        SettingsViewModel vm = new(new FakeStringLocalizer(), new FakeAppPreferences(), new FakeThemeManager(), new FakePreferences(), new FakeApplication(), _family, new FakeGate(), new FakeNavigation(), new FakeDisplayMode(), new FakeLauncher(), new FakeScreenWake());
         vm.OnNavigatedTo(null);
         vm.SoundEnabled.Should().BeTrue();
 

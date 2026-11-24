@@ -14,6 +14,7 @@ internal sealed class DisplayRequestManager : IDisplayRequestManager
         var currentGeneration = _generation;
         _activeRequestCount++;
         _displayRequest.RequestActive();
+        UpdateExecutionState();
 
         return Disposable.Create(() =>
         {
@@ -22,6 +23,7 @@ internal sealed class DisplayRequestManager : IDisplayRequestManager
             {
                 _activeRequestCount--;
                 _displayRequest.RequestRelease();
+                UpdateExecutionState();
             }
         });
     }
@@ -35,5 +37,25 @@ internal sealed class DisplayRequestManager : IDisplayRequestManager
         }
 
         _generation++;
+        UpdateExecutionState();
     }
+
+    private void UpdateExecutionState()
+    {
+#if !WINAPPSDK
+        // DisplayRequest is a no-op on Skia desktop, but a PC plugged into a TV still has to stay on.
+        if (OperatingSystem.IsWindows())
+        {
+            const uint Continuous = 0x80000000;
+            const uint SystemRequired = 0x00000001;
+            const uint DisplayRequired = 0x00000002;
+            SetThreadExecutionState(_activeRequestCount > 0 ? Continuous | SystemRequired | DisplayRequired : Continuous);
+        }
+#endif
+    }
+
+#if !WINAPPSDK
+    [System.Runtime.InteropServices.DllImport("kernel32.dll")]
+    private static extern uint SetThreadExecutionState(uint flags);
+#endif
 }

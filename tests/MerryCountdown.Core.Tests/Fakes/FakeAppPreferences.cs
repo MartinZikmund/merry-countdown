@@ -13,5 +13,7 @@ internal sealed class FakeAppPreferences : IAppPreferences
 
     public bool OfferUserRating { get; set; }
 
+    public bool KeepScreenOn { get; set; }
+
     public ElementTheme Theme { get; set; } = ElementTheme.Default;
 }

@@ -136,6 +136,7 @@ public partial class App : Application, IApplication
         services.AddScoped<IPhotoLibrary, PhotoLibrary>();
         services.AddScoped<PhotoBackdrop>();
         services.AddScoped<IDisplayModeService, DisplayModeService>();
+        services.AddScoped<IScreenWake, ScreenWake>();
         services.AddScoped<ICompactOverlayService, CompactOverlayService>();
         services.AddScoped<IParentGateService, ParentGateService>();
         services.AddScoped<ISnackService, SnackService>();

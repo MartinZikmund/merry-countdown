@@ -18,6 +18,7 @@ public sealed partial class WindowShell : Page, IWindowShell
     private ViewModelBase? _currentPageViewModel;
     private readonly IDisplayModeService _display;
     private readonly ICompactOverlayService _compactOverlay;
+    private readonly IScreenWake _screenWake;
     private Controls.LookPicker? _lookPicker;
 
     public WindowShell(IServiceProvider serviceProvider, Window associatedWindow)
@@ -48,6 +49,8 @@ public sealed partial class WindowShell : Page, IWindowShell
         _display.Changed += OnDisplayModeChanged;
         _compactOverlay = ServiceProvider.GetRequiredService<ICompactOverlayService>();
         _compactOverlay.Changed += OnCompactOverlayChanged;
+        _screenWake = ServiceProvider.GetRequiredService<IScreenWake>();
+        TrackWindowVisibility();
         Loading += WindowShell_Loading;
 
         UpdateWindowTitle();
@@ -214,9 +217,28 @@ public sealed partial class WindowShell : Page, IWindowShell
         }
     }
 
+    // Minimized, hidden or sent to the background: nobody is looking, so the screen may sleep.
+    private void TrackWindowVisibility()
+    {
+        _associatedWindow.VisibilityChanged += (_, e) => _screenWake.SetWindowVisible(e.Visible);
+
+#if WINAPPSDK
+        // WinUI doesn't raise VisibilityChanged for minimize.
+        _associatedWindow.AppWindow.Changed += (_, _) => _associatedWindow.DispatcherQueue.TryEnqueue(() =>
+        {
+            if (!_isWindowClosed)
+            {
+                var minimized = _associatedWindow.AppWindow.Presenter is OverlappedPresenter { State: OverlappedPresenterState.Minimized };
+                _screenWake.SetWindowVisible(_associatedWindow.AppWindow.IsVisible && !minimized);
+            }
+        });
+#endif
+    }
+
     private void OnWindowClosed(object sender, WindowEventArgs args)
     {
         _isWindowClosed = true;
+        _screenWake.SetWindowVisible(false);
         _associatedWindow.Closed -= OnWindowClosed;
         InnerFrame.Navigated -= InnerFrame_Navigated;
         ViewModel.PropertyChanged -= ViewModel_PropertyChanged;

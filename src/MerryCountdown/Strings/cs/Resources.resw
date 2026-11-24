@@ -424,6 +424,12 @@
   <data name="CalmDescription" xml:space="preserve">
     <value>Pomalejší animace pro citlivé oči a starší zařízení.</value>
   </data>
+  <data name="KeepScreenOnHeader" xml:space="preserve">
+    <value>Nechat displej svítit</value>
+  </data>
+  <data name="KeepScreenOnDescription" xml:space="preserve">
+    <value>Displej při otevřené aplikaci nezhasne. Víc vybíjí baterii.</value>
+  </data>
   <data name="FamilyDisplayDescription" xml:space="preserve">
     <value>Celá obrazovka pro televizi nebo tablet zapnutý po celý advent. Nezhasíná a jemně se pohybuje, aby se nic nevypálilo.</value>
   </data>

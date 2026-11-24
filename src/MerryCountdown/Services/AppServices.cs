@@ -75,11 +75,9 @@ public sealed class FamilyEntitlementCache(FamilyService family) : IEntitlementC
     }
 }
 
-/// <summary>Full screen, screen kept on, no chrome: what a TV or tablet needs to run all advent.</summary>
-public sealed class DisplayModeService(IWindowShellProvider shells, IDisplayRequestManager displayRequests) : IDisplayModeService
+/// <summary>Full screen, no chrome (<see cref="ScreenWake"/> keeps the screen on): what a TV or tablet needs to run all advent.</summary>
+public sealed class DisplayModeService(IWindowShellProvider shells) : IDisplayModeService
 {
-    private IDisposable? _keepAwake;
-
     public bool IsActive { get; private set; }
 
     public event EventHandler? Changed;
@@ -93,7 +91,6 @@ public sealed class DisplayModeService(IWindowShellProvider shells, IDisplayRequ
 
         IsActive = true;
         SetFullScreen(true);
-        KeepAwake(true);
         Changed?.Invoke(this, EventArgs.Empty);
     }
 
@@ -106,31 +103,8 @@ public sealed class DisplayModeService(IWindowShellProvider shells, IDisplayRequ
 
         IsActive = false;
         SetFullScreen(false);
-        KeepAwake(false);
         Changed?.Invoke(this, EventArgs.Empty);
     }
-
-    private void KeepAwake(bool stayAwake)
-    {
-        _keepAwake?.Dispose();
-        _keepAwake = stayAwake ? displayRequests.RequestActive() : null;
-
-#if !WINAPPSDK
-        // DisplayRequest is a no-op on Skia desktop, but a PC plugged into a TV still has to stay on.
-        if (OperatingSystem.IsWindows())
-        {
-            const uint Continuous = 0x80000000;
-            const uint SystemRequired = 0x00000001;
-            const uint DisplayRequired = 0x00000002;
-            SetThreadExecutionState(stayAwake ? Continuous | SystemRequired | DisplayRequired : Continuous);
-        }
-#endif
-    }
-
-#if !WINAPPSDK
-    [System.Runtime.InteropServices.DllImport("kernel32.dll")]
-    private static extern uint SetThreadExecutionState(uint flags);
-#endif
 
     private void SetFullScreen(bool isFullScreen)
     {

@@ -46,9 +46,32 @@ public class SettingsViewModelTests
         viewModel.WorktreeLabel.Should().Be("Pracovni strom: identity");
     }
 
+    [TestMethod]
+    public void KeepScreenOn_WhenToggled_IsPassedToScreenWake()
+    {
+        FakeScreenWake wake = new();
+        var viewModel = CreateViewModel(worktreeName: null, screenWake: wake);
+        viewModel.OnNavigatedTo(null);
+
+        viewModel.KeepScreenOn = true;
+
+        wake.KeepScreenOn.Should().BeTrue();
+    }
+
+    [TestMethod]
+    public void OnNavigatedTo_ShowsTheSavedKeepScreenOn()
+    {
+        var viewModel = CreateViewModel(worktreeName: null, screenWake: new FakeScreenWake { KeepScreenOn = true });
+
+        viewModel.OnNavigatedTo(null);
+
+        viewModel.KeepScreenOn.Should().BeTrue();
+    }
+
     private static SettingsViewModel CreateViewModel(
         string? worktreeName,
-        IDictionary<string, string>? strings = null) =>
+        IDictionary<string, string>? strings = null,
+        FakeScreenWake? screenWake = null) =>
         new(
             new FakeStringLocalizer(strings),
             new FakeAppPreferences(),
@@ -59,5 +82,6 @@ public class SettingsViewModelTests
             new FakeGate(),
             new FakeNavigation(),
             new FakeDisplayMode(),
-            new FakeLauncher());
+            new FakeLauncher(),
+            screenWake ?? new FakeScreenWake());
 }
