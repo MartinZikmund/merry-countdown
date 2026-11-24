@@ -19,11 +19,11 @@ public sealed partial class CountdownView : CountdownViewBase
             SignControl.IsCompact = Root.ActualWidth < CompactSize || Root.ActualHeight < CompactSize;
             TellSceneAboutSign();
         };
-        SignControl.SizeChanged += (_, _) => TellSceneAboutSign();
+        SignBox.SizeChanged += (_, _) => TellSceneAboutSign();
     }
 
     private void TellSceneAboutSign() =>
-        Scene.CoveredTop = Root.ActualHeight > 0 ? SignControl.ActualHeight / Root.ActualHeight : 0;
+        Scene.CoveredTop = Root.ActualHeight > 0 ? SignBox.ActualHeight / Root.ActualHeight : 0;
 
     private void Scene_Tapped(object sender, TappedRoutedEventArgs e) => ViewModel?.SceneTapped();
 }
