@@ -10,7 +10,16 @@ public sealed class SnowGlobeScene : Scene
     private const float CalmShake = 0.4f;
     private const float SettleSeconds = 5f;
 
+    // How far below the middle the socket's rim sits, and how big the rim and the hole in it are, in radii.
+    private const float RimDrop = 0.8f;
+    private const float RimWidth = 0.74f;
+    private const float RimDepth = 0.1f;
+    private const float SocketWidth = 0.69f;
+    private const float SocketDepth = 0.075f;
+
     private float _lastShake = -100;
+    private SKPath? _glass;
+    private (float X, float Y, float Radius) _glassFor;
 
     public override string Id => "globe";
 
@@ -30,8 +39,12 @@ public sealed class SnowGlobeScene : Scene
         table.Shader = tableShader;
         canvas.DrawRect(0, cy + (radius * 1.2f), width, height, table);
 
-        PaintWorld(canvas, cx, cy, radius);
+        using SKPaint shadow = new() { IsAntialias = true, Color = SKColors.Black.WithAlpha(70) };
+        canvas.DrawOval(cx, cy + (radius * 1.37f), radius * 1.02f, radius * 0.07f, shadow);
+
+        // The glass goes on after the base, so it hides the back of the rim and the front of the rim hides it.
         PaintBase(canvas, cx, cy, radius);
+        PaintWorld(canvas, Glass(cx, cy, radius), cx, cy, radius);
     }
 
     protected override void PaintSkyLife(SKCanvas canvas, int width, int height, float time) =>
@@ -40,8 +53,11 @@ public sealed class SnowGlobeScene : Scene
     protected override void PaintForegroundLife(SKCanvas canvas, int width, int height, float time)
     {
         var (cx, cy, radius) = Geometry(width, height);
+        canvas.Save();
+        canvas.ClipPath(Glass(cx, cy, radius), antialias: true);
         PaintGlobeSnow(canvas, cx, cy, radius, time);
         PaintGlass(canvas, cx, cy, radius);
+        canvas.Restore();
     }
 
     protected override IEnumerable<SceneElement> ForegroundElements(int width, int height, float time)
@@ -62,12 +78,33 @@ public sealed class SnowGlobeScene : Scene
         return (width / 2f, height - (radius * 1.62f), radius);
     }
 
-    private static void PaintWorld(SKCanvas canvas, float cx, float cy, float radius)
+    protected override void Release() => _glass?.Dispose();
+
+    /// <summary>The part of the ball that shows: all of it down to the rim, and below that only what sits in the socket.</summary>
+    private SKPath Glass(float cx, float cy, float radius)
+    {
+        if (_glass is not null && _glassFor == (cx, cy, radius))
+        {
+            return _glass;
+        }
+
+        var rim = cy + (radius * RimDrop);
+        using SKPath ball = new();
+        ball.AddCircle(cx, cy, radius);
+        using SKPath open = new();
+        open.AddRect(new SKRect(cx - radius, cy - radius, cx + radius, rim));
+        open.AddOval(new SKRect(cx - (radius * SocketWidth), rim - (radius * SocketDepth), cx + (radius * SocketWidth), rim + (radius * SocketDepth)));
+
+        _glass?.Dispose();
+        _glass = ball.Op(open, SKPathOp.Intersect);
+        _glassFor = (cx, cy, radius);
+        return _glass;
+    }
+
+    private static void PaintWorld(SKCanvas canvas, SKPath glass, float cx, float cy, float radius)
     {
         canvas.Save();
-        using SKPath clip = new();
-        clip.AddCircle(cx, cy, radius);
-        canvas.ClipPath(clip, antialias: true);
+        canvas.ClipPath(glass, antialias: true);
 
         using var skyShader = SKShader.CreateLinearGradient(new SKPoint(0, cy - radius), new SKPoint(0, cy + radius), [Palette.Dusk, new SKColor(0x5C, 0x6F, 0xB8)], SKShaderTileMode.Clamp);
         using SKPaint sky = new() { Shader = skyShader };
@@ -82,7 +119,7 @@ public sealed class SnowGlobeScene : Scene
         Painter.House(canvas, cx + (radius * 0.1f), ground + (radius * 0.04f), radius * 0.56f, radius * 0.38f, Palette.Cranberry, Palette.Snow);
         Painter.Window(canvas, cx + (radius * 0.0f), ground - (radius * 0.2f), radius * 0.13f, radius * 0.15f, Palette.Candle);
 
-        PaintSnowman(canvas, cx - (radius * 0.08f), ground + (radius * 0.3f), radius * 0.2f);
+        PaintSnowman(canvas, cx - (radius * 0.14f), ground + (radius * 0.24f), radius * 0.2f);
         canvas.Restore();
     }
 
@@ -104,36 +141,51 @@ public sealed class SnowGlobeScene : Scene
 
     private static void PaintBase(SKCanvas canvas, float cx, float cy, float radius)
     {
-        var top = cy + (radius * 0.82f);
+        var top = cy + (radius * RimDrop);
         var bottom = cy + (radius * 1.34f);
+
+        // Seen from a little above, like the rim: the foot, the band and the row of stars all sag in the middle.
+        var sag = radius * 0.05f;
         using SKPath path = new();
-        path.MoveTo(cx - (radius * 0.72f), top);
-        path.LineTo(cx + (radius * 0.72f), top);
+        path.MoveTo(cx - (radius * RimWidth), top);
+        path.LineTo(cx + (radius * RimWidth), top);
         path.QuadTo(cx + (radius * 0.86f), bottom - (radius * 0.2f), cx + (radius * 0.92f), bottom);
-        path.LineTo(cx - (radius * 0.92f), bottom);
-        path.QuadTo(cx - (radius * 0.86f), bottom - (radius * 0.2f), cx - (radius * 0.72f), top);
+        path.QuadTo(cx, bottom + (sag * 2), cx - (radius * 0.92f), bottom);
+        path.QuadTo(cx - (radius * 0.86f), bottom - (radius * 0.2f), cx - (radius * RimWidth), top);
         path.Close();
         using var shader = SKShader.CreateLinearGradient(new SKPoint(cx - radius, 0), new SKPoint(cx + radius, 0), [Palette.Berry, Palette.Cranberry, Palette.Berry], SKShaderTileMode.Clamp);
         using SKPaint paint = new() { Shader = shader, IsAntialias = true };
         canvas.DrawPath(path, paint);
 
         using SKPaint gold = new() { IsAntialias = true, Color = Palette.Candle };
-        canvas.DrawRect(cx - (radius * 0.84f), bottom - (radius * 0.2f), radius * 1.68f, radius * 0.045f, gold);
+        canvas.Save();
+        canvas.ClipPath(path, antialias: true);
+        using SKPath band = new();
+        var bandY = bottom - (radius * 0.18f);
+        band.MoveTo(cx - radius, bandY);
+        band.QuadTo(cx, bandY + (sag * 2), cx + radius, bandY);
+        gold.Style = SKPaintStyle.Stroke;
+        gold.StrokeWidth = radius * 0.045f;
+        canvas.DrawPath(band, gold);
+        gold.Style = SKPaintStyle.Fill;
+        canvas.Restore();
+
         for (var i = -2; i <= 2; i++)
         {
-            Painter.Star(canvas, gold, cx + (i * radius * 0.28f), top + (radius * 0.2f), radius * 0.05f, 5, 0.45f, 0);
+            var across = i * 0.28f;
+            Painter.Star(canvas, gold, cx + (across * radius), top + (radius * 0.23f) + (sag * (1 - (across * across))), radius * 0.05f, 5, 0.45f, 0);
         }
+
+        // The rim the ball rests in, and the dark of the socket behind it.
+        canvas.DrawOval(cx, top, radius * RimWidth, radius * RimDepth, gold);
+        using SKPaint socket = new() { IsAntialias = true, Color = new SKColor(0x4A, 0x0C, 0x1E) };
+        canvas.DrawOval(cx, top, radius * SocketWidth, radius * SocketDepth, socket);
     }
 
     private void PaintGlobeSnow(SKCanvas canvas, float cx, float cy, float radius, float time)
     {
         var tapped = MathF.Exp(-Math.Max(0, time - _lastShake) * ShakeDecay);
         var shake = Math.Max(tapped, Shaken(time, SettleSeconds)) * (CalmMotion ? CalmShake : 1);
-
-        canvas.Save();
-        using SKPath clip = new();
-        clip.AddCircle(cx, cy, radius);
-        canvas.ClipPath(clip, antialias: true);
 
         Random random = new(77);
         using SKPaint paint = new() { IsAntialias = true };
@@ -157,8 +209,6 @@ public sealed class SnowGlobeScene : Scene
             paint.Color = SKColors.White.WithAlpha((byte)(170 + (85 * offset)));
             canvas.DrawCircle(calmX + ((wildX - calmX) * shake), calmY + ((wildY - calmY) * shake), size, paint);
         }
-
-        canvas.Restore();
     }
 
     private static void PaintGlass(SKCanvas canvas, float cx, float cy, float radius)

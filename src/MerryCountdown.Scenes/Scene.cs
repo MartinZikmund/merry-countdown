@@ -213,7 +213,13 @@ public abstract class Scene : IDisposable
         _isDisposed = true;
         _backdrop?.Dispose();
         _fadingOut?.Dispose();
+        Release();
         GC.SuppressFinalize(this);
+    }
+
+    /// <summary>For a scene to free what it keeps between frames.</summary>
+    protected virtual void Release()
+    {
     }
 
     protected virtual void PaintSnow(SKCanvas canvas, int width, int height, float time) =>
