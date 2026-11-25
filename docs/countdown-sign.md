@@ -14,6 +14,8 @@ Both are saved in `FamilySettings.Sign` and `FamilySettings.CountdownStyle`. Num
 
 `CountdownState.UntilNextSleep` counts to the moment `Sleeps` next changes: midnight, or the arrival time once no sleeps are left. It isn't `Remaining`, which always counts to the arrival, so a Christmas Eve family arriving at 17:00 would otherwise see "15 sleeps" next to "14 days".
 
+Under the clock, a caption says what it is counting to only when that is worth saying: on the last sleep it names the big day, and on the big day it counts to the arrival. On ordinary days there is no caption (`HasNextChangeCaption`).
+
 ## Adding a sign
 
 1. Add a value to `SignDesign` and a `Sign_<value>` string to both `Resources.resw` files.

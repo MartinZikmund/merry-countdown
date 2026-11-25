@@ -32,7 +32,10 @@ public partial class CountdownSignViewModel(IStringLocalizer localizer) : Observ
     public partial string SleepsCaption { get; set; } = "";
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasNextChangeCaption))]
     public partial string NextChangeCaption { get; set; } = "";
+
+    public bool HasNextChangeCaption => NextChangeCaption.Length > 0;
 
     [ObservableProperty]
     public partial string ClockHours { get; set; } = "";
@@ -99,7 +102,9 @@ public partial class CountdownSignViewModel(IStringLocalizer localizer) : Observ
         {
             0 => localizer["SignNextChangeBigDay"],
             1 => localizer["SignNextChangeLastSleep", bigDay],
-            _ => localizer["SignNextChange", state.Sleeps - 1],
+
+            // On an ordinary day the sleeps and the clock say enough.
+            _ => "",
         };
         ClockHours = TwoDigits((int)state.UntilNextSleep.TotalHours);
         ClockMinutes = TwoDigits(state.UntilNextSleep.Minutes);

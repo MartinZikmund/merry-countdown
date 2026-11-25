@@ -75,9 +75,12 @@ public class CountdownSignViewModelTests
     }
 
     [TestMethod]
-    public void Update_WithSleepsLeft_CaptionNamesTheNextNumber()
+    public void Update_WithSleepsLeft_HasNoCaption()
     {
-        Update(new DateTime(2026, 12, 20), Family(BigDay.ChristmasDay)).NextChangeCaption.Should().Be("SignNextChange");
+        var sign = Update(new DateTime(2026, 12, 20), Family(BigDay.ChristmasDay));
+
+        sign.NextChangeCaption.Should().BeEmpty();
+        sign.HasNextChangeCaption.Should().BeFalse();
     }
 
     [TestMethod]
