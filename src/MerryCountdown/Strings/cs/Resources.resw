@@ -479,7 +479,7 @@
     <value>Hračky</value>
   </data>
   <data name="StickerGroup_play" xml:space="preserve">
-    <value>Hry a zábava</value>
+    <value>Hry a&#160;zábava</value>
   </data>
   <data name="StickerGroup_gadgets" xml:space="preserve">
     <value>Elektronika</value>
@@ -491,7 +491,7 @@
     <value>Zvířátka</value>
   </data>
   <data name="StickerGroup_treats" xml:space="preserve">
-    <value>Dobroty a překvapení</value>
+    <value>Dobroty a&#160;překvapení</value>
   </data>
   <data name="SettingsChristmas" xml:space="preserve">
     <value>Vánoce</value>
