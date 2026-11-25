@@ -20,6 +20,8 @@ public sealed partial class WindowShell : Page, IWindowShell
     private readonly ICompactOverlayService _compactOverlay;
     private readonly IScreenWake _screenWake;
     private Controls.LookPicker? _lookPicker;
+    private readonly WelcomeTips _welcomeTips;
+    private bool _isWelcomeOffered;
 
     public WindowShell(IServiceProvider serviceProvider, Window associatedWindow)
     {
@@ -51,6 +53,8 @@ public sealed partial class WindowShell : Page, IWindowShell
         _compactOverlay = ServiceProvider.GetRequiredService<ICompactOverlayService>();
         _compactOverlay.Changed += OnCompactOverlayChanged;
         _screenWake = ServiceProvider.GetRequiredService<IScreenWake>();
+        _welcomeTips = ServiceProvider.GetRequiredService<WelcomeTips>();
+        _welcomeTips.Changed += (_, _) => ShowWelcomeTip();
         TrackWindowVisibility();
         Loading += WindowShell_Loading;
 
@@ -82,6 +86,7 @@ public sealed partial class WindowShell : Page, IWindowShell
     {
         if (_display.IsActive)
         {
+            _welcomeTips.Finish();
             DisplayHost.Content = new Views.DisplayView(ServiceProvider.GetRequiredService<DisplayViewModel>());
             DisplayHost.Visibility = Visibility.Visible;
         }
@@ -95,6 +100,11 @@ public sealed partial class WindowShell : Page, IWindowShell
     private void OnCompactOverlayChanged(object? sender, EventArgs e)
     {
         var isActive = _compactOverlay.IsActive;
+        if (isActive)
+        {
+            _welcomeTips.Finish();
+        }
+
         CompactOverlayHost.Content = isActive ? new Views.CompactOverlayView(ServiceProvider.GetRequiredService<CompactOverlayViewModel>()) : null;
         CompactOverlayHost.Visibility = isActive ? Visibility.Visible : Visibility.Collapsed;
 
@@ -197,6 +207,55 @@ public sealed partial class WindowShell : Page, IWindowShell
         CustomizeFlyout.Hide();
         CustomizeFlyout.Content = _lookPicker;
         CustomizeButton.Visibility = home is null ? Visibility.Collapsed : Visibility.Visible;
+
+        if (home is not null)
+        {
+            OfferWelcomeTips();
+        }
+        else if (_welcomeTips.Current == WelcomeTip.Customize)
+        {
+            // The button it points at has just gone.
+            _welcomeTips.Next();
+        }
+    }
+
+    private bool IsBarInView => !_isWindowClosed && !_display.IsActive && !_compactOverlay.IsActive;
+
+    private async void OfferWelcomeTips()
+    {
+        if (_isWelcomeOffered)
+        {
+            return;
+        }
+
+        // A moment for the scene to be seen first.
+        _isWelcomeOffered = true;
+        await Task.Delay(TimeSpan.FromSeconds(1.5));
+
+        if (IsBarInView && CustomizeButton.Visibility == Visibility.Visible)
+        {
+            _welcomeTips.Begin();
+        }
+        else
+        {
+            _isWelcomeOffered = false;
+        }
+    }
+
+    private void ShowWelcomeTip()
+    {
+        CustomizeTip.IsOpen = _welcomeTips.Current == WelcomeTip.Customize;
+        SettingsTip.IsOpen = _welcomeTips.Current == WelcomeTip.Settings;
+    }
+
+    private void WelcomeTip_Next(TeachingTip sender, object args) => _welcomeTips.Next();
+
+    private void WelcomeTip_Closed(TeachingTip sender, TeachingTipClosedEventArgs args)
+    {
+        if (args.Reason != TeachingTipCloseReason.Programmatic)
+        {
+            _welcomeTips.Finish();
+        }
     }
 
     private void OnLookPickerCloseRequested(object? sender, EventArgs e) => CustomizeFlyout.Hide();
