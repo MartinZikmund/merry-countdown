@@ -51,7 +51,7 @@ public partial class DisplayViewModel : ViewModelBase
         Backdrop = backdrop;
         Sign = new CountdownSignViewModel(localizer);
         _library = DoorLibrary.Load(CultureInfo.CurrentUICulture.Name);
-        SceneId = backdrop.SceneFor(SceneCatalog.Resolve(family.Settings.SceneId, fullVersion.IsFull).Id);
+        SceneId = SceneCatalog.Resolve(family.Settings.SceneId, fullVersion.IsFull).Id;
         Tick();
     }
 

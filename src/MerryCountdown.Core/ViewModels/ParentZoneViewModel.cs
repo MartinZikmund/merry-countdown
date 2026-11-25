@@ -36,7 +36,6 @@ public partial class ParentZoneViewModel : ViewModelBase
         _messages = messages;
         _clock = clock;
         _photos = photos;
-        ForegroundOptions = [localizer["PhotoForegroundNone"], .. SceneCatalog.All.Select(scene => localizer[$"Scene_{scene.Id}"].Value)];
         PhotoIntervalOptions = [.. PhotoIntervals.Select(seconds => seconds < 60 ? localizer.Plural("PhotoIntervalSeconds", seconds) : localizer.Plural("PhotoIntervalMinutes", seconds / 60))];
         PageTitle = localizer["ParentZoneTitle"];
         NewEventDate = new DateTimeOffset(clock.Now.Date);
@@ -49,7 +48,6 @@ public partial class ParentZoneViewModel : ViewModelBase
 
     public ObservableCollection<PhotoRowViewModel> Photos { get; } = [];
 
-    public IReadOnlyList<string> ForegroundOptions { get; }
 
     public IReadOnlyList<string> PhotoIntervalOptions { get; }
 
@@ -96,8 +94,9 @@ public partial class ParentZoneViewModel : ViewModelBase
     [ObservableProperty]
     public partial bool HasPhotos { get; set; }
 
+    /// <summary>The grown-ups' question is skipped on this device.</summary>
     [ObservableProperty]
-    public partial int ForegroundIndex { get; set; }
+    public partial bool KeepUnlocked { get; set; }
 
     [ObservableProperty]
     public partial int PhotoIntervalIndex { get; set; }
@@ -122,11 +121,12 @@ public partial class ParentZoneViewModel : ViewModelBase
 
     partial void OnUsesPhotosChanged(bool value) => SavePhotoSetting(s => s.UsesPhotos = value);
 
-    partial void OnForegroundIndexChanged(int value)
+    partial void OnKeepUnlockedChanged(bool value)
     {
-        if (value >= 0)
+        if (!_isLoading)
         {
-            SavePhotoSetting(s => s.PhotoForegroundSceneId = value == 0 ? null : SceneCatalog.All[value - 1].Id);
+            _family.Settings.KeepGrownUpsUnlocked = value;
+            _family.SaveSettings();
         }
     }
 
@@ -201,6 +201,12 @@ public partial class ParentZoneViewModel : ViewModelBase
         var settings = _family.Settings;
         settings.PhotoIds.Remove(row.Id);
         settings.UsesPhotos = settings.UsesPhotos && settings.PhotoIds.Count > 0;
+        if (settings.PhotoIds.Count == 0 && settings.SceneId == SceneCatalog.PhotosId)
+        {
+            // The Photos scene has nothing left to show.
+            settings.SceneId = SceneCatalog.All[0].Id;
+        }
+
         _family.SaveSettings();
         _photos.Delete(row.Id);
         Load();
@@ -279,7 +285,7 @@ public partial class ParentZoneViewModel : ViewModelBase
 
         var settings = _family.Settings;
         UsesPhotos = settings.UsesPhotos;
-        ForegroundIndex = SceneCatalog.All.ToList().FindIndex(scene => scene.Id == settings.PhotoForegroundSceneId) + 1;
+        KeepUnlocked = settings.KeepGrownUpsUnlocked;
         PhotoIntervalIndex = Math.Max(0, PhotoIntervals.ToList().IndexOf(settings.PhotoIntervalSeconds));
         Photos.Clear();
         foreach (var id in settings.PhotoIds)

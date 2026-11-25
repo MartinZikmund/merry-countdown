@@ -761,7 +761,7 @@
     <value>Jméno</value>
   </data>
   <data name="Scene_photos" xml:space="preserve">
-    <value>Moje fotky</value>
+    <value>Fotky</value>
   </data>
   <data name="PhotosHeader" xml:space="preserve">
     <value>Va&#353;e fotky</value>
@@ -774,15 +774,6 @@
   </data>
   <data name="PhotosAdd" xml:space="preserve">
     <value>Přidat fotky</value>
-  </data>
-  <data name="PhotoForegroundHeader" xml:space="preserve">
-    <value>Před fotkami</value>
-  </data>
-  <data name="PhotoForegroundDescription" xml:space="preserve">
-    <value>Nechte vpředu domky, krb nebo vláček z&#160;obrázku, nebo zobrazte jen fotku.</value>
-  </data>
-  <data name="PhotoForegroundNone" xml:space="preserve">
-    <value>Jen fotka</value>
   </data>
   <data name="PhotoIntervalHeader" xml:space="preserve">
     <value>Zm&#283;na fotky</value>
@@ -918,5 +909,17 @@
   </data>
   <data name="WelcomeTipDone" xml:space="preserve">
     <value>Rozumím</value>
+  </data>
+  <data name="PhotosBehindScene" xml:space="preserve">
+    <value>Moje fotky za obrázkem</value>
+  </data>
+  <data name="GateHeader" xml:space="preserve">
+    <value>Otázka pro dospělé</value>
+  </data>
+  <data name="KeepUnlockedHeader" xml:space="preserve">
+    <value>Nechat koutek odemčený</value>
+  </data>
+  <data name="KeepUnlockedDescription" xml:space="preserve">
+    <value>Otázka se na tomto zařízení přestane zobrazovat, takže se sem dostane kdokoli, kdo ho drží, a&#160;může koupit plnou verzi nebo otevírat odkazy. Když je to vypnuté, otázka se vrátí 15&#160;minut po poslední správné odpovědi.</value>
   </data>
 </root>

@@ -1,11 +1,65 @@
 using FluentAssertions;
 using MerryCountdown.Core.Family;
+using MerryCountdown.Core.Season;
+using MerryCountdown.Core.Tests.Fakes;
 
 namespace MerryCountdown.Core.Tests;
 
 [TestClass]
 public class FamilyServiceTests
 {
+    private static FamilyService LoadVersion1(Action<FamilySettings> setUp)
+    {
+        FamilySettings settings = FamilySettings.ForCulture("en-US");
+        settings.SceneId = "globe";
+        setUp(settings);
+        return new FamilyService(new FakeFamilyStore { Data = new FamilyData { Version = 1, Settings = settings } }, "en-US");
+    }
+
+    [TestMethod]
+    public void Version1_JustThePhoto_BecomesThePhotosScene()
+    {
+        var family = LoadVersion1(s => s.UsesPhotos = true);
+
+        family.Settings.SceneId.Should().Be(SceneCatalog.PhotosId);
+        family.Settings.UsesPhotos.Should().BeTrue();
+    }
+
+    [TestMethod]
+    public void Version1_PhotosWithASceneInFront_KeepsThatSceneInFront()
+    {
+        var family = LoadVersion1(s =>
+        {
+            s.UsesPhotos = true;
+            s.PhotoForegroundSceneId = "fireplace";
+        });
+
+        family.Settings.SceneId.Should().Be("fireplace");
+        family.Settings.UsesPhotos.Should().BeTrue();
+        family.Settings.PhotoForegroundSceneId.Should().BeNull();
+    }
+
+    [TestMethod]
+    public void Version1_PhotosOff_KeepsItsSceneWhateverTheForegroundWas()
+    {
+        var family = LoadVersion1(s => s.PhotoForegroundSceneId = "fireplace");
+
+        family.Settings.SceneId.Should().Be("globe");
+        family.Settings.UsesPhotos.Should().BeFalse();
+    }
+
+    [TestMethod]
+    public void CurrentVersion_IsNotMigratedAgain()
+    {
+        FamilySettings settings = FamilySettings.ForCulture("en-US");
+        settings.SceneId = "globe";
+        settings.UsesPhotos = true;
+
+        FamilyService family = new(new FakeFamilyStore { Data = new FamilyData { Settings = settings } }, "en-US");
+
+        family.Settings.SceneId.Should().Be("globe");
+    }
+
     private sealed class FakeStore : IFamilyStore
     {
         public FamilyData Data { get; set; } = new();

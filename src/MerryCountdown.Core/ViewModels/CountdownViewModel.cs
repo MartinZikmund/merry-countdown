@@ -10,7 +10,7 @@ namespace MerryCountdown.Core.ViewModels;
 
 public partial class CountdownViewModel : ViewModelBase
 {
-    public const string PhotosOptionId = "photos";
+    public const string PhotosOptionId = SceneCatalog.PhotosId;
 
     private readonly IFamilyService _family;
     private readonly IFullVersionService _fullVersion;
@@ -84,6 +84,17 @@ public partial class CountdownViewModel : ViewModelBase
     [ObservableProperty]
     public partial bool HasEvents { get; set; }
 
+    /// <summary>The family's photos show behind the scene. Always on for the Photos scene.</summary>
+    [ObservableProperty]
+    public partial bool PhotosBehindScene { get; set; }
+
+    /// <summary>False while the Photos scene is chosen: there the photos are the scene.</summary>
+    [ObservableProperty]
+    public partial bool CanTogglePhotos { get; set; } = true;
+
+    /// <summary>Turning photos on leads to a dialog or another page first: the full version, or adding some photos.</summary>
+    public bool PhotosNeedSetup => !_fullVersion.IsFull || _family.Settings.PhotoIds.Count == 0;
+
     public bool CanUseCompactOverlay => _overlay.IsSupported;
 
     /// <summary>The overlay covers this page, so painting its scene as well would only drain the battery.</summary>
@@ -146,27 +157,51 @@ public partial class CountdownViewModel : ViewModelBase
             return;
         }
 
-        _family.Settings.UsesPhotos = false;
         _family.Settings.SceneId = option.Id;
         _family.SaveSettings();
     }
 
     private async Task SelectPhotosAsync()
     {
-        if (!_fullVersion.IsFull)
+        if (await CanShowPhotosAsync())
         {
-            await OfferFullVersionAsync();
-        }
-        else if (_family.Settings.PhotoIds.Count > 0)
-        {
+            _family.Settings.SceneId = SceneCatalog.PhotosId;
             _family.Settings.UsesPhotos = true;
             _family.SaveSettings();
         }
-        else if (await _gate.PassAsync())
+    }
+
+    public async Task SetPhotosBehindSceneAsync(bool isOn)
+    {
+        if (!CanTogglePhotos || (isOn && !await CanShowPhotosAsync()))
+        {
+            return;
+        }
+
+        _family.Settings.UsesPhotos = isOn;
+        _family.SaveSettings();
+    }
+
+    private async Task<bool> CanShowPhotosAsync()
+    {
+        if (!_fullVersion.IsFull)
+        {
+            await OfferFullVersionAsync();
+            return false;
+        }
+
+        if (_family.Settings.PhotoIds.Count > 0)
+        {
+            return true;
+        }
+
+        if (await _gate.PassAsync())
         {
             // Nothing to show yet, and adding photos is for a grown-up.
             _navigation.Navigate<ParentZoneViewModel>();
         }
+
+        return false;
     }
 
     // Says why first, so a locked tap doesn't just land a kid on a maths question.
@@ -203,8 +238,12 @@ public partial class CountdownViewModel : ViewModelBase
     private void Reload()
     {
         var settings = _family.Settings;
-        var chosenScene = SceneCatalog.Resolve(settings.SceneId, _fullVersion.IsFull).Id;
-        SceneId = Backdrop.SceneFor(chosenScene);
+        SceneId = SceneCatalog.Resolve(settings.SceneId, _fullVersion.IsFull).Id;
+
+        // With no photo to show, the Photos scene falls back to a painted one, and the list says so.
+        var isPhotoScene = Backdrop.IsPhotoScene && Backdrop.IsActive;
+        CanTogglePhotos = !isPhotoScene;
+        PhotosBehindScene = Backdrop.IsActive;
         Snow = settings.Snow;
         CalmMotion = settings.CalmMotion;
 
@@ -221,10 +260,10 @@ public partial class CountdownViewModel : ViewModelBase
         Scenes.Clear();
         foreach (var scene in SceneCatalog.All)
         {
-            Scenes.Add(new SceneOptionViewModel(scene.Id, _localizer[$"Scene_{scene.Id}"], scene.RequiresFullVersion && !_fullVersion.IsFull, scene.Id == SceneId));
+            Scenes.Add(new SceneOptionViewModel(scene.Id, _localizer[$"Scene_{scene.Id}"], scene.RequiresFullVersion && !_fullVersion.IsFull, !isPhotoScene && scene.Id == SceneId));
         }
 
-        Scenes.Add(new SceneOptionViewModel(PhotosOptionId, _localizer["Scene_photos"], !_fullVersion.IsFull, Backdrop.IsActive));
+        Scenes.Add(new SceneOptionViewModel(PhotosOptionId, _localizer["Scene_photos"], !_fullVersion.IsFull, isPhotoScene));
 
         Events.Clear();
         if (_fullVersion.IsFull)

@@ -38,7 +38,7 @@ public enum CountdownStyle
 /// <summary>Everything the app remembers. Stored only on this device.</summary>
 public sealed class FamilyData
 {
-    public const int CurrentVersion = 1;
+    public const int CurrentVersion = 2;
 
     public int Version { get; set; } = CurrentVersion;
 
@@ -147,8 +147,11 @@ public sealed class FamilySettings
 
     public int PhotoIntervalSeconds { get; set; } = DefaultPhotoIntervalSeconds;
 
-    /// <summary>The scene whose foreground stays in front of the photos. Null shows just the photo.</summary>
+    /// <summary>Only read from version 1 data, where photos had a foreground scene of their own. See <see cref="FamilyService"/>.</summary>
     public string? PhotoForegroundSceneId { get; set; }
+
+    /// <summary>The grown-ups' question is never asked on this device.</summary>
+    public bool KeepGrownUpsUnlocked { get; set; }
 
     public static FamilySettings ForCulture(string cultureName)
     {

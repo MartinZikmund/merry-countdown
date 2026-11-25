@@ -34,7 +34,7 @@ public partial class CompactOverlayViewModel : ViewModelBase
         _sounds = sounds;
         Backdrop = backdrop;
         Sign = new CountdownSignViewModel(localizer);
-        SceneId = backdrop.SceneFor(SceneCatalog.Resolve(family.Settings.SceneId, fullVersion.IsFull).Id);
+        SceneId = SceneCatalog.Resolve(family.Settings.SceneId, fullVersion.IsFull).Id;
         Snow = family.Settings.Snow;
         CalmMotion = family.Settings.CalmMotion;
         Tick();
