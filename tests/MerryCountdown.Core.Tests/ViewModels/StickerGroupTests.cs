@@ -38,7 +38,8 @@ public class StickerGroupTests
         var vm = Create(family);
         var unicorn = vm.Stickers.Single(s => s.Key == "unicorn");
 
-        vm.AddPictureWishCommand.Execute(unicorn);
+        vm.ChoosePictureCommand.Execute(unicorn);
+        vm.AddWishCommand.Execute(null);
 
         vm.Wishes.Should().ContainSingle(w => w.Sticker == "unicorn" && w.Label == "Sticker_unicorn");
         family.ActiveKid.Wishes.Single().Sticker.Should().Be("unicorn");

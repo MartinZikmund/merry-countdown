@@ -204,11 +204,12 @@
                 </Grid>
             </Border>
 
-            <!--  Pictures first: picking one adds the wish.  -->
+            <!--  Pictures first: the chosen one waits here until ＋ puts it on the letter.  -->
             <controls:StickerPicker
                 x:Name="PicturePicker"
-                ChooseCommand="{x:Bind ViewModel.AddPictureWishCommand}"
-                Groups="{x:Bind ViewModel.StickerGroups}" />
+                ChooseCommand="{x:Bind ViewModel.ChoosePictureCommand}"
+                Groups="{x:Bind ViewModel.StickerGroups}"
+                SelectedSticker="{x:Bind ViewModel.SelectedSticker, Mode=OneWay}" />
 
             <Grid ColumnSpacing="8">
                 <Grid.ColumnDefinitions>
@@ -224,7 +225,7 @@
                     FontSize="20"
                     KeyDown="NewWish_KeyDown"
                     MaxLength="{x:Bind ViewModel.WishMaxLength}"
-                    PlaceholderText="{markup:Localize Key=WishPlaceholder}"
+                    PlaceholderText="{x:Bind ViewModel.WishPlaceholder, Mode=OneWay}"
                     Text="{x:Bind ViewModel.NewWishText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 <Button
                     Grid.Column="1"

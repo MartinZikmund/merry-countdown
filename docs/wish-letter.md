@@ -9,9 +9,10 @@ Under 840 wide, the tools are a bar pinned to the bottom of the page, above the 
 Only the letter scrolls, so the way to add a wish is always in reach however long the letter gets. When wide, the
 same tools are a column next to the letter that doesn't scroll.
 
-- **Pick a picture** comes first and is the biggest target. Picking one adds the wish at once
-  (`AddPictureWishCommand`). If there are words in the text box, the picture takes them along.
-- **Or write a wish**: the text box and its round ＋ button (or Enter) add a typed wish (`AddWishCommand`).
+- **Pick a picture** comes first and is the biggest target. Picking one doesn't add anything yet
+  (`ChoosePictureCommand`): the picture waits on the button, and its name becomes the text box's placeholder.
+- **The round ＋ button** (or Enter) adds the wish (`AddWishCommand`). With only a picture, the wish says the
+  picture's name. With words typed, it says those, next to the picture if one is chosen. Words alone work too.
 - **An empty letter** shows a dashed "Your first wish goes here" slot. Tapping it opens the pictures.
 - **A new wish** is scrolled to the middle of the letter, pops in and glows (`ArrivedWish`). With Calm motion
   it jumps there without scrolling smoothly and without the pop, and still glows.
