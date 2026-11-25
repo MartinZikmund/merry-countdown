@@ -1,5 +1,7 @@
 using System.ComponentModel;
+using System.Diagnostics;
 using MerryCountdown.Core.Family;
+using MerryCountdown.Core.Services;
 using MerryCountdown.Core.ViewModels;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
@@ -300,7 +302,32 @@ public sealed partial class CountdownSign : UserControl
         return geometry;
     }
 
-    private void OnTapped(object sender, TappedRoutedEventArgs e)
+    public static readonly DependencyProperty ShakeProperty = DependencyProperty.Register(
+        nameof(Shake), typeof(ShakeEventArgs), typeof(CountdownSign), new PropertyMetadata(null, (d, e) => ((CountdownSign)d).OnShaken(e.NewValue)));
+
+    private static readonly TimeSpan _swingLength = TimeSpan.FromMilliseconds(1300);
+    private long _lastShakeSwing;
+
+    /// <summary>The latest push of a shake. The sign swings as it does when tapped.</summary>
+    public ShakeEventArgs? Shake
+    {
+        get => (ShakeEventArgs?)GetValue(ShakeProperty);
+        set => SetValue(ShakeProperty, value);
+    }
+
+    // A shake is many pushes; restarting the swing on each would make it stutter.
+    private void OnShaken(object? shake)
+    {
+        if (shake is not null && (_lastShakeSwing == 0 || Stopwatch.GetElapsedTime(_lastShakeSwing) >= _swingLength))
+        {
+            _lastShakeSwing = Stopwatch.GetTimestamp();
+            Swing();
+        }
+    }
+
+    private void OnTapped(object sender, TappedRoutedEventArgs e) => Swing();
+
+    private void Swing()
     {
         if (CalmMotion || IsPreview)
         {

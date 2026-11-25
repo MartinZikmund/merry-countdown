@@ -11,6 +11,8 @@ Shaking the phone, or grabbing the window by its title bar and shaking it, makes
 | Toy train | Cars bounce, steam billows, the lamp flashes | The lamp flashes |
 | A photo with no foreground | A burst of snow | A slower, fainter burst |
 
+The countdown sign joins in: it swings the way it does when tapped (`CountdownSign.Shake`), once per swing however many pushes arrive, and not at all with Calm motion.
+
 The mini window always draws its scene with Calm motion, so shaking it gives the calm column. Family Display doesn't listen: it runs on a TV.
 
 ## Where each piece lives
