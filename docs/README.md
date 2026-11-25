@@ -4,7 +4,6 @@ One page per topic. Keep it that way — see [`.claude/rules/docs.md`](../.claud
 
 ## Building & tooling
 
-- [big-day.md](./big-day.md) — which day the countdown runs to: Christmas Eve, Christmas Day or a day of the family's own, and where it is set.
 - [building.md](./building.md) — target frameworks, per-platform prerequisites, build and run commands.
 - [worktree-identity.md](./worktree-identity.md) — per-worktree package identity, so two git worktrees can be installed and run side by side.
 - [xaml-styler.md](./xaml-styler.md) — XAML formatting rules and how CI enforces them.
@@ -13,6 +12,7 @@ One page per topic. Keep it that way — see [`.claude/rules/docs.md`](../.claud
 
 - [app-bar.md](./app-bar.md) — the sticker tabs at the top of the app, how they share the title bar on Windows, the customize button, and the badge that says a new door is waiting.
 - [app-name.md](./app-name.md) — the English and Czech app name, and every place it lives: strings, Windows manifest, Android label, iOS bundle.
+- [big-day.md](./big-day.md) — which day the countdown runs to: Christmas Eve, Christmas Day or a day of the family's own, and where it is set.
 - [compact-overlay.md](./compact-overlay.md) — the small always-on-top countdown window, and why only WinUI offers it.
 - [countdown-sign.md](./countdown-sign.md) — the choosable signs and countdown styles on Home and Family Display, and how to add a sign.
 - [dialogs.md](./dialogs.md) — how every dialog gets the app look and the chosen theme, and why its template is a copy.
