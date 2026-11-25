@@ -46,6 +46,13 @@ public sealed class AppPreferences : IAppPreferences
         set => _preferences.Set(KeepScreenOnKey, value);
     }
 
+    private const string HasSeenWelcomeTipsKey = "HasSeenWelcomeTips";
+    public bool HasSeenWelcomeTips
+    {
+        get => _preferences.Get(HasSeenWelcomeTipsKey, false);
+        set => _preferences.Set(HasSeenWelcomeTipsKey, value);
+    }
+
     private const string ThemeKey = "AppTheme";
     public ElementTheme Theme
     {

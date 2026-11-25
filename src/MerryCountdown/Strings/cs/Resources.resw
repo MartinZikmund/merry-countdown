@@ -901,4 +901,22 @@
   <data name="Sign_Baubles" xml:space="preserve">
     <value>Girlanda s&#160;baňkami</value>
   </data>
+  <data name="WelcomeTipCustomizeTitle" xml:space="preserve">
+    <value>Upravte si to po svém</value>
+  </data>
+  <data name="WelcomeTipCustomizeText" xml:space="preserve">
+    <value>Vyberte jiný obrázek nebo ceduli, ukažte vlastní fotky nebo pusťte odpočet na velkou obrazovku.</value>
+  </data>
+  <data name="WelcomeTipNext" xml:space="preserve">
+    <value>Další</value>
+  </data>
+  <data name="WelcomeTipSettingsTitle" xml:space="preserve">
+    <value>Pro dospělé</value>
+  </data>
+  <data name="WelcomeTipSettingsText" xml:space="preserve">
+    <value>Jména dětí, kdo nosí dárky, zvuky a&#160;všechno ostatní najdete v&#160;Nastavení.</value>
+  </data>
+  <data name="WelcomeTipDone" xml:space="preserve">
+    <value>Rozumím</value>
+  </data>
 </root>
