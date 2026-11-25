@@ -53,11 +53,12 @@ public sealed class SnowGlobeScene : Scene
     protected override void PaintForegroundLife(SKCanvas canvas, int width, int height, float time)
     {
         var (cx, cy, radius) = Geometry(width, height);
+        var glass = Glass(cx, cy, radius);
         canvas.Save();
-        canvas.ClipPath(Glass(cx, cy, radius), antialias: true);
+        canvas.ClipPath(glass, antialias: true);
         PaintGlobeSnow(canvas, cx, cy, radius, time);
-        PaintGlass(canvas, cx, cy, radius);
         canvas.Restore();
+        PaintGlass(canvas, glass, cx, cy, radius);
     }
 
     protected override IEnumerable<SceneElement> ForegroundElements(int width, int height, float time)
@@ -211,11 +212,12 @@ public sealed class SnowGlobeScene : Scene
         }
     }
 
-    private static void PaintGlass(SKCanvas canvas, float cx, float cy, float radius)
+    private static void PaintGlass(SKCanvas canvas, SKPath glass, float cx, float cy, float radius)
     {
+        // Filling the glass's own outline keeps the shine off the base without the cost of painting through a clip.
         using var rim = SKShader.CreateRadialGradient(new SKPoint(cx, cy), radius, [SKColors.Transparent, SKColors.White.WithAlpha(90)], [0.82f, 1f], SKShaderTileMode.Clamp);
         using SKPaint paint = new() { Shader = rim, IsAntialias = true };
-        canvas.DrawCircle(cx, cy, radius, paint);
+        canvas.DrawPath(glass, paint);
 
         using SKPaint shine = new() { IsAntialias = true, Color = SKColors.White.WithAlpha(70) };
         canvas.Save();
