@@ -35,14 +35,17 @@ public sealed class FireplaceScene : Scene
         var outerWidth = hearth * 1.5f;
         var outerHeight = hearth * 1.02f;
         paint.Color = new SKColor(0xB4, 0x57, 0x3E);
-        canvas.DrawRoundRect(cx - (outerWidth / 2), floor - outerHeight, outerWidth, outerHeight, hearth * 0.02f, hearth * 0.02f, paint);
+        using var body = TopRounded(new SKRect(cx - (outerWidth / 2), floor - outerHeight, cx + (outerWidth / 2), floor), hearth * 0.02f);
+        canvas.DrawRoundRect(body, paint);
+        canvas.Save();
+        canvas.ClipRoundRect(body, antialias: true);
         PaintBricks(canvas, cx - (outerWidth / 2), floor - outerHeight, outerWidth, outerHeight, hearth);
+        canvas.Restore();
 
         paint.Color = new SKColor(0x1A, 0x0C, 0x10);
         var opening = hearth * 0.92f;
-        using SKPath arch = new();
-        arch.AddRoundRect(new SKRect(cx - (opening / 2), floor - (opening * 0.7f), cx + (opening / 2), floor + 4), opening * 0.2f, opening * 0.2f);
-        canvas.DrawPath(arch, paint);
+        using var firebox = TopRounded(new SKRect(cx - (opening / 2), floor - (opening * 0.7f), cx + (opening / 2), floor), opening * 0.2f);
+        canvas.DrawRoundRect(firebox, paint);
 
         paint.Color = Palette.Wood;
         canvas.DrawRoundRect(cx - (hearth * 0.86f), floor - outerHeight - (hearth * 0.07f), hearth * 1.72f, hearth * 0.09f, hearth * 0.015f, hearth * 0.015f, paint);
@@ -65,7 +68,7 @@ public sealed class FireplaceScene : Scene
         var roar = Math.Max(Remaining(_flamesTapped, time, FlamesReaction), shaken * 0.6f);
         var glow = (byte)(95 + (roar * (CalmMotion ? 45 : 90)));
         Painter.Glow(canvas, cx, floor - (opening * 0.2f), hearth * 1.5f * flicker, Palette.Ember, glow);
-        PaintFlames(canvas, cx, floor - (opening * 0.07f), opening, time, CalmMotion ? 0 : roar);
+        PaintFlames(canvas, cx, floor - (opening * 0.11f), opening, time, CalmMotion ? 0 : roar);
         PaintEmbers(canvas, cx, floor, opening, time);
         if (!CalmMotion)
         {
@@ -122,16 +125,29 @@ public sealed class FireplaceScene : Scene
         }
     }
 
+    // Square where it stands on the floor.
+    private static SKRoundRect TopRounded(SKRect box, float radius)
+    {
+        SKRoundRect shape = new();
+        SKPoint corner = new(radius, radius);
+        shape.SetRectRadii(box, [corner, corner, SKPoint.Empty, SKPoint.Empty]);
+        return shape;
+    }
+
     private static void PaintBricks(SKCanvas canvas, float x, float y, float width, float height, float hearth)
     {
         using SKPaint paint = new() { Color = new SKColor(0x8F, 0x3F, 0x2D), StrokeWidth = Math.Max(1, hearth * 0.005f), IsAntialias = true };
         var rowHeight = hearth * 0.075f;
         var brick = hearth * 0.16f;
         var row = 0;
-        for (var ly = y + rowHeight; ly < y + height; ly += rowHeight, row++)
+        for (var ly = y; ly < y + height; ly += rowHeight, row++)
         {
-            canvas.DrawLine(x, ly, x + width, ly, paint);
-            for (var lx = x + (row % 2 == 0 ? 0 : brick / 2); lx < x + width; lx += brick)
+            if (row > 0)
+            {
+                canvas.DrawLine(x, ly, x + width, ly, paint);
+            }
+
+            for (var lx = x + (row % 2 == 0 ? brick / 2 : brick); lx < x + width; lx += brick)
             {
                 canvas.DrawLine(lx, ly, lx, ly + rowHeight, paint);
             }
@@ -143,14 +159,16 @@ public sealed class FireplaceScene : Scene
         using SKPaint paint = new() { IsAntialias = true, Color = Palette.WoodDark };
         var length = opening * 0.68f;
         var thick = opening * 0.09f;
+
+        // High enough that the tilted ends stay inside the firebox instead of poking out over the floor.
         canvas.Save();
         canvas.RotateDegrees(-7, cx, floor);
-        canvas.DrawRoundRect(cx - (length / 2), floor - (thick * 1.55f), length, thick, thick / 2, thick / 2, paint);
+        canvas.DrawRoundRect(cx - (length / 2), floor - (thick * 2f), length, thick, thick / 2, thick / 2, paint);
         canvas.Restore();
         canvas.Save();
         canvas.RotateDegrees(8, cx, floor);
         paint.Color = Palette.Wood;
-        canvas.DrawRoundRect(cx - (length / 2), floor - (thick * 1.1f), length, thick, thick / 2, thick / 2, paint);
+        canvas.DrawRoundRect(cx - (length / 2), floor - (thick * 1.55f), length, thick, thick / 2, thick / 2, paint);
         canvas.Restore();
     }
 
