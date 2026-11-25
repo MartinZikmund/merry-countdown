@@ -82,11 +82,7 @@ public sealed class VillageScene : Scene
     {
         foreach (var house in LayOutHouses(width, height))
         {
-            Painter.House(canvas, house.X, house.Ground, house.Width, house.Height, house.Wall, Palette.Snow);
-            foreach (var window in house.Windows)
-            {
-                Painter.Window(canvas, window.Left, window.Top, window.Width, window.Height, Palette.Candle);
-            }
+            Painter.House(canvas, house.X, house.Ground, house.Width, house.Height, house.Wall, Palette.Snow, house.Windows, Palette.Candle);
         }
     }
 

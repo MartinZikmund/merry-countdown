@@ -116,8 +116,8 @@ public sealed class SnowGlobeScene : Scene
 
         Painter.Pine(canvas, cx - (radius * 0.48f), ground, radius * 0.75f, Palette.Pine, Palette.Snow);
         Painter.Pine(canvas, cx + (radius * 0.62f), ground + (radius * 0.04f), radius * 0.48f, Palette.PineDark, Palette.Snow);
-        Painter.House(canvas, cx + (radius * 0.1f), ground + (radius * 0.04f), radius * 0.56f, radius * 0.38f, Palette.Cranberry, Palette.Snow);
-        Painter.Window(canvas, cx + (radius * 0.0f), ground - (radius * 0.2f), radius * 0.13f, radius * 0.15f, Palette.Candle);
+        var window = SKRect.Create(cx, ground - (radius * 0.2f), radius * 0.13f, radius * 0.15f);
+        Painter.House(canvas, cx + (radius * 0.1f), ground + (radius * 0.04f), radius * 0.56f, radius * 0.38f, Palette.Cranberry, Palette.Snow, [window], Palette.Candle);
 
         PaintSnowman(canvas, cx - (radius * 0.14f), ground + (radius * 0.24f), radius * 0.2f);
         canvas.Restore();

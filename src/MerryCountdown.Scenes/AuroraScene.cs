@@ -32,7 +32,7 @@ public sealed class AuroraScene : Scene
         Ribbon(canvas, width, height, time, 0.17f, 0.1f, 0.12f, new SKColor(0xFF, 0x7E, 0xC8), 4.2f, reach, glow);
     }
 
-    // The land stands still and goes into the cached backdrop; only the cabin's lights move.
+    // The land stands still and goes into the cached backdrop; only the cabin's window panes flicker.
     protected override void PaintForeground(SKCanvas canvas, int width, int height) =>
         PaintLand(canvas, width, height);
 
@@ -53,6 +53,16 @@ public sealed class AuroraScene : Scene
 
     private static (float X, float Ground, float Size) Cabin(int width, int height) =>
         (width * 0.5f, height * 0.875f, Math.Min(width, height) * 0.3f);
+
+    private static SKRect CabinWindow(int width, int height, int index)
+    {
+        var (x, ground, cabin) = Cabin(width, height);
+        return SKRect.Create(x + (cabin * (index == 0 ? -0.28f : 0.11f)), ground - (cabin * 0.38f), cabin * 0.17f, cabin * 0.2f);
+    }
+
+    /// <summary>The lamp inside, from 0 at its dimmest to 2 at its brightest.</summary>
+    private static SKColor CabinLight(float flicker) =>
+        new(Palette.Candle.Red, (byte)(Palette.Candle.Green * (0.84f + (0.08f * flicker))), Palette.Candle.Blue);
 
     // Each ribbon is one mesh of 12-pixel columns, drawn in a single call: a draw per column was most of the frame on the GPU.
     private void Ribbon(SKCanvas canvas, int width, int height, float time, float centre, float swing, float tall, SKColor color, float phase, float reach, float glow)
@@ -117,7 +127,7 @@ public sealed class AuroraScene : Scene
         Painter.Hill(canvas, width, height, height * 0.86f, height * 0.02f, 1.2f, 0.2f, Palette.SnowShade, Palette.SnowDeep);
 
         var (cabinX, cabinGround, cabin) = Cabin(width, height);
-        Painter.House(canvas, cabinX, cabinGround, cabin, cabin * 0.55f, Palette.WoodDark, Palette.Snow);
+        Painter.House(canvas, cabinX, cabinGround, cabin, cabin * 0.55f, Palette.WoodDark, Palette.Snow, [CabinWindow(width, height, 0), CabinWindow(width, height, 1)], CabinLight(1));
 
         Painter.Pine(canvas, width * 0.13f, height * 0.93f, unit * 0.36f, Palette.Pine, Palette.Snow);
         Painter.Pine(canvas, width * 0.88f, height * 0.94f, unit * 0.31f, Palette.Pine, Palette.Snow);
@@ -126,10 +136,12 @@ public sealed class AuroraScene : Scene
     private void PaintCabinLights(SKCanvas canvas, int width, int height, float time)
     {
         var (cabinX, cabinGround, cabin) = Cabin(width, height);
-        var flicker = 0.92f + (0.08f * MathF.Sin(time * 5.3f));
-        var light = new SKColor(Palette.Candle.Red, (byte)(Palette.Candle.Green * flicker), Palette.Candle.Blue);
-        Painter.Window(canvas, cabinX - (cabin * 0.28f), cabinGround - (cabin * 0.38f), cabin * 0.17f, cabin * 0.2f, light);
-        Painter.Window(canvas, cabinX + (cabin * 0.11f), cabinGround - (cabin * 0.38f), cabin * 0.17f, cabin * 0.2f, light);
+        var light = CabinLight(1 + MathF.Sin(time * 5.3f));
+        for (var i = 0; i < 2; i++)
+        {
+            var window = CabinWindow(width, height, i);
+            Painter.WindowPane(canvas, window.Left, window.Top, window.Width, window.Height, light);
+        }
 
         // Someone inside turns the lamps up. A shake does it too, so there's still an answer under a photo.
         var lamps = Math.Max(Remaining(_cabinTapped, time, CabinReaction), Shaken(time, ShakeSettle));
