@@ -80,13 +80,13 @@ public partial class CalendarViewModel : ViewModelBase
     public void TapDoor(DoorViewModel door)
     {
         var now = _clock.Now;
-        var year = AdventCalendar.SeasonYear(now);
+        var year = _family.Settings.Advent(now).Year;
         var kid = _family.ActiveKid;
 
         switch (door.State)
         {
             case DoorState.Locked:
-                Hint = _localizer.Plural("DoorLockedHint", AdventCalendar.SleepsUntil(door.Number, now));
+                Hint = _localizer.Plural("DoorLockedHint", _family.Settings.Advent(now).SleepsUntil(door.Number, now));
                 door.Jiggle();
                 _sounds.Play(SoundEffect.DoorLocked);
                 break;
@@ -152,7 +152,7 @@ public partial class CalendarViewModel : ViewModelBase
     private void RebuildDoors()
     {
         var now = _clock.Now;
-        var year = AdventCalendar.SeasonYear(now);
+        var year = _family.Settings.Advent(now).Year;
         var kid = _family.ActiveKid;
         _builtFor = now.Date;
         _builtForKid = kid;
@@ -216,8 +216,9 @@ public partial class DoorViewModel(int number, IStringLocalizer localizer) : Obs
     internal void Refresh(DoorLibrary library, DateTime now, int year, IFamilyService family, Kid kid)
     {
         CalmMotion = family.Settings.CalmMotion;
-        State = AdventCalendar.StateOf(Number, now, family.IsDoorOpened(kid, year, Number));
-        IsToday = AdventCalendar.TodaysDoor(now) == Number;
+        var season = family.Settings.Advent(now);
+        State = season.StateOf(Number, now, family.IsDoorOpened(kid, year, Number));
+        IsToday = season.TodaysDoor(now) == Number;
         Sticker = library.For(Number, year).Sticker;
         AccessibleName = localizer[$"DoorAccessible_{State}", Number];
     }

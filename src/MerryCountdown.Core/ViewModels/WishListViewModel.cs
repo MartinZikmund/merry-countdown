@@ -205,7 +205,7 @@ public partial class WishListViewModel : ViewModelBase
     [RelayCommand(CanExecute = nameof(CanSend))]
     private void SendLetter()
     {
-        if (CanSend && _family.SendLetter(AdventCalendar.SeasonYear(_clock.Now)))
+        if (CanSend && _family.SendLetter(_family.Settings.Advent(_clock.Now).Year))
         {
             _sounds.Play(SoundEffect.Letter);
             ForgetRemoved();
@@ -264,7 +264,7 @@ public partial class WishListViewModel : ViewModelBase
         }
 
         HasWishes = Wishes.Count > 0;
-        IsSent = kid.LetterSentYear == AdventCalendar.SeasonYear(_clock.Now) && HasWishes;
+        IsSent = kid.LetterSentYear == _family.Settings.Advent(_clock.Now).Year && HasWishes;
         _isLoading = false;
     }
 }
