@@ -847,9 +847,6 @@
   <data name="UnitSeconds_Many" xml:space="preserve">
     <value>seconds</value>
   </data>
-  <data name="SignNextChange" xml:space="preserve">
-    <value>until it says {0}</value>
-  </data>
   <data name="SignNextChangeLastSleep" xml:space="preserve">
     <value>until it's {0}!</value>
   </data>

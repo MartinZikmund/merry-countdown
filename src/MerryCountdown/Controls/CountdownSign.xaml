@@ -183,7 +183,8 @@
                             x:Name="NextChange"
                             Margin="0,4,0,0"
                             HorizontalAlignment="Center"
-                            Text="{x:Bind Sign.NextChangeCaption, Mode=OneWay}" />
+                            Text="{x:Bind Sign.NextChangeCaption, Mode=OneWay}"
+                            Visibility="{x:Bind Sign.HasNextChangeCaption, Mode=OneWay}" />
                     </StackPanel>
 
                     <TextBlock
@@ -344,7 +345,8 @@
                         Padding="12,2"
                         HorizontalAlignment="Center"
                         Background="{StaticResource SceneGlassStrongBrush}"
-                        CornerRadius="14">
+                        CornerRadius="14"
+                        Visibility="{x:Bind Sign.HasNextChangeCaption, Mode=OneWay}">
                         <TextBlock
                             x:Name="BallNextChange"
                             Foreground="White"

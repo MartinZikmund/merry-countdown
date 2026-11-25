@@ -847,9 +847,6 @@
   <data name="UnitSeconds_Many" xml:space="preserve">
     <value>sekund</value>
   </data>
-  <data name="SignNextChange" xml:space="preserve">
-    <value>ne&#382; se zm&#283;n&#237; na {0}</value>
-  </data>
   <data name="SignNextChangeLastSleep" xml:space="preserve">
     <value>a&#160;je tu {0}!</value>
   </data>
