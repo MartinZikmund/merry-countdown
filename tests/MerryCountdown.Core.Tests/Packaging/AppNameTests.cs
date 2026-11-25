@@ -9,14 +9,14 @@ namespace MerryCountdown.Core.Tests.Packaging;
 public class AppNameTests
 {
     private const string EnglishName = "Merry Countdown";
-    private const string CzechName = "Vánoční odpočítávání";
+    private const string CzechName = "Čekání na Vánoce";
 
     [TestMethod]
     public void ApplicationName_InEnglishResources_IsMerryCountdown() =>
         ReadResw("en", "ApplicationName").Should().Be(EnglishName);
 
     [TestMethod]
-    public void ApplicationName_InCzechResources_IsVanocniOdpocitavani() =>
+    public void ApplicationName_InCzechResources_IsCekaniNaVanoce() =>
         ReadResw("cs", "ApplicationName").Should().Be(CzechName);
 
     [TestMethod]
@@ -24,7 +24,7 @@ public class AppNameTests
     {
         var cs = File.ReadAllText(Path.Combine(Root(), "src", "MerryCountdown", "Strings", "cs", "Resources.resw"));
 
-        cs.Should().NotContain("Veselé odpočítávání").And.NotContain("Veselého odpočítávání");
+        cs.Should().NotContain("Veselé odpočítávání").And.NotContain("Veselého odpočítávání").And.NotContain("<value>Vánoční odpočítávání</value>");
     }
 
     [TestMethod]
