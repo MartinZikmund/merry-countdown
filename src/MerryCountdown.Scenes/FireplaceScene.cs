@@ -161,8 +161,9 @@ public sealed class FireplaceScene : Scene
     private static void PaintBackLog(SKCanvas canvas, float cx, float floor, float opening) =>
         PaintLog(canvas, cx, floor, opening, degrees: -7, lift: 2f, Palette.WoodDark);
 
+    // Low and nearly level, so it hides the foot of the flames and not the fire itself.
     private static void PaintFrontLog(SKCanvas canvas, float cx, float floor, float opening) =>
-        PaintLog(canvas, cx, floor, opening, degrees: 8, lift: 1.55f, Palette.Wood);
+        PaintLog(canvas, cx, floor, opening, degrees: 4, lift: 1.3f, Palette.Wood);
 
     private static void PaintLog(SKCanvas canvas, float cx, float floor, float opening, float degrees, float lift, SKColor color)
     {
