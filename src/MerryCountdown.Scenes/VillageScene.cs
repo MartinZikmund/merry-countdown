@@ -9,6 +9,10 @@ public sealed class VillageScene : Scene
     private const float HouseReaction = 2f;
     private const int MostHouses = 64;
     private const float ShakeSettle = 2.5f;
+    private const int TreeLights = 26;
+
+    // Where each light hangs: how far down the tree, and how far out towards the tips of the branches.
+    private static readonly (float Down, float Out)[] _lightSpots = CreateLightSpots();
 
     private readonly float[] _houseTapped = Enumerable.Repeat(float.NegativeInfinity, MostHouses).ToArray();
     private float _treeTapped = float.NegativeInfinity;
@@ -64,6 +68,27 @@ public sealed class VillageScene : Scene
 
     private static (float X, float Ground, float Height) Tree(int width, int height) =>
         (width * 0.5f, height * 0.94f, Math.Min(width, height) * 0.34f);
+
+    private static (float Down, float Out)[] CreateLightSpots()
+    {
+        Random random = new(99);
+        var spots = new (float, float)[TreeLights];
+        for (var i = 0; i < TreeLights; i++)
+        {
+            var along = random.NextSingle();
+            var side = (random.NextSingle() * 2) - 1;
+            spots[i] = (0.08f + (along * 0.74f), side * 0.8f);
+        }
+
+        return spots;
+    }
+
+    /// <summary>The light's place on a tree: on its branches, never in the air beside it.</summary>
+    internal static SKPoint TreeLight(int index, float x, float ground, float treeHeight)
+    {
+        var (down, toTip) = _lightSpots[index];
+        return new SKPoint(x + (toTip * Painter.PineHalfWidth(down) * treeHeight), ground - treeHeight + (down * treeHeight));
+    }
 
     private static void ForestLine(SKCanvas canvas, int width, int height, float baseline, float waves, float phase, float swell)
     {
@@ -208,14 +233,12 @@ public sealed class VillageScene : Scene
         Painter.Glow(canvas, x, ground - (treeHeight * 0.5f), treeHeight * 0.85f, Palette.Candle, 40);
         Painter.Pine(canvas, x, ground, treeHeight, Palette.Pine, Palette.Snow);
 
-        Random random = new(99);
         using SKPaint paint = new() { IsAntialias = true };
-        for (var i = 0; i < 26; i++)
+        for (var i = 0; i < TreeLights; i++)
         {
-            var along = random.NextSingle();
-            var side = (random.NextSingle() * 2) - 1;
-            var ly = ground - (treeHeight * 0.92f) + (along * treeHeight * 0.74f);
-            var lx = x + (side * along * treeHeight * 0.24f) + (jingle * MathF.Sin((time * 31f) + (i * 2.3f)));
+            var spot = TreeLight(i, x, ground, treeHeight);
+            var ly = spot.Y;
+            var lx = spot.X + (jingle * MathF.Sin((time * 31f) + (i * 2.3f)));
             var color = Palette.Lights[i % Palette.Lights.Length];
             var speed = left > 0 && !CalmMotion ? 14f : 2.1f;
             var pulse = 0.55f + (0.45f * MathF.Sin((time * speed) + (i * 1.7f)));
