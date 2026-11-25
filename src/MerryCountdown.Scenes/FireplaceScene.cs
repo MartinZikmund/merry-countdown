@@ -106,8 +106,8 @@ public sealed class FireplaceScene : Scene
 
     private (float X, float Floor, float Hearth) Geometry(int width, int height)
     {
-        // Mantel and garland top out 1.12 hearths above the floor.
-        var hearth = Math.Min(Math.Min(width * 0.62f, height * 0.5f), height * (ClearPart - 0.1f) / 1.18f);
+        // Mantel and garland top out 1.12 hearths above the floor, and the presents reach 1.05 hearths to either side.
+        var hearth = Math.Min(Math.Min(width * 0.47f, height * 0.5f), height * (ClearPart - 0.1f) / 1.18f);
         return (width / 2f, height * 0.9f, hearth);
     }
 
