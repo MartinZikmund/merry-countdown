@@ -132,7 +132,7 @@ internal static class Painter
 
     private static float PineTierHalf(int tier) => 0.25f * (0.45f + (tier / (float)PineTiers * 0.55f));
 
-    /// <summary>Half the width of a pine's branches at a depth below its tip, both as shares of its height.</summary>
+    /// <summary>Half the width of a pine's green at a depth below its tip, both as shares of its height. Snow caps reach a little further.</summary>
     public static float PineHalfWidth(float depth)
     {
         var widest = 0f;
