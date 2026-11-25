@@ -14,6 +14,8 @@ public partial class ParentZoneViewModel : ViewModelBase
     /// <summary>How long each photo stays up.</summary>
     public static readonly IReadOnlyList<int> PhotoIntervals = [30, 60, 300, 900, 1800, 3600];
 
+    private const int CustomDateYear = 2028;
+
     private readonly IFamilyService _family;
     private readonly IFullVersionService _fullVersion;
     private readonly IStringLocalizer _localizer;
@@ -36,11 +38,19 @@ public partial class ParentZoneViewModel : ViewModelBase
         _messages = messages;
         _clock = clock;
         _photos = photos;
+        BigDayOptions = [.. Enum.GetValues<BigDay>().Select(day => localizer.BigDayName(day))];
+        BringerOptions = [.. Enum.GetValues<GiftBringer>().Select(bringer => localizer.BringerName(bringer))];
         PhotoIntervalOptions = [.. PhotoIntervals.Select(seconds => seconds < 60 ? localizer.Plural("PhotoIntervalSeconds", seconds) : localizer.Plural("PhotoIntervalMinutes", seconds / 60))];
         PageTitle = localizer["ParentZoneTitle"];
         NewEventDate = new DateTimeOffset(clock.Now.Date);
         Load();
     }
+
+    /// <summary>In the order of <see cref="BigDay"/>, so an index is a value.</summary>
+    public IReadOnlyList<string> BigDayOptions { get; }
+
+    /// <summary>In the order of <see cref="GiftBringer"/>.</summary>
+    public IReadOnlyList<string> BringerOptions { get; }
 
     public ObservableCollection<KidRowViewModel> Kids { get; } = [];
 
@@ -89,6 +99,19 @@ public partial class ParentZoneViewModel : ViewModelBase
     public partial TimeSpan ArrivalTime { get; set; }
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsCustomBigDay))]
+    public partial int BigDayIndex { get; set; }
+
+    public bool IsCustomBigDay => BigDayIndex == (int)BigDay.Custom;
+
+    /// <summary>Only its month and day count. The year is a leap year so 29 February can be picked.</summary>
+    [ObservableProperty]
+    public partial DateTimeOffset CustomBigDate { get; set; }
+
+    [ObservableProperty]
+    public partial int BringerIndex { get; set; }
+
+    [ObservableProperty]
     public partial bool UsesPhotos { get; set; }
 
     [ObservableProperty]
@@ -115,6 +138,41 @@ public partial class ParentZoneViewModel : ViewModelBase
         if (!_isLoading && IsFull)
         {
             _family.Settings.ArrivalMinutes = (int)value.TotalMinutes;
+            _family.SaveSettings();
+        }
+    }
+
+    partial void OnBigDayIndexChanged(int value)
+    {
+        if (_isLoading || value < 0)
+        {
+            return;
+        }
+
+        _family.Settings.UseBigDay((BigDay)value);
+        _family.SaveSettings();
+
+        // Christmas Eve and Christmas Day each bring their own usual hour.
+        _isLoading = true;
+        ArrivalTime = TimeSpan.FromMinutes(_family.Settings.ArrivalMinutes);
+        _isLoading = false;
+    }
+
+    partial void OnCustomBigDateChanged(DateTimeOffset value)
+    {
+        if (!_isLoading)
+        {
+            _family.Settings.CustomBigDayMonth = value.Month;
+            _family.Settings.CustomBigDayDay = value.Day;
+            _family.SaveSettings();
+        }
+    }
+
+    partial void OnBringerIndexChanged(int value)
+    {
+        if (!_isLoading && value >= 0)
+        {
+            _family.Settings.GiftBringer = (GiftBringer)value;
             _family.SaveSettings();
         }
     }
@@ -286,6 +344,9 @@ public partial class ParentZoneViewModel : ViewModelBase
         var settings = _family.Settings;
         UsesPhotos = settings.UsesPhotos;
         KeepUnlocked = settings.KeepGrownUpsUnlocked;
+        BigDayIndex = (int)settings.BigDay;
+        CustomBigDate = new DateTimeOffset(new DateTime(CustomDateYear, settings.CustomBigDayMonth, settings.CustomBigDayDay));
+        BringerIndex = (int)settings.GiftBringer;
         PhotoIntervalIndex = Math.Max(0, PhotoIntervals.ToList().IndexOf(settings.PhotoIntervalSeconds));
         Photos.Clear();
         foreach (var id in settings.PhotoIds)

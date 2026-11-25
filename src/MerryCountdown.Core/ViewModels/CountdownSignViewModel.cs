@@ -85,8 +85,9 @@ public partial class CountdownSignViewModel(IStringLocalizer localizer) : Observ
 
     public void Update(DateTime now, FamilySettings settings)
     {
-        var state = CountdownClock.Compute(now, settings.BigDay, settings.ArrivalMinutes);
-        var bigDay = localizer.BigDayName(settings.BigDay);
+        var (month, day) = settings.BigDate();
+        var state = CountdownClock.Compute(now, month, day, settings.ArrivalMinutes);
+        var bigDay = localizer.BigDayName(settings);
         var remaining = state.Remaining;
         var days = (int)remaining.TotalDays;
 
