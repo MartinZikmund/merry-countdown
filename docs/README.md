@@ -21,6 +21,7 @@ One page per topic. Keep it that way — see [`.claude/rules/docs.md`](../.claud
 - [keep-screen-on.md](./keep-screen-on.md) — the setting that stops the screen sleeping, how it combines with Family Display and window visibility, and what each head uses.
 - [localization.md](./localization.md) — adding strings, plural forms for counted things, names in Czech, and the Czech house style.
 - [performance.md](./performance.md) — how to measure scene frame times and the app's memory, what was found and fixed, and what is still unmeasured.
+- [scene-drawing.md](./scene-drawing.md) — the layers a scene is painted in, the rules that keep it looking right at every size and in front of a photo, and how to look at it.
 - [scene-shake.md](./scene-shake.md) — what each scene does when the device or the window is shaken, and how a shake is told apart from a drag.
 - [scene-taps.md](./scene-taps.md) — what each scene does when tapped, and how to make something tappable.
 - [sound-effects.md](./sound-effects.md) — which taps make which sounds, what plays them on each head, how to add one, and who made them.
