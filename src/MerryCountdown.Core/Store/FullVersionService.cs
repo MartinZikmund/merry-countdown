@@ -94,7 +94,17 @@ public sealed class FullVersionService(IStoreService store, IEntitlementCache ca
 
     public async Task<PurchaseResult> PurchaseAsync(CancellationToken ct = default)
     {
-        var result = await store.PurchaseAsync(ct);
+        PurchaseResult result;
+        try
+        {
+            result = await store.PurchaseAsync(ct);
+        }
+        catch (Exception exception) when (exception is not OperationCanceledException)
+        {
+            // The store throws when it can't be reached or doesn't know the app. Nobody was charged.
+            return PurchaseResult.Failed;
+        }
+
         if (result is PurchaseResult.Succeeded or PurchaseResult.AlreadyOwned)
         {
             Apply(true);
