@@ -1,4 +1,4 @@
-<local:SettingsViewBase
+﻿<local:SettingsViewBase
     x:Class="MerryCountdown.Views.SettingsView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -19,29 +19,18 @@
                 Style="{StaticResource PageTitleTextStyle}"
                 Text="{x:Bind ViewModel.PageTitle, Mode=OneWay}" />
 
-            <!--  Christmas  -->
-            <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{markup:Localize Key=SettingsChristmas}" />
+            <!--  Grown-ups  -->
+            <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{markup:Localize Key=SettingsGrownUps}" />
 
-            <toolkit:SettingsCard Description="{markup:Localize Key=BigDayDescription}" Header="{markup:Localize Key=BigDayHeader}">
+            <toolkit:SettingsCard
+                AutomationProperties.AutomationId="ParentZoneCard"
+                Command="{x:Bind ViewModel.OpenParentZoneCommand}"
+                Description="{markup:Localize Key=ParentZoneDescription}"
+                Header="{markup:Localize Key=ParentZoneTitle}"
+                IsClickEnabled="True">
                 <toolkit:SettingsCard.HeaderIcon>
-                    <FontIcon Glyph="&#xE787;" />
+                    <FontIcon Glyph="&#xE716;" />
                 </toolkit:SettingsCard.HeaderIcon>
-                <ComboBox
-                    AutomationProperties.AutomationId="BigDayCombo"
-                    AutomationProperties.Name="{markup:Localize Key=BigDayHeader}"
-                    ItemsSource="{x:Bind ViewModel.BigDayOptions}"
-                    SelectedIndex="{x:Bind ViewModel.BigDayIndex, Mode=TwoWay}" />
-            </toolkit:SettingsCard>
-
-            <toolkit:SettingsCard Description="{markup:Localize Key=BringerDescription}" Header="{markup:Localize Key=BringerHeader}">
-                <toolkit:SettingsCard.HeaderIcon>
-                    <FontIcon Glyph="&#xE715;" />
-                </toolkit:SettingsCard.HeaderIcon>
-                <ComboBox
-                    AutomationProperties.AutomationId="BringerCombo"
-                    AutomationProperties.Name="{markup:Localize Key=BringerHeader}"
-                    ItemsSource="{x:Bind ViewModel.BringerOptions}"
-                    SelectedIndex="{x:Bind ViewModel.BringerIndex, Mode=TwoWay}" />
             </toolkit:SettingsCard>
 
             <!--  Look and motion  -->
@@ -135,20 +124,6 @@
                     </toolkit:SettingsCard>
                 </toolkit:SettingsExpander.Items>
             </toolkit:SettingsExpander>
-
-            <!--  Grown-ups  -->
-            <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{markup:Localize Key=SettingsGrownUps}" />
-
-            <toolkit:SettingsCard
-                AutomationProperties.AutomationId="ParentZoneCard"
-                Command="{x:Bind ViewModel.OpenParentZoneCommand}"
-                Description="{markup:Localize Key=ParentZoneDescription}"
-                Header="{markup:Localize Key=ParentZoneTitle}"
-                IsClickEnabled="True">
-                <toolkit:SettingsCard.HeaderIcon>
-                    <FontIcon Glyph="&#xE716;" />
-                </toolkit:SettingsCard.HeaderIcon>
-            </toolkit:SettingsCard>
 
             <!--  About  -->
             <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{markup:Localize Key=About}" />

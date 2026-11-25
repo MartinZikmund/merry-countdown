@@ -5,6 +5,9 @@ public enum BigDay
 {
     ChristmasEve,
     ChristmasDay,
+
+    /// <summary>A date the family sets itself: New Year's Eve, 6 January, 6 December...</summary>
+    Custom,
 }
 
 public enum CountdownPhase
@@ -19,20 +22,26 @@ public readonly record struct CountdownState(CountdownPhase Phase, DateTime Targ
 /// <summary>Works in local wall-clock time on purpose: a child's Christmas is wherever they are.</summary>
 public static class CountdownClock
 {
-    private const int LastCelebrationDay = 26;
+    public static CountdownState Compute(DateTime now, BigDay bigDay, int arrivalMinutes) =>
+        Compute(now, 12, bigDay == BigDay.ChristmasEve ? 24 : 25, arrivalMinutes);
 
-    public static CountdownState Compute(DateTime now, BigDay bigDay, int arrivalMinutes)
+    /// <summary>Counts to a day that comes round every year, wherever in the year it is.</summary>
+    public static CountdownState Compute(DateTime now, int month, int day, int arrivalMinutes)
     {
-        var target = TargetIn(now.Year, bigDay, arrivalMinutes);
+        var target = TargetIn(now.Year, month, day, arrivalMinutes);
 
-        if (now >= target && now < new DateTime(now.Year, 12, LastCelebrationDay + 1))
+        // A day at the very end of December is still being celebrated on 1 January.
+        foreach (var arrival in new[] { target, TargetIn(now.Year - 1, month, day, arrivalMinutes) })
         {
-            return new CountdownState(CountdownPhase.Celebrating, target, 0, TimeSpan.Zero, TimeSpan.Zero);
+            if (now >= arrival && now < CelebrationEnd(arrival))
+            {
+                return new CountdownState(CountdownPhase.Celebrating, arrival, 0, TimeSpan.Zero, TimeSpan.Zero);
+            }
         }
 
         if (now > target)
         {
-            target = TargetIn(now.Year + 1, bigDay, arrivalMinutes);
+            target = TargetIn(now.Year + 1, month, day, arrivalMinutes);
         }
 
         var sleeps = (target.Date - now.Date).Days;
@@ -49,6 +58,10 @@ public static class CountdownClock
     private static DateTime Occurrence(int year, int month, int day) =>
         new(year, month, Math.Min(day, DateTime.DaysInMonth(year, month)));
 
-    private static DateTime TargetIn(int year, BigDay bigDay, int arrivalMinutes) =>
-        new DateTime(year, 12, bigDay == BigDay.ChristmasEve ? 24 : 25).AddMinutes(arrivalMinutes);
+    private static DateTime TargetIn(int year, int month, int day, int arrivalMinutes) =>
+        Occurrence(year, month, day).AddMinutes(arrivalMinutes);
+
+    // The big day and the one after. Christmas Eve gets a third, so both Christmases run to the 26th.
+    private static DateTime CelebrationEnd(DateTime target) =>
+        target.Date.AddDays(target is { Month: 12, Day: 24 } ? 3 : 2);
 }

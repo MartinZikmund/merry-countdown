@@ -122,6 +122,11 @@ public sealed class FamilySettings
 
     public GiftBringer GiftBringer { get; set; }
 
+    /// <summary>Used while <see cref="BigDay"/> is <see cref="BigDay.Custom"/>.</summary>
+    public int CustomBigDayMonth { get; set; } = 12;
+
+    public int CustomBigDayDay { get; set; } = 31;
+
     /// <summary>Minutes after midnight on the big day when the countdown reaches zero.</summary>
     public int ArrivalMinutes { get; set; }
 
@@ -169,8 +174,21 @@ public sealed class FamilySettings
     public void UseBigDay(BigDay bigDay)
     {
         BigDay = bigDay;
-        ArrivalMinutes = bigDay == BigDay.ChristmasEve ? EveningArrival : 0;
+        ArrivalMinutes = bigDay switch
+        {
+            BigDay.ChristmasEve => EveningArrival,
+            BigDay.ChristmasDay => 0,
+            _ => ArrivalMinutes,
+        };
     }
+
+    /// <summary>The month and day the countdown runs to.</summary>
+    public (int Month, int Day) BigDate() => BigDay switch
+    {
+        BigDay.ChristmasEve => (12, 24),
+        BigDay.ChristmasDay => (12, 25),
+        _ => (CustomBigDayMonth, CustomBigDayDay),
+    };
 }
 
 [JsonSerializable(typeof(FamilyData))]

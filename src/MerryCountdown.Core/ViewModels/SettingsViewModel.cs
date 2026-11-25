@@ -59,8 +59,6 @@ public partial class SettingsViewModel : ViewModelBase
             Theme = _appPreferences.Theme;
             KeepScreenOn = _screenWake.KeepScreenOn;
             var settings = _family.Settings;
-            IsChristmasEve = settings.BigDay == BigDay.ChristmasEve;
-            IsJezisek = settings.GiftBringer == GiftBringer.Jezisek;
             SnowIndex = (int)settings.Snow;
             CalmMotion = settings.CalmMotion;
             SoundEnabled = settings.SoundEnabled;
@@ -77,44 +75,8 @@ public partial class SettingsViewModel : ViewModelBase
 
     public string[] SnowOptions => [_localizer["Snow_Off"], _localizer["Snow_Gentle"], _localizer["Snow_Blizzard"]];
 
-    public string[] BigDayOptions => [_localizer.BigDayName(BigDay.ChristmasEve), _localizer.BigDayName(BigDay.ChristmasDay)];
-
-    public string[] BringerOptions => [_localizer.BringerName(GiftBringer.Santa), _localizer.BringerName(GiftBringer.Jezisek)];
-
     [ObservableProperty]
     public partial ElementTheme Theme { get; set; }
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(BigDayIndex))]
-    public partial bool IsChristmasEve { get; set; }
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(BringerIndex))]
-    public partial bool IsJezisek { get; set; }
-
-    public int BigDayIndex
-    {
-        get => IsChristmasEve ? 0 : 1;
-        set
-        {
-            if (value >= 0)
-            {
-                IsChristmasEve = value == 0;
-            }
-        }
-    }
-
-    public int BringerIndex
-    {
-        get => IsJezisek ? 1 : 0;
-        set
-        {
-            if (value >= 0)
-            {
-                IsJezisek = value == 1;
-            }
-        }
-    }
 
     [ObservableProperty]
     public partial int SnowIndex { get; set; }
@@ -152,12 +114,6 @@ public partial class SettingsViewModel : ViewModelBase
         _themeManager.SetTheme(value);
         _appPreferences.Theme = value;
     }
-
-    partial void OnIsChristmasEveChanged(bool value) =>
-        UpdateSettings(s => s.UseBigDay(value ? BigDay.ChristmasEve : BigDay.ChristmasDay));
-
-    partial void OnIsJezisekChanged(bool value) =>
-        UpdateSettings(s => s.GiftBringer = value ? GiftBringer.Jezisek : GiftBringer.Santa);
 
     partial void OnSnowIndexChanged(int value)
     {

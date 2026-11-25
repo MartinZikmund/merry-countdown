@@ -112,6 +112,36 @@
             </toolkit:SettingsCard>
 
             <!--  Full version features  -->
+            <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{markup:Localize Key=BigDaySection}" />
+            <toolkit:SettingsCard Description="{markup:Localize Key=BigDayDescription}" Header="{markup:Localize Key=BigDayHeader}">
+                <toolkit:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE787;" />
+                </toolkit:SettingsCard.HeaderIcon>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <DatePicker
+                        AutomationProperties.AutomationId="CustomBigDatePicker"
+                        AutomationProperties.Name="{markup:Localize Key=BigDay_Custom}"
+                        Date="{x:Bind ViewModel.CustomBigDate, Mode=TwoWay}"
+                        Visibility="{x:Bind ViewModel.IsCustomBigDay, Mode=OneWay}"
+                        YearVisible="False" />
+                    <ComboBox
+                        AutomationProperties.AutomationId="BigDayCombo"
+                        AutomationProperties.Name="{markup:Localize Key=BigDayHeader}"
+                        ItemsSource="{x:Bind ViewModel.BigDayOptions}"
+                        SelectedIndex="{x:Bind ViewModel.BigDayIndex, Mode=TwoWay}" />
+                </StackPanel>
+            </toolkit:SettingsCard>
+            <toolkit:SettingsCard Description="{markup:Localize Key=BringerDescription}" Header="{markup:Localize Key=BringerHeader}">
+                <toolkit:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE715;" />
+                </toolkit:SettingsCard.HeaderIcon>
+                <ComboBox
+                    AutomationProperties.AutomationId="BringerCombo"
+                    AutomationProperties.Name="{markup:Localize Key=BringerHeader}"
+                    ItemsSource="{x:Bind ViewModel.BringerOptions}"
+                    SelectedIndex="{x:Bind ViewModel.BringerIndex, Mode=TwoWay}" />
+            </toolkit:SettingsCard>
+
             <InfoBar
                 Title="{markup:Localize Key=FullVersionLockedTitle}"
                 Margin="0,16,0,0"

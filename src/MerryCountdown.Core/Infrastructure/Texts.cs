@@ -1,3 +1,4 @@
+using System.Globalization;
 using MerryCountdown.Core.Family;
 using MerryCountdown.Core.Season;
 
@@ -14,4 +15,10 @@ public static class Texts
 
     public static string BigDayName(this IStringLocalizer localizer, BigDay bigDay) =>
         localizer[$"BigDay_{bigDay}"];
+
+    /// <summary>The family's big day by name, or by date when it is one of their own.</summary>
+    public static string BigDayName(this IStringLocalizer localizer, FamilySettings settings) =>
+        settings.BigDay == BigDay.Custom
+            ? new DateTime(2028, settings.CustomBigDayMonth, settings.CustomBigDayDay).ToString("M", CultureInfo.CurrentCulture)
+            : localizer.BigDayName(settings.BigDay);
 }

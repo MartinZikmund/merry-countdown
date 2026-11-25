@@ -6,6 +6,42 @@ namespace MerryCountdown.Core.Tests;
 [TestClass]
 public class CountdownClockTests
 {
+    [TestMethod]
+    public void CustomDay_InJanuary_CountsAcrossTheNewYear()
+    {
+        var state = CountdownClock.Compute(new DateTime(2026, 12, 30, 12, 0, 0), month: 1, day: 6, arrivalMinutes: 0);
+
+        state.Phase.Should().Be(CountdownPhase.Counting);
+        state.Target.Should().Be(new DateTime(2027, 1, 6));
+        state.Sleeps.Should().Be(7);
+    }
+
+    [TestMethod]
+    public void CustomDay_CelebratesThatDayAndTheNext()
+    {
+        CountdownClock.Compute(new DateTime(2026, 12, 31, 18, 0, 0), 12, 31, 17 * 60).Phase.Should().Be(CountdownPhase.Celebrating);
+        CountdownClock.Compute(new DateTime(2027, 1, 1, 23, 0, 0), 12, 31, 17 * 60).Phase.Should().Be(CountdownPhase.Celebrating);
+
+        var after = CountdownClock.Compute(new DateTime(2027, 1, 2, 0, 0, 0), 12, 31, 17 * 60);
+        after.Phase.Should().Be(CountdownPhase.Counting);
+        after.Target.Should().Be(new DateTime(2027, 12, 31, 17, 0, 0));
+    }
+
+    [TestMethod]
+    public void CustomDay_BeforeItsHour_CountsToTheArrival()
+    {
+        var state = CountdownClock.Compute(new DateTime(2026, 12, 31, 10, 0, 0), 12, 31, 17 * 60);
+
+        state.Sleeps.Should().Be(0);
+        state.UntilNextSleep.Should().Be(TimeSpan.FromHours(7));
+    }
+
+    [TestMethod]
+    public void CustomDay_OnTheTwentyNinthOfFebruary_FallsOnTheTwentyEighthInOtherYears()
+    {
+        CountdownClock.Compute(new DateTime(2027, 2, 1), 2, 29, 0).Target.Should().Be(new DateTime(2027, 2, 28));
+    }
+
     private static DateTime At(int year, int month, int day, int hour = 12, int minute = 0, int second = 0) =>
         new(year, month, day, hour, minute, second);
 

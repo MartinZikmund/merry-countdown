@@ -508,9 +508,6 @@
   <data name="StickerGroup_treats" xml:space="preserve">
     <value>Dobroty a&#160;překvapení</value>
   </data>
-  <data name="SettingsChristmas" xml:space="preserve">
-    <value>Vánoce</value>
-  </data>
   <data name="BigDayHeader" xml:space="preserve">
     <value>Náš velký den</value>
   </data>
@@ -584,7 +581,7 @@
     <value>Koutek pro dospělé</value>
   </data>
   <data name="ParentZoneDescription" xml:space="preserve">
-    <value>Děti, plná verze, osobní vzkazy a&#160;rodinné události.</value>
+    <value>Děti, velký den, kdo nosí dárky, plná verze a&#160;další.</value>
   </data>
   <data name="PrivacyHeader" xml:space="preserve">
     <value>Soukromí</value>
@@ -918,5 +915,11 @@
   </data>
   <data name="KeepUnlockedDescription" xml:space="preserve">
     <value>Otázka se na tomto zařízení přestane zobrazovat, takže se sem dostane kdokoli, kdo ho drží, a&#160;může koupit plnou verzi nebo otevírat odkazy. Když je to vypnuté, otázka se vrátí 15&#160;minut po poslední správné odpovědi.</value>
+  </data>
+  <data name="BigDay_Custom" xml:space="preserve">
+    <value>Jiný den</value>
+  </data>
+  <data name="BigDaySection" xml:space="preserve">
+    <value>Velký den</value>
   </data>
 </root>

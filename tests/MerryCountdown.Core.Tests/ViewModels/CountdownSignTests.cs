@@ -84,6 +84,19 @@ public class CountdownSignViewModelTests
     }
 
     [TestMethod]
+    public void Update_WithADayOfTheFamilysOwn_CountsToIt()
+    {
+        var settings = Family(BigDay.ChristmasDay);
+        settings.UseBigDay(BigDay.Custom);
+        settings.CustomBigDayMonth = 12;
+        settings.CustomBigDayDay = 31;
+
+        var sign = Update(new DateTime(2026, 12, 29, 12, 0, 0), settings);
+
+        sign.SleepsNumber.Should().Be("2");
+    }
+
+    [TestMethod]
     public void Update_OnTheLastSleep_CaptionNamesTheBigDay()
     {
         Update(new DateTime(2026, 12, 24, 12, 0, 0), Family(BigDay.ChristmasDay)).NextChangeCaption.Should().Be("SignNextChangeLastSleep");

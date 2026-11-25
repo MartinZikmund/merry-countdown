@@ -508,9 +508,6 @@
   <data name="StickerGroup_treats" xml:space="preserve">
     <value>Treats and surprises</value>
   </data>
-  <data name="SettingsChristmas" xml:space="preserve">
-    <value>Christmas</value>
-  </data>
   <data name="BigDayHeader" xml:space="preserve">
     <value>Our big day</value>
   </data>
@@ -584,7 +581,7 @@
     <value>Grown-ups corner</value>
   </data>
   <data name="ParentZoneDescription" xml:space="preserve">
-    <value>Kids, the full version, personal messages and family events.</value>
+    <value>Kids, the big day, who brings the presents, the full version and more.</value>
   </data>
   <data name="PrivacyHeader" xml:space="preserve">
     <value>Privacy</value>
@@ -918,5 +915,11 @@
   </data>
   <data name="KeepUnlockedDescription" xml:space="preserve">
     <value>Skips the question on this device, so anyone holding it can get in here, buy the full version and open links. When off, the question comes back 15 minutes after the last right answer.</value>
+  </data>
+  <data name="BigDay_Custom" xml:space="preserve">
+    <value>Another day</value>
+  </data>
+  <data name="BigDaySection" xml:space="preserve">
+    <value>The big day</value>
   </data>
 </root>

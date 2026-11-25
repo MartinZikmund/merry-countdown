@@ -290,6 +290,45 @@ public class PhotoFeatureViewModelTests
     }
 
     [TestMethod]
+    public void BigDay_AnotherDay_SavesTheDateAndKeepsTheHour()
+    {
+        var (vm, family, _, _) = CreateParentZone();
+        family.Settings.UseBigDay(BigDay.ChristmasEve);
+        var hour = family.Settings.ArrivalMinutes;
+
+        vm.BigDayIndex = (int)BigDay.Custom;
+        vm.CustomBigDate = new DateTimeOffset(new DateTime(2028, 1, 6));
+
+        vm.IsCustomBigDay.Should().BeTrue();
+        family.Settings.BigDay.Should().Be(BigDay.Custom);
+        family.Settings.BigDate().Should().Be((1, 6));
+        family.Settings.ArrivalMinutes.Should().Be(hour);
+    }
+
+    [TestMethod]
+    public void BigDay_ChristmasEve_BringsItsEveningHour()
+    {
+        var (vm, family, _, _) = CreateParentZone();
+
+        vm.BigDayIndex = (int)BigDay.ChristmasEve;
+
+        family.Settings.BigDay.Should().Be(BigDay.ChristmasEve);
+        vm.ArrivalTime.Should().Be(TimeSpan.FromMinutes(family.Settings.ArrivalMinutes));
+        vm.ArrivalTime.Should().BeGreaterThan(TimeSpan.Zero);
+    }
+
+    [TestMethod]
+    public void Bringer_IsChosenInTheGrownUpsCorner()
+    {
+        var (vm, family, _, _) = CreateParentZone();
+
+        vm.BringerIndex = (int)GiftBringer.Jezisek;
+
+        family.Settings.GiftBringer.Should().Be(GiftBringer.Jezisek);
+        vm.BringerOptions.Should().HaveCount(Enum.GetValues<GiftBringer>().Length);
+    }
+
+    [TestMethod]
     public void KeepUnlocked_IsSavedForTheGate()
     {
         var (vm, family, _, _) = CreateParentZone();
