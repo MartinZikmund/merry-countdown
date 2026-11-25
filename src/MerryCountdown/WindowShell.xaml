@@ -221,7 +221,7 @@
                 <RadioButton
                     x:Name="SettingsTab"
                     Grid.Column="6"
-                    MinWidth="40"
+                    MinWidth="36"
                     Padding="0"
                     VerticalAlignment="Center"
                     AutomationProperties.AutomationId="SettingsItem"

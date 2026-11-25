@@ -370,8 +370,8 @@ public sealed partial class WindowShell : Page, IWindowShell
             tab.FontSize = toBottom ? 14 : 16;
             tab.MinWidth = toBottom ? 0 : 72;
             tab.Padding = toBottom ? new Thickness(4, 2, 4, 2) : new Thickness(12, 2, 12, 2);
-            tab.MinHeight = toBottom ? 56 : 40;
-            tab.CornerRadius = new CornerRadius(toBottom ? 28 : 20);
+            tab.MinHeight = toBottom ? 56 : 36;
+            tab.CornerRadius = new CornerRadius(toBottom ? 28 : 18);
         }
 
         MakeRoomForDoorBadge();

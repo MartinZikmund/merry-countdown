@@ -66,12 +66,12 @@
         <Setter Property="Spacing" Value="4" />
     </Style>
     <Style x:Key="AppBarTabStyle" TargetType="RadioButton">
-        <!--  40 high plus the bar's padding makes 48: the height of the tall caption buttons it shares a row with.  -->
+        <!--  36 high in a bar of 48: the tall caption buttons it shares a row with, and air above and below.  -->
         <Setter Property="MinWidth" Value="72" />
-        <Setter Property="MinHeight" Value="40" />
+        <Setter Property="MinHeight" Value="36" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="Padding" Value="12,2" />
-        <Setter Property="CornerRadius" Value="20" />
+        <Setter Property="CornerRadius" Value="18" />
         <Setter Property="FontFamily" Value="{StaticResource DisplayFontFamily}" />
         <Setter Property="FontSize" Value="16" />
         <Setter Property="Foreground" Value="{ThemeResource PageTextBrush}" />
@@ -130,11 +130,11 @@
         x:Key="AppBarIconButtonStyle"
         BasedOn="{StaticResource DefaultButtonStyle}"
         TargetType="Button">
-        <Setter Property="Width" Value="40" />
-        <Setter Property="Height" Value="40" />
+        <Setter Property="Width" Value="36" />
+        <Setter Property="Height" Value="36" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="CornerRadius" Value="20" />
+        <Setter Property="CornerRadius" Value="18" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Foreground" Value="{ThemeResource PageTextBrush}" />
