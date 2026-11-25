@@ -267,5 +267,44 @@
             VerticalAlignment="Top"
             Background="Transparent"
             Visibility="Collapsed" />
+
+        <!--  Shown once to a new family, one after the other. See docs/welcome-tips.md.  -->
+        <TeachingTip
+            x:Name="CustomizeTip"
+            ActionButtonClick="WelcomeTip_Next"
+            ActionButtonContent="{markup:Localize Key=WelcomeTipNext}"
+            AutomationProperties.AutomationId="WelcomeTipCustomize"
+            AutomationProperties.Name="{markup:Localize Key=WelcomeTipCustomizeTitle}"
+            Closed="WelcomeTip_Closed"
+            PreferredPlacement="Bottom"
+            Style="{StaticResource MerryTeachingTipStyle}"
+            Target="{x:Bind CustomizeButton}">
+            <StackPanel Spacing="4">
+                <TextBlock
+                    FontFamily="{StaticResource DisplayFontFamily}"
+                    FontSize="20"
+                    Text="{markup:Localize Key=WelcomeTipCustomizeTitle}"
+                    TextWrapping="Wrap" />
+                <TextBlock Text="{markup:Localize Key=WelcomeTipCustomizeText}" TextWrapping="Wrap" />
+            </StackPanel>
+        </TeachingTip>
+        <TeachingTip
+            x:Name="SettingsTip"
+            AutomationProperties.AutomationId="WelcomeTipSettings"
+            AutomationProperties.Name="{markup:Localize Key=WelcomeTipSettingsTitle}"
+            CloseButtonContent="{markup:Localize Key=WelcomeTipDone}"
+            Closed="WelcomeTip_Closed"
+            PreferredPlacement="Bottom"
+            Style="{StaticResource MerryTeachingTipStyle}"
+            Target="{x:Bind SettingsTab}">
+            <StackPanel Spacing="4">
+                <TextBlock
+                    FontFamily="{StaticResource DisplayFontFamily}"
+                    FontSize="20"
+                    Text="{markup:Localize Key=WelcomeTipSettingsTitle}"
+                    TextWrapping="Wrap" />
+                <TextBlock Text="{markup:Localize Key=WelcomeTipSettingsText}" TextWrapping="Wrap" />
+            </StackPanel>
+        </TeachingTip>
     </Grid>
 </Page>

@@ -39,6 +39,9 @@
             <SolidColorBrush x:Key="FullVersionCardForegroundBrush" Color="#2A2F55" />
             <SolidColorBrush x:Key="DialogBackgroundBrush" Color="#FFFDF7" />
             <SolidColorBrush x:Key="DialogBorderBrush" Color="#E3C98A" />
+            <StaticResource x:Key="TeachingTipBackgroundBrush" ResourceKey="DialogBackgroundBrush" />
+            <StaticResource x:Key="TeachingTipTransientBackground" ResourceKey="DialogBackgroundBrush" />
+            <StaticResource x:Key="TeachingTipBorderBrush" ResourceKey="DialogBorderBrush" />
             <StaticResource x:Key="PageTextBrush" ResourceKey="TextFillColorPrimaryBrush" />
         </ResourceDictionary>
 
@@ -80,6 +83,9 @@
             <SolidColorBrush x:Key="FullVersionCardForegroundBrush" Color="#FFFFFF" />
             <SolidColorBrush x:Key="DialogBackgroundBrush" Color="#1B2150" />
             <SolidColorBrush x:Key="DialogBorderBrush" Color="#99FFC95C" />
+            <StaticResource x:Key="TeachingTipBackgroundBrush" ResourceKey="DialogBackgroundBrush" />
+            <StaticResource x:Key="TeachingTipTransientBackground" ResourceKey="DialogBackgroundBrush" />
+            <StaticResource x:Key="TeachingTipBorderBrush" ResourceKey="DialogBorderBrush" />
             <StaticResource x:Key="PageTextBrush" ResourceKey="TextFillColorPrimaryBrush" />
         </ResourceDictionary>
 
@@ -110,6 +116,9 @@
             <StaticResource x:Key="FullVersionCardForegroundBrush" ResourceKey="SystemColorWindowTextColorBrush" />
             <StaticResource x:Key="DialogBackgroundBrush" ResourceKey="SystemColorWindowColorBrush" />
             <StaticResource x:Key="DialogBorderBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+            <StaticResource x:Key="TeachingTipBackgroundBrush" ResourceKey="DialogBackgroundBrush" />
+            <StaticResource x:Key="TeachingTipTransientBackground" ResourceKey="DialogBackgroundBrush" />
+            <StaticResource x:Key="TeachingTipBorderBrush" ResourceKey="DialogBorderBrush" />
             <StaticResource x:Key="PageTextBrush" ResourceKey="SystemColorWindowTextColorBrush" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>

@@ -20,6 +20,13 @@
         <Setter Property="CornerRadius" Value="22" />
     </Style>
 
+    <!--  A tip's buttons match the dialogs'. Its card colours come from the TeachingTip keys in Colors.xaml.  -->
+    <Style x:Key="MerryTeachingTipStyle" TargetType="TeachingTip">
+        <Setter Property="Foreground" Value="{ThemeResource PageTextBrush}" />
+        <Setter Property="ActionButtonStyle" Value="{StaticResource DialogDefaultButtonStyle}" />
+        <Setter Property="CloseButtonStyle" Value="{StaticResource DialogDefaultButtonStyle}" />
+    </Style>
+
     <!--
         WinUI's ContentDialog template with the app's look: one rounded card with a gold edge on the app's own
         scrim, a Baloo title and pill buttons. A copy rather than a restyle, because the stock template swaps the
