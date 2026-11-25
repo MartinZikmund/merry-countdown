@@ -137,6 +137,7 @@ public partial class App : Application, IApplication
         services.AddScoped<PhotoBackdrop>();
         services.AddScoped<IDisplayModeService, DisplayModeService>();
         services.AddScoped<IScreenWake, ScreenWake>();
+        services.AddScoped<WelcomeTips>();
         services.AddScoped<ICompactOverlayService, CompactOverlayService>();
 #if __ANDROID__ || __IOS__
         services.AddScoped<IShakeService, MotionShakeService>();

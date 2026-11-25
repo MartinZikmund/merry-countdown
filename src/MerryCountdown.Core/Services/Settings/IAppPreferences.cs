@@ -12,5 +12,7 @@ public interface IAppPreferences
 
     bool KeepScreenOn { get; set; }
 
+    bool HasSeenWelcomeTips { get; set; }
+
     ElementTheme Theme { get; set; }
 }

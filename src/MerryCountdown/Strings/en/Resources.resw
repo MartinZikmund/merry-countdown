@@ -901,4 +901,22 @@
   <data name="Sign_Baubles" xml:space="preserve">
     <value>Bauble garland</value>
   </data>
+  <data name="WelcomeTipCustomizeTitle" xml:space="preserve">
+    <value>Make it yours</value>
+  </data>
+  <data name="WelcomeTipCustomizeText" xml:space="preserve">
+    <value>Pick another scene or sign, show your own photos, or put the countdown on the big screen.</value>
+  </data>
+  <data name="WelcomeTipNext" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="WelcomeTipSettingsTitle" xml:space="preserve">
+    <value>For the grown-ups</value>
+  </data>
+  <data name="WelcomeTipSettingsText" xml:space="preserve">
+    <value>The kids' names, who brings the presents, sounds and everything else are in Settings.</value>
+  </data>
+  <data name="WelcomeTipDone" xml:space="preserve">
+    <value>Got it</value>
+  </data>
 </root>
