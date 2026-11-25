@@ -125,25 +125,50 @@ internal static class Painter
     public static float HillY(float x, int width, float baseline, float swell, float waves, float phase) =>
         baseline - (MathF.Sin(((x / width) * waves * MathF.Tau) + phase) * swell);
 
+    private const int PineTiers = 3;
+    private const float PineTierStep = 0.26f;
+    private const float PineTierTall = 0.46f;
+    private const float PineTierWaist = 0.08f;
+
+    private static float PineTierHalf(int tier) => 0.25f * (0.45f + (tier / (float)PineTiers * 0.55f));
+
+    /// <summary>Half the width of a pine's branches at a depth below its tip, both as shares of its height.</summary>
+    public static float PineHalfWidth(float depth)
+    {
+        var widest = 0f;
+        for (var tier = 0; tier < PineTiers; tier++)
+        {
+            var into = depth - (PineTierStep * tier);
+            if (into < 0 || into > PineTierTall)
+            {
+                continue;
+            }
+
+            // The edge is the curve Pine draws: its width grows evenly along it while its depth bows inwards.
+            var (a, b) = (PineTierTall - (2 * PineTierWaist), 2 * (PineTierTall - PineTierWaist));
+            var along = (b - MathF.Sqrt(Math.Max(0, (b * b) - (4 * a * into)))) / (2 * a);
+            widest = Math.Max(widest, PineTierHalf(tier) * along);
+        }
+
+        return widest;
+    }
+
     public static void Pine(SKCanvas canvas, float x, float groundY, float height, SKColor color, SKColor snowColor)
     {
         using SKPaint paint = new() { IsAntialias = true, Color = Palette.WoodDark };
-        var width = height * 0.5f;
         canvas.DrawRect(x - (height * 0.035f), groundY - (height * 0.14f), height * 0.07f, height * 0.16f, paint);
 
-        const int Tiers = 3;
-        for (var tier = 0; tier < Tiers; tier++)
+        for (var tier = 0; tier < PineTiers; tier++)
         {
-            var progress = tier / (float)Tiers;
-            var top = groundY - height + (height * 0.26f * tier);
-            var bottom = top + (height * 0.46f);
-            var half = width * (0.45f + (progress * 0.55f)) / 2;
+            var top = groundY - height + (height * PineTierStep * tier);
+            var bottom = top + (height * PineTierTall);
+            var half = height * PineTierHalf(tier);
 
             using SKPath body = new();
             body.MoveTo(x, top);
-            body.QuadTo(x + (half * 0.5f), bottom - (height * 0.08f), x + half, bottom);
+            body.QuadTo(x + (half * 0.5f), bottom - (height * PineTierWaist), x + half, bottom);
             body.QuadTo(x, bottom + (height * 0.05f), x - half, bottom);
-            body.QuadTo(x - (half * 0.5f), bottom - (height * 0.08f), x, top);
+            body.QuadTo(x - (half * 0.5f), bottom - (height * PineTierWaist), x, top);
             body.Close();
             paint.Color = color;
             canvas.DrawPath(body, paint);
