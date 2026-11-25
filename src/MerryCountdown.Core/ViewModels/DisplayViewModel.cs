@@ -155,8 +155,9 @@ public partial class DisplayViewModel : ViewModelBase
 
     private void UpdateKids(DateTime now)
     {
-        var door = AdventCalendar.TodaysDoor(now);
-        var year = AdventCalendar.SeasonYear(now);
+        var season = _family.Settings.Advent(now);
+        var door = season.TodaysDoor(now);
+        var year = season.Year;
         var kids = _family.Kids;
 
         if (Kids.Count != kids.Count || Kids.Zip(kids).Any(p => p.First.Kid != p.Second))

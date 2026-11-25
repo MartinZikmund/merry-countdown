@@ -182,6 +182,13 @@ public sealed class FamilySettings
         };
     }
 
+    /// <summary>
+    /// The doors lead up to the big day. Both Christmases keep 1 to 24 December; a day of the family's own gets
+    /// its last door on the day itself.
+    /// </summary>
+    public AdventSeason Advent(DateTime now) =>
+        BigDay == BigDay.Custom ? AdventCalendar.SeasonFor(now, CustomBigDayMonth, CustomBigDayDay) : AdventCalendar.Christmas(now);
+
     /// <summary>The month and day the countdown runs to.</summary>
     public (int Month, int Day) BigDate() => BigDay switch
     {

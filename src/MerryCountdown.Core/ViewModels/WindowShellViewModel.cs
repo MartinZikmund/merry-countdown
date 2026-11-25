@@ -59,8 +59,9 @@ public partial class WindowShellViewModel : ObservableObject
     private void UpdateWaitingDoor()
     {
         var now = _clock.Now;
-        WaitingDoorNumber = AdventCalendar.TodaysDoor(now) is { } today
-            && !_family.IsDoorOpened(_family.ActiveKid, AdventCalendar.SeasonYear(now), today)
+        var season = _family.Settings.Advent(now);
+        WaitingDoorNumber = season.TodaysDoor(now) is { } today
+            && !_family.IsDoorOpened(_family.ActiveKid, season.Year, today)
                 ? today
                 : NoDoor;
     }

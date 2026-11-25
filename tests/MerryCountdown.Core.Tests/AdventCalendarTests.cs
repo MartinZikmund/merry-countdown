@@ -1,4 +1,5 @@
 using FluentAssertions;
+using MerryCountdown.Core.Family;
 using MerryCountdown.Core.Season;
 
 namespace MerryCountdown.Core.Tests;
@@ -6,6 +7,65 @@ namespace MerryCountdown.Core.Tests;
 [TestClass]
 public class AdventCalendarTests
 {
+    [TestMethod]
+    public void Season_ForADayOfTheFamilysOwn_EndsItsDoorsOnThatDay()
+    {
+        var season = AdventCalendar.SeasonFor(new DateTime(2026, 11, 25), 12, 10);
+
+        season.DoorDate(24).Should().Be(new DateTime(2026, 12, 10));
+        season.DoorDate(1).Should().Be(new DateTime(2026, 11, 17));
+        season.TodaysDoor(new DateTime(2026, 11, 25)).Should().Be(9);
+        season.StateOf(9, new DateTime(2026, 11, 25), isOpened: false).Should().Be(DoorState.Ready);
+        season.StateOf(10, new DateTime(2026, 11, 25), isOpened: false).Should().Be(DoorState.Locked);
+        season.SleepsUntil(12, new DateTime(2026, 11, 25)).Should().Be(3);
+    }
+
+    [TestMethod]
+    public void Season_ForADayInJanuary_StartsItsDoorsInDecemberAndIsFiledUnderJanuarysYear()
+    {
+        var season = AdventCalendar.SeasonFor(new DateTime(2026, 12, 20), 1, 6);
+
+        season.DoorDate(24).Should().Be(new DateTime(2027, 1, 6));
+        season.DoorDate(1).Should().Be(new DateTime(2026, 12, 14));
+        season.Year.Should().Be(2027);
+    }
+
+    [TestMethod]
+    public void Season_StaysUpThirteenDaysAfterTheLastDoor_ThenMovesToNextYear()
+    {
+        AdventCalendar.SeasonFor(new DateTime(2026, 12, 23), 12, 10).LastDoor.Should().Be(new DateTime(2026, 12, 10));
+        AdventCalendar.SeasonFor(new DateTime(2026, 12, 24), 12, 10).LastDoor.Should().Be(new DateTime(2027, 12, 10));
+    }
+
+    [TestMethod]
+    public void Season_AfterTheLastDoor_HasNoDoorForToday()
+    {
+        AdventCalendar.SeasonFor(new DateTime(2026, 12, 12), 12, 10).TodaysDoor(new DateTime(2026, 12, 12)).Should().BeNull();
+    }
+
+    [TestMethod]
+    [DataRow(BigDay.ChristmasEve)]
+    [DataRow(BigDay.ChristmasDay)]
+    public void FamilySettings_Christmas_KeepsTheDoorsOnTheFirstToTwentyFourthOfDecember(BigDay bigDay)
+    {
+        FamilySettings settings = new();
+        settings.UseBigDay(bigDay);
+
+        var season = settings.Advent(new DateTime(2026, 11, 25));
+
+        season.DoorDate(1).Should().Be(new DateTime(2026, 12, 1));
+        season.DoorDate(24).Should().Be(new DateTime(2026, 12, 24));
+    }
+
+    [TestMethod]
+    public void FamilySettings_ADayOfItsOwn_MovesTheDoorsWithIt()
+    {
+        FamilySettings settings = new() { CustomBigDayMonth = 12, CustomBigDayDay = 31 };
+        settings.UseBigDay(BigDay.Custom);
+
+        settings.Advent(new DateTime(2026, 12, 8)).TodaysDoor(new DateTime(2026, 12, 8)).Should().Be(1);
+    }
+
     [DataRow(2026, 11, 5, 2026)]
     [DataRow(2026, 12, 31, 2026)]
     [DataRow(2027, 1, 6, 2026)]
