@@ -43,6 +43,7 @@ public sealed partial class WindowShell : Page, IWindowShell
 
         ViewModel = ServiceProvider.GetRequiredService<WindowShellViewModel>();
         ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+        MakeRoomForDoorBadge();
 
         InnerFrame.Navigated += InnerFrame_Navigated;
         _display = ServiceProvider.GetRequiredService<IDisplayModeService>();
