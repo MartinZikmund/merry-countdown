@@ -3,7 +3,7 @@
 To add a section, add a `RadioButton` to `TabPanel` in `WindowShell.xaml` with `AppBarTabStyle`, a sticker and a label, set its `Tag` to the `NavigationSection` name, and add it to the list in `WindowShell.UpdateTabSelection`.
 
 - The tabs are radio buttons with their own template, not a `NavigationView`, so they can look like the rest of the app: stickers for kids who can't read yet, Baloo for the label, and the same gold as the app's other big buttons for the selected tab.
-- The bar is 48 high, with tabs and round buttons 40 high inside it. See [the title bar on Windows](#the-title-bar-on-windows) for why.
+- The bar is 48 high, with tabs and round buttons 36 high inside it, so they don't touch the window's top edge. See [the title bar on Windows](#the-title-bar-on-windows) for why.
 - Settings is the same kind of tab with a plain icon and no label, because it's for grown-ups.
 - A back button appears at the start of the bar when there is somewhere to go back to.
 - On Home, a palette button sits next to Settings. It opens the [look picker](#the-customize-button).
@@ -31,7 +31,7 @@ On the WinUI head the bar is the title bar: the window extends into it, and the 
 - When the tabs would leave less than 64 DIPs to drag by, they move to the bottom bar even if the window is a little wider than 640, and the app's icon and name take their place in the drag region.
 - The [compact overlay](./compact-overlay.md) collapses the bar, so it has a drag strip of its own, `OverlayDragRegion`.
 
-To add something to the bar, give it its own column and add its width to `content` in `ArrangeBars`, or the tabs will crowd out the drag region before they move down. Keep it 40 high or less.
+To add something to the bar, give it its own column and add its width to `content` in `ArrangeBars`, or the tabs will crowd out the drag region before they move down. Keep it 36 high or less.
 
 ## The customize button
 
