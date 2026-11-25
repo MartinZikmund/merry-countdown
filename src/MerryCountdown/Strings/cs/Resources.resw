@@ -167,7 +167,7 @@
     <value>Pokud se v&#225;m aplikace l&#237;b&#237;, ohodno&#357;te ji pros&#237;m. Pom&#367;&#382;e n&#225;m to!</value>
   </data>
   <data name="ApplicationName" xml:space="preserve">
-    <value>Vánoční odpočítávání</value>
+    <value>Čekání na Vánoce</value>
   </data>
   <data name="AboutAppDescription" xml:space="preserve">
     <value>Vánoční odpočítávání, adventní kalendář a&#160;seznam přání pro děti a&#160;rodiny. Vyrobil v&#160;Praze Martin Zikmund.</value>
@@ -632,7 +632,7 @@
     <value>devět</value>
   </data>
   <data name="FullVersionTitle" xml:space="preserve">
-    <value>Plná verze Vánočního odpočítávání</value>
+    <value>Plná verze Čekání na Vánoce</value>
   </data>
   <data name="BuyFullVersion" xml:space="preserve">
     <value>Získat plnou verzi</value>

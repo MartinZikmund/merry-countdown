@@ -1,4 +1,4 @@
 /* App icon label - displayed under the app icon on home screen */
-"CFBundleDisplayName" = "Vánoční odpočítávání";
-/* Short name, Apple wants under 16 characters */
-"CFBundleName" = "Vánoční odpočet";
+"CFBundleDisplayName" = "Čekání na Vánoce";
+/* Short name: the full name is 16 characters, one over what Apple suggests */
+"CFBundleName" = "Čekání na Vánoce";

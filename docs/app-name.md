@@ -1,6 +1,6 @@
 # The app's name
 
-English: **Merry Countdown**. Czech: **Vánoční odpočítávání**. A Czech user should see the same name in the
+English: **Merry Countdown**. Czech: **Čekání na Vánoce**. A Czech user should see the same name in the
 title bar, under the icon, in the Start menu and in the share sheet. This page says where each one lives.
 
 Display text only. The package identity, the product id and the reserved Store name do not change.
@@ -12,7 +12,7 @@ Display text only. The package identity, the product id and the reserved Store n
 | In-app title, Settings card, full-version title | `ApplicationName` and `FullVersionTitle` in `Strings/{en,cs}/Resources.resw` | The window title and title bar use `ApplicationName`. |
 | Windows: Start, taskbar, Settings > Apps | `ApplicationName` in the same resw files | Copied into the package at build time, see below. |
 | Android launcher label | `Platforms/Android/Resources/values{,-cs}/Strings.xml` | `Label = "@string/ApplicationName"` in `Main.Android.cs`. |
-| iOS home screen | `CFBundleDisplayName` in `Platforms/iOS/Resources/{en,cs}.lproj/InfoPlist.strings` | `CFBundleName` is a short form, Apple wants under 16 characters: `Merry Countdown` / `Vánoční odpočet`. |
+| iOS home screen | `CFBundleDisplayName` in `Platforms/iOS/Resources/{en,cs}.lproj/InfoPlist.strings` | `CFBundleName` is the same name. Apple suggests under 16 characters; `Čekání na Vánoce` is exactly 16. |
 | `ApplicationTitle` in `MerryCountdown.csproj` | English only | Desktop and WebAssembly use it. They have no per-language display name. |
 | Store titles | Partner Center, Play Console, App Store Connect | Not in this repo, see the last section. |
 
@@ -33,9 +33,9 @@ The suffix is the same as before, so Dev and worktree builds keep working in bot
 
 | Build | English | Czech |
 |---|---|---|
-| Prod | `Merry Countdown` | `Vánoční odpočítávání` |
-| Dev | `Merry Countdown Dev` | `Vánoční odpočítávání Dev` |
-| Dev, worktree `issue-39` | `Merry Countdown Dev (issue-39)` | `Vánoční odpočítávání Dev (issue-39)` |
+| Prod | `Merry Countdown` | `Čekání na Vánoce` |
+| Dev | `Merry Countdown Dev` | `Čekání na Vánoce Dev` |
+| Dev, worktree `issue-39` | `Merry Countdown Dev (issue-39)` | `Čekání na Vánoce Dev (issue-39)` |
 
 The 40-character limit on `ShortName` (see [worktree-identity.md](./worktree-identity.md)) is checked by
 `scripts/verify-worktree-identity.ps1` against the English `ApplicationTitle`. A Czech worktree name with a long tag
@@ -56,8 +56,8 @@ The Czech iOS file is UTF-8, not ASCII, because of the accented letters.
 
 ## Length
 
-`Vánoční odpočítávání` is 20 characters. Under a phone icon the launcher shortens it (about 12 characters show), the
-same way it shortened `Veselé odpočítávání`. In the Windows title bar it fits at 560 DIPs wide next to the DEV badge.
+`Čekání na Vánoce` is 16 characters. Under a phone icon the launcher shortens it (about 12 characters show). It is
+shorter than the earlier names, which fitted the Windows title bar at 560 DIPs wide next to the DEV badge.
 
 ## Manual follow-ups (outside the repo)
 
@@ -65,4 +65,4 @@ same way it shortened `Veselé odpočítávání`. In the Windows title bar it f
   be used, the reserved name today is only *Merry Countdown*.
 - **Google Play:** set the Czech title under Store presence > Main store listing > Translations.
 - **App Store Connect:** set the Czech name on the Czech localization of the app. Names must be unique across the store.
-- The Czech store descriptions and the privacy policy text should say *Vánoční odpočítávání* too.
+- The Czech store descriptions and the privacy policy text should say *Čekání na Vánoce* too.
