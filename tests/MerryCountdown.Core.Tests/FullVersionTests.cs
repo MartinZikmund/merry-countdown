@@ -21,7 +21,8 @@ public class FullVersionTests
         public Task<bool> IsOwnedAsync(CancellationToken ct = default) =>
             ThrowOnQuery ? throw new InvalidOperationException() : Task.FromResult(Owned);
 
-        public Task<PurchaseResult> PurchaseAsync(CancellationToken ct = default) => Task.FromResult(NextPurchase);
+        public Task<PurchaseResult> PurchaseAsync(CancellationToken ct = default) =>
+            ThrowOnQuery ? throw new InvalidOperationException() : Task.FromResult(NextPurchase);
     }
 
     private sealed class FakeCache : IEntitlementCache
@@ -45,6 +46,16 @@ public class FullVersionTests
 
         service.IsFull.Should().BeFalse();
         service.CanPurchase.Should().BeTrue();
+    }
+
+    [TestMethod]
+    public async Task Purchase_WhenTheStoreCannotBeReached_FailsWithoutThrowingOrUnlocking()
+    {
+        FullVersionService service = new(new FakeStore { ThrowOnQuery = true }, new FakeCache());
+
+        (await service.PurchaseAsync()).Should().Be(PurchaseResult.Failed);
+
+        service.IsFull.Should().BeFalse();
     }
 
     [TestMethod]
