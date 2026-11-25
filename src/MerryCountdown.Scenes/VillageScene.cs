@@ -11,6 +11,11 @@ public sealed class VillageScene : Scene
     private const float ShakeSettle = 2.5f;
     private const int TreeLights = 26;
 
+    // Strings of lights wound round the tree, two to each tier of branches: one across its middle and one along its
+    // skirt, where the tree is widest. Each is how far down the tree it hangs and how many lights are on it.
+    // Declared before the spots, which are worked out from it.
+    private static readonly (float Down, int Lights)[] _lightStrings = [(0.22f, 3), (0.38f, 4), (0.5f, 4), (0.64f, 5), (0.78f, 4), (0.9f, 6)];
+
     // Where each light hangs: how far down the tree, and how far out towards the tips of the branches.
     private static readonly (float Down, float Out)[] _lightSpots = CreateLightSpots();
 
@@ -71,13 +76,23 @@ public sealed class VillageScene : Scene
 
     private static (float Down, float Out)[] CreateLightSpots()
     {
-        Random random = new(99);
+        // Each string crosses the tree at a slant, the next one the other way, and sags a little in the middle.
+        const float Slant = 0.05f;
+        const float Sag = 0.02f;
+        const float Reach = 0.78f;
+
         var spots = new (float, float)[TreeLights];
-        for (var i = 0; i < TreeLights; i++)
+        var next = 0;
+        for (var line = 0; line < _lightStrings.Length; line++)
         {
-            var along = random.NextSingle();
-            var side = (random.NextSingle() * 2) - 1;
-            spots[i] = (0.08f + (along * 0.74f), side * 0.8f);
+            var (hangsAt, count) = _lightStrings[line];
+            var direction = line % 2 == 0 ? 1 : -1;
+            for (var i = 0; i < count; i++)
+            {
+                var across = ((i / (float)(count - 1)) * 2) - 1;
+                var down = hangsAt + (across * direction * Slant / 2) + (Sag * (1 - (across * across)));
+                spots[next++] = (down, across * Reach);
+            }
         }
 
         return spots;
@@ -234,6 +249,21 @@ public sealed class VillageScene : Scene
         Painter.Pine(canvas, x, ground, treeHeight, Palette.Pine, Palette.Snow);
 
         using SKPaint paint = new() { IsAntialias = true };
+
+        // The wire each string of lights hangs on.
+        paint.Color = Palette.PineDark.WithAlpha(150);
+        paint.StrokeWidth = Math.Max(1, unit * 0.0022f);
+        var first = 0;
+        foreach (var (_, count) in _lightStrings)
+        {
+            for (var i = first; i < first + count - 1; i++)
+            {
+                canvas.DrawLine(TreeLight(i, x, ground, treeHeight), TreeLight(i + 1, x, ground, treeHeight), paint);
+            }
+
+            first += count;
+        }
+
         for (var i = 0; i < TreeLights; i++)
         {
             var spot = TreeLight(i, x, ground, treeHeight);
