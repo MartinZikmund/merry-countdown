@@ -24,6 +24,17 @@ public class VillageDrawingTests
     }
 
     [TestMethod]
+    public void TreeLight_Lights_ReachEveryTierOfTheTree()
+    {
+        var depths = Enumerable.Range(0, 26).Select(i => (VillageScene.TreeLight(i, X, Ground, Tall).Y - (Ground - Tall)) / Tall).ToList();
+
+        // The tree's three tiers end 0.46, 0.72 and 0.98 of the way down.
+        depths.Count(d => d < 0.46f).Should().BeGreaterThan(4);
+        depths.Count(d => d is >= 0.46f and < 0.72f).Should().BeGreaterThan(4);
+        depths.Count(d => d >= 0.72f).Should().BeGreaterThan(4, "the bottom tier is the biggest and used to be bare");
+    }
+
+    [TestMethod]
     public void TreeLight_Lights_SpreadOverBothSides()
     {
         var lights = Enumerable.Range(0, 26).Select(i => VillageScene.TreeLight(i, X, Ground, Tall)).ToList();
