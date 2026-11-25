@@ -161,11 +161,16 @@ internal static class Painter
         }
     }
 
-    public static void House(SKCanvas canvas, float x, float groundY, float width, float height, SKColor wall, SKColor roofSnow)
+    /// <summary>The windows go on before the roof, so their glow warms the wall and leaves the snow above it white.</summary>
+    public static void House(SKCanvas canvas, float x, float groundY, float width, float height, SKColor wall, SKColor roofSnow, ReadOnlySpan<SKRect> windows, SKColor light)
     {
         using SKPaint paint = new() { IsAntialias = true, Color = wall };
         var wallTop = groundY - height;
         canvas.DrawRoundRect(x - (width / 2), wallTop, width, height + 4, width * 0.03f, width * 0.03f, paint);
+        foreach (var window in windows)
+        {
+            Window(canvas, window.Left, window.Top, window.Width, window.Height, light);
+        }
 
         var overhang = width * 0.14f;
         var roofHeight = width * 0.46f;
@@ -182,6 +187,11 @@ internal static class Painter
     public static void Window(SKCanvas canvas, float x, float y, float width, float height, SKColor light)
     {
         Glow(canvas, x + (width / 2), y + (height / 2), width * 2.1f, light, 110);
+        WindowPane(canvas, x, y, width, height, light);
+    }
+
+    public static void WindowPane(SKCanvas canvas, float x, float y, float width, float height, SKColor light)
+    {
         using SKPaint paint = new() { IsAntialias = true, Color = light };
         canvas.DrawRoundRect(x, y, width, height, width * 0.12f, width * 0.12f, paint);
         paint.Color = Palette.WoodDark;

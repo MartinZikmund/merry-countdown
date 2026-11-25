@@ -112,9 +112,11 @@ public sealed class ToyTrainScene : Scene
         canvas.DrawRoundRect(x, top + (h * 0.35f), length * 0.72f, h * 0.65f, h * 0.12f, h * 0.12f, paint);
         paint.Color = Palette.Cranberry;
         canvas.DrawRoundRect(x, top - (h * 0.12f), length * 0.34f, h * 1.12f, h * 0.08f, h * 0.08f, paint);
+
+        // Roofs go on after the windows, or the glow would stain them.
+        Painter.Window(canvas, x + (length * 0.08f), top + (h * 0.03f), length * 0.17f, h * 0.34f, Palette.Candle);
         paint.Color = Palette.Night;
         canvas.DrawRoundRect(x - (length * 0.03f), top - (h * 0.2f), length * 0.4f, h * 0.12f, h * 0.05f, h * 0.05f, paint);
-        Painter.Window(canvas, x + (length * 0.08f), top + (h * 0.03f), length * 0.17f, h * 0.34f, Palette.Candle);
 
         paint.Color = Palette.Candle;
         canvas.DrawRect(x + (length * 0.42f), top + (h * 0.42f), length * 0.05f, h * 0.5f, paint);
@@ -140,8 +142,6 @@ public sealed class ToyTrainScene : Scene
         var top = rail - wheel - height;
         using SKPaint paint = new() { IsAntialias = true, Color = color };
         canvas.DrawRoundRect(x, top, length, height, height * 0.1f, height * 0.1f, paint);
-        paint.Color = Palette.Snow;
-        canvas.DrawRoundRect(x - (length * 0.02f), top - (height * 0.09f), length * 1.04f, height * 0.16f, height * 0.07f, height * 0.07f, paint);
 
         const int Windows = 3;
         var windowWidth = length * 0.2f;
@@ -151,6 +151,9 @@ public sealed class ToyTrainScene : Scene
             var light = new SKColor(Palette.Candle.Red, (byte)(Palette.Candle.Green * phase), Palette.Candle.Blue);
             Painter.Window(canvas, x + (length * 0.09f) + (i * length * 0.29f), top + (height * 0.2f), windowWidth, height * 0.42f, light);
         }
+
+        paint.Color = Palette.Snow;
+        canvas.DrawRoundRect(x - (length * 0.02f), top - (height * 0.09f), length * 1.04f, height * 0.16f, height * 0.07f, height * 0.07f, paint);
 
         paint.Color = Palette.Night;
         canvas.DrawRect(x + length, rail - (wheel * 1.5f), length * 0.09f, wheel * 0.36f, paint);
