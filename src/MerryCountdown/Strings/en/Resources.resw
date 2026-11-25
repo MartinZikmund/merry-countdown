@@ -227,7 +227,7 @@
     <value>Snowy village</value>
   </data>
   <data name="Scene_globe" xml:space="preserve">
-    <value>Snow globe (tap to shake!)</value>
+    <value>Snow globe</value>
   </data>
   <data name="Scene_aurora" xml:space="preserve">
     <value>Northern lights</value>
