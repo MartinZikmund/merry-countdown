@@ -24,6 +24,26 @@ public class FireplaceDrawingTests
     [DataRow(1180, 860)]
     [DataRow(390, 844)]
     [TestMethod]
+    public void Fireplace_FrontLog_LiesInFrontOfTheFlames(int width, int height)
+    {
+        using var scene = Scene.Create("fireplace");
+        var flames = scene.VisibleElements(width, height, 0).First().Area;
+
+        // The front log is 0.09 of the firebox thick and its middle sits just over one thickness above the floor.
+        var thick = flames.Width * 0.09f;
+        var y = (int)(flames.Bottom - (thick * 1.05f));
+        using var frame = Drawing.Render(scene, width, height, 2);
+
+        // Across the middle of the log, where the flames stand. A stray ember may cross it, so not every pixel.
+        var across = Enumerable.Range(-10, 21).Select(i => (int)(flames.MidX + (i * flames.Width * 0.012f))).ToList();
+        var wood = across.Count(x => Drawing.Distance(frame.GetPixel(x, y), Palette.Wood) < 40);
+
+        wood.Should().BeGreaterThan(across.Count * 3 / 4, "the flames rise from behind the front log");
+    }
+
+    [DataRow(1180, 860)]
+    [DataRow(390, 844)]
+    [TestMethod]
     public void Fireplace_BricksAndLogs_StayOffTheFloor(int width, int height)
     {
         using var scene = Scene.Create("fireplace");
