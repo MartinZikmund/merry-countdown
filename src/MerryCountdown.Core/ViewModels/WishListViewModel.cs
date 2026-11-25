@@ -81,6 +81,15 @@ public partial class WishListViewModel : ViewModelBase
     [NotifyCanExecuteChangedFor(nameof(AddWishCommand))]
     public partial string NewWishText { get; set; } = "";
 
+    /// <summary>The picture waiting to go on the letter with the next wish.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(WishPlaceholder))]
+    [NotifyCanExecuteChangedFor(nameof(AddWishCommand))]
+    public partial WishStickerViewModel? SelectedSticker { get; set; }
+
+    /// <summary>The chosen picture's name, which is what the wish says unless the kid types something.</summary>
+    public string WishPlaceholder => SelectedSticker?.Name ?? _localizer["WishPlaceholder"];
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsWriting))]
     public partial bool IsSent { get; set; }
@@ -129,31 +138,37 @@ public partial class WishListViewModel : ViewModelBase
         }
     }
 
-    [RelayCommand(CanExecute = nameof(CanAddWish))]
-    private void AddWish() => Add(null);
-
-    private bool CanAddWish() => !string.IsNullOrWhiteSpace(NewWishText);
-
-    /// <summary>Picking a picture is the whole job for a kid who can't write, so it adds the wish straight away.</summary>
-    [RelayCommand]
-    private void AddPictureWish(WishStickerViewModel sticker)
+    partial void OnSelectedStickerChanged(WishStickerViewModel? oldValue, WishStickerViewModel? newValue)
     {
-        _sounds.Play(SoundEffect.Sticker);
-        Add(sticker.Key);
+        oldValue?.IsSelected = false;
+        newValue?.IsSelected = true;
     }
 
-    private void Add(string? sticker)
+    /// <summary>A picture alone is a whole wish, for a kid who can't write. Words alone are one too.</summary>
+    [RelayCommand(CanExecute = nameof(CanAddWish))]
+    private void AddWish()
     {
-        var wish = _family.AddWish(NewWishText, sticker);
+        var wish = _family.AddWish(NewWishText, SelectedSticker?.Key);
         if (wish is null)
         {
             return;
         }
 
         NewWishText = "";
+        SelectedSticker = null;
         ForgetRemoved();
         Load();
         ArrivedWish = Wishes.FirstOrDefault(w => w.Wish == wish);
+    }
+
+    private bool CanAddWish() => SelectedSticker is not null || !string.IsNullOrWhiteSpace(NewWishText);
+
+    /// <summary>Picks the picture for the next wish. It goes on the letter with ＋, with or without words.</summary>
+    [RelayCommand]
+    private void ChoosePicture(WishStickerViewModel sticker)
+    {
+        _sounds.Play(SoundEffect.Sticker);
+        SelectedSticker = sticker;
     }
 
     [RelayCommand]

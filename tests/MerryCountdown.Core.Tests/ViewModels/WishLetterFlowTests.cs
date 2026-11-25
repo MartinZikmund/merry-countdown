@@ -25,34 +25,78 @@ public class WishLetterFlowTests
     }
 
     [TestMethod]
-    public void AddPictureWish_AddsItAtOnce()
+    public void ChoosePicture_WaitsInsteadOfAddingTheWish()
     {
         var vm = Create();
+        var teddy = vm.Stickers.Single(s => s.Key == "teddy");
 
-        vm.AddPictureWishCommand.Execute(vm.Stickers.Single(s => s.Key == "teddy"));
+        vm.ChoosePictureCommand.Execute(teddy);
+
+        vm.Wishes.Should().BeEmpty();
+        vm.SelectedSticker.Should().BeSameAs(teddy);
+        teddy.IsSelected.Should().BeTrue();
+        vm.AddWishCommand.CanExecute(null).Should().BeTrue();
+    }
+
+    [TestMethod]
+    public void ChoosePicture_ItsNameBecomesThePlaceholder()
+    {
+        var vm = Create();
+        vm.WishPlaceholder.Should().Be("WishPlaceholder");
+
+        vm.ChoosePictureCommand.Execute(vm.Stickers.Single(s => s.Key == "teddy"));
+
+        vm.WishPlaceholder.Should().Be("Sticker_teddy");
+    }
+
+    [TestMethod]
+    public void ChoosePicture_AnotherOne_ReplacesTheFirst()
+    {
+        var vm = Create();
+        var teddy = vm.Stickers.Single(s => s.Key == "teddy");
+
+        vm.ChoosePictureCommand.Execute(teddy);
+        vm.ChoosePictureCommand.Execute(vm.Stickers.Single(s => s.Key == "unicorn"));
+
+        teddy.IsSelected.Should().BeFalse();
+        vm.SelectedSticker!.Key.Should().Be("unicorn");
+    }
+
+    [TestMethod]
+    public void AddWish_WithOnlyAPicture_UsesThePicturesOwnName()
+    {
+        var vm = Create();
+        vm.ChoosePictureCommand.Execute(vm.Stickers.Single(s => s.Key == "teddy"));
+
+        vm.AddWishCommand.Execute(null);
 
         vm.Wishes.Should().ContainSingle(w => w.Sticker == "teddy" && w.Label == "Sticker_teddy");
         _family.ActiveKid.Wishes.Single().Sticker.Should().Be("teddy");
     }
 
     [TestMethod]
-    public void AddPictureWish_TakesTheTypedWordsAlong()
+    public void AddWish_WithAPictureAndWords_KeepsBothAndStartsAfresh()
     {
         var vm = Create();
+        var teddy = vm.Stickers.Single(s => s.Key == "teddy");
+        vm.ChoosePictureCommand.Execute(teddy);
         vm.NewWishText = "the brown one";
 
-        vm.AddPictureWishCommand.Execute(vm.Stickers.Single(s => s.Key == "teddy"));
+        vm.AddWishCommand.Execute(null);
 
         vm.Wishes.Should().ContainSingle(w => w.Sticker == "teddy" && w.Label == "the brown one");
         vm.NewWishText.Should().BeEmpty();
+        vm.SelectedSticker.Should().BeNull();
+        teddy.IsSelected.Should().BeFalse();
+        vm.WishPlaceholder.Should().Be("WishPlaceholder");
     }
 
     [TestMethod]
-    public void AddPictureWish_Pops()
+    public void ChoosePicture_Pops()
     {
         var vm = Create();
 
-        vm.AddPictureWishCommand.Execute(vm.Stickers[0]);
+        vm.ChoosePictureCommand.Execute(vm.Stickers[0]);
 
         _sounds.Played.Should().Equal(SoundEffect.Sticker);
     }
