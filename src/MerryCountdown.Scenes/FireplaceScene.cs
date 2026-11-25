@@ -50,7 +50,7 @@ public sealed class FireplaceScene : Scene
         paint.Color = Palette.Wood;
         canvas.DrawRoundRect(cx - (hearth * 0.86f), floor - outerHeight - (hearth * 0.07f), hearth * 1.72f, hearth * 0.09f, hearth * 0.015f, hearth * 0.015f, paint);
 
-        PaintLogs(canvas, cx, floor, opening);
+        PaintBackLog(canvas, cx, floor, opening);
         PaintGarland(canvas, cx, floor - outerHeight - (hearth * 0.07f), hearth);
     }
 
@@ -69,6 +69,9 @@ public sealed class FireplaceScene : Scene
         var glow = (byte)(95 + (roar * (CalmMotion ? 45 : 90)));
         Painter.Glow(canvas, cx, floor - (opening * 0.2f), hearth * 1.5f * flicker, Palette.Ember, glow);
         PaintFlames(canvas, cx, floor - (opening * 0.11f), opening, time, CalmMotion ? 0 : roar);
+
+        // The fire burns between the two logs, so this one goes on after the flames.
+        PaintFrontLog(canvas, cx, floor, opening);
         PaintEmbers(canvas, cx, floor, opening, time);
         if (!CalmMotion)
         {
@@ -154,21 +157,22 @@ public sealed class FireplaceScene : Scene
         }
     }
 
-    private static void PaintLogs(SKCanvas canvas, float cx, float floor, float opening)
+    // Both logs sit high enough that their tilted ends stay inside the firebox instead of poking out over the floor.
+    private static void PaintBackLog(SKCanvas canvas, float cx, float floor, float opening) =>
+        PaintLog(canvas, cx, floor, opening, degrees: -7, lift: 2f, Palette.WoodDark);
+
+    private static void PaintFrontLog(SKCanvas canvas, float cx, float floor, float opening) =>
+        PaintLog(canvas, cx, floor, opening, degrees: 8, lift: 1.55f, Palette.Wood);
+
+    private static void PaintLog(SKCanvas canvas, float cx, float floor, float opening, float degrees, float lift, SKColor color)
     {
-        using SKPaint paint = new() { IsAntialias = true, Color = Palette.WoodDark };
+        using SKPaint paint = new() { IsAntialias = true, Color = color };
         var length = opening * 0.68f;
         var thick = opening * 0.09f;
 
-        // High enough that the tilted ends stay inside the firebox instead of poking out over the floor.
         canvas.Save();
-        canvas.RotateDegrees(-7, cx, floor);
-        canvas.DrawRoundRect(cx - (length / 2), floor - (thick * 2f), length, thick, thick / 2, thick / 2, paint);
-        canvas.Restore();
-        canvas.Save();
-        canvas.RotateDegrees(8, cx, floor);
-        paint.Color = Palette.Wood;
-        canvas.DrawRoundRect(cx - (length / 2), floor - (thick * 1.55f), length, thick, thick / 2, thick / 2, paint);
+        canvas.RotateDegrees(degrees, cx, floor);
+        canvas.DrawRoundRect(cx - (length / 2), floor - (thick * lift), length, thick, thick / 2, thick / 2, paint);
         canvas.Restore();
     }
 
