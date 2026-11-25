@@ -1,4 +1,5 @@
 using System.Globalization;
+using MerryCountdown.Core.Season;
 
 namespace MerryCountdown.Core.Family;
 
@@ -59,6 +60,7 @@ public sealed class FamilyService : IFamilyService
         _store = store ?? throw new ArgumentNullException(nameof(store));
         _data = store.Load();
         _data.Settings ??= FamilySettings.ForCulture(cultureName);
+        MigratePhotoScene(_data);
 
         if (_data.Kids.Count == 0)
         {
@@ -69,6 +71,24 @@ public sealed class FamilyService : IFamilyService
     public FamilyService(IFamilyStore store)
         : this(store, CultureInfo.CurrentUICulture.Name)
     {
+    }
+
+    // Version 1 kept "photos on" apart from the scene in front of them. Now the scene says it all.
+    private static void MigratePhotoScene(FamilyData data)
+    {
+        if (data.Version >= 2)
+        {
+            return;
+        }
+
+        var settings = data.Settings!;
+        if (settings.UsesPhotos)
+        {
+            settings.SceneId = settings.PhotoForegroundSceneId ?? SceneCatalog.PhotosId;
+        }
+
+        settings.PhotoForegroundSceneId = null;
+        data.Version = 2;
     }
 
     public IReadOnlyList<Kid> Kids => _data.Kids;

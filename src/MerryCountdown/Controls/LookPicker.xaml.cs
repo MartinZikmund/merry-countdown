@@ -42,6 +42,24 @@ public sealed partial class LookPicker : UserControl
         ViewModel.EnterCompactOverlayCommand.Execute(null);
     }
 
+    private async void PhotosToggle_Toggled(object sender, RoutedEventArgs e)
+    {
+        // The binding setting the switch lands here too.
+        var isOn = PhotosToggle.IsOn;
+        if (isOn == ViewModel.PhotosBehindScene)
+        {
+            return;
+        }
+
+        if (isOn && ViewModel.PhotosNeedSetup)
+        {
+            CloseRequested?.Invoke(this, EventArgs.Empty);
+        }
+
+        await ViewModel.SetPhotosBehindSceneAsync(isOn);
+        PhotosToggle.IsOn = ViewModel.PhotosBehindScene;
+    }
+
     private void SceneOption_Click(object sender, RoutedEventArgs e)
     {
         if (sender is Button { Tag: SceneOptionViewModel option })

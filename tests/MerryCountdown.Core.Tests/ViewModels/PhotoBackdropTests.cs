@@ -151,25 +151,35 @@ public class PhotoBackdropTests
     }
 
     [TestMethod]
-    public void Foreground_FollowsTheChoiceWhilePhotosAreOn()
+    public void Foreground_StaysInFrontOfPhotosBehindAScene()
     {
-        var (backdrop, family, _, _, _) = Create(true, "a");
-        backdrop.ShowForeground.Should().BeFalse();
+        var (backdrop, _, _, _, _) = Create(true, "a");
 
-        family.Settings.PhotoForegroundSceneId = "fireplace";
-        family.SaveSettings();
-
+        backdrop.IsActive.Should().BeTrue();
         backdrop.ShowForeground.Should().BeTrue();
-        backdrop.SceneFor("village").Should().Be("fireplace");
     }
 
     [TestMethod]
-    public void SceneFor_WithoutPhotos_KeepsTheChosenScene()
+    public void Foreground_GoesAwayForThePhotosScene()
     {
-        var (backdrop, family, _, _, _) = Create();
-        family.Settings.PhotoForegroundSceneId = "fireplace";
+        var (backdrop, family, _, _, _) = Create(true, "a");
 
-        backdrop.SceneFor("village").Should().Be("village");
+        family.Settings.SceneId = SceneCatalog.PhotosId;
+        family.SaveSettings();
+
+        backdrop.ShowForeground.Should().BeFalse();
+    }
+
+    [TestMethod]
+    public void PhotosScene_ShowsPhotosEvenWithTheToggleOff()
+    {
+        var (backdrop, family, _, _, _) = Create(true, "a");
+
+        family.Settings.UsesPhotos = false;
+        family.Settings.SceneId = SceneCatalog.PhotosId;
+        family.SaveSettings();
+
+        backdrop.IsActive.Should().BeTrue();
     }
 }
 
@@ -267,18 +277,27 @@ public class PhotoFeatureViewModelTests
     }
 
     [TestMethod]
-    public void Foreground_FirstOptionIsNone_RestAreScenes()
+    public async Task RemovePhoto_TheLastOne_LeavesThePhotosScene()
+    {
+        var (vm, family, library, _) = CreateParentZone();
+        library.NextPick = ["a"];
+        await vm.AddPhotosCommand.ExecuteAsync(null);
+        family.Settings.SceneId = SceneCatalog.PhotosId;
+
+        await vm.RemovePhotoCommand.ExecuteAsync(vm.Photos[0]);
+
+        family.Settings.SceneId.Should().Be(SceneCatalog.All[0].Id);
+    }
+
+    [TestMethod]
+    public void KeepUnlocked_IsSavedForTheGate()
     {
         var (vm, family, _, _) = CreateParentZone();
+        vm.KeepUnlocked.Should().BeFalse();
 
-        vm.ForegroundOptions.Should().HaveCount(SceneCatalog.All.Count + 1);
-        vm.ForegroundIndex.Should().Be(0);
+        vm.KeepUnlocked = true;
 
-        vm.ForegroundIndex = 1;
-        family.Settings.PhotoForegroundSceneId.Should().Be(SceneCatalog.All[0].Id);
-
-        vm.ForegroundIndex = 0;
-        family.Settings.PhotoForegroundSceneId.Should().BeNull();
+        family.Settings.KeepGrownUpsUnlocked.Should().BeTrue();
     }
 
     private static (CountdownViewModel Vm, FamilyService Family, FakeNavigation Nav, FakeGate Gate) CreateCountdown(bool isFull, params string[] photos)
@@ -308,14 +327,92 @@ public class PhotoFeatureViewModelTests
     }
 
     [TestMethod]
-    public async Task SceneMenu_MyPhotos_WithPhotos_TurnsThemOn()
+    public async Task SceneMenu_Photos_WithPhotos_BecomesTheSceneAndTurnsThemOn()
     {
         var (vm, family, nav, _) = CreateCountdown(true, "a");
 
         await vm.SelectSceneCommand.ExecuteAsync(PhotosOption(vm));
 
+        family.Settings.SceneId.Should().Be(SceneCatalog.PhotosId);
         family.Settings.UsesPhotos.Should().BeTrue();
         nav.Visited.Should().BeEmpty();
+    }
+
+    [TestMethod]
+    public async Task SceneMenu_Photos_IsTheOnlyOneMarkedAndLocksTheToggleOn()
+    {
+        var (vm, _, _, _) = CreateCountdown(true, "a");
+        vm.ViewLoaded();
+
+        await vm.SelectSceneCommand.ExecuteAsync(PhotosOption(vm));
+
+        vm.Scenes.Where(s => s.IsSelected).Select(s => s.Id).Should().Equal(SceneCatalog.PhotosId);
+        vm.PhotosBehindScene.Should().BeTrue();
+        vm.CanTogglePhotos.Should().BeFalse();
+    }
+
+    [TestMethod]
+    public async Task PhotosToggle_On_PutsPhotosBehindTheChosenScene()
+    {
+        var (vm, family, _, _) = CreateCountdown(true, "a");
+        family.Settings.SceneId = "globe";
+        vm.ViewLoaded();
+
+        await vm.SetPhotosBehindSceneAsync(true);
+
+        family.Settings.UsesPhotos.Should().BeTrue();
+        family.Settings.SceneId.Should().Be("globe");
+        vm.PhotosBehindScene.Should().BeTrue();
+        vm.Backdrop.ShowForeground.Should().BeTrue();
+        vm.Scenes.Where(s => s.IsSelected).Select(s => s.Id).Should().Equal("globe");
+    }
+
+    [TestMethod]
+    public async Task PhotosToggle_Off_ShowsThePaintedSceneAgain()
+    {
+        var (vm, family, _, _) = CreateCountdown(true, "a");
+        family.Settings.UsesPhotos = true;
+        vm.ViewLoaded();
+
+        await vm.SetPhotosBehindSceneAsync(false);
+
+        family.Settings.UsesPhotos.Should().BeFalse();
+        vm.PhotosBehindScene.Should().BeFalse();
+    }
+
+    [TestMethod]
+    public async Task PhotosToggle_WhileThePhotosSceneIsChosen_StaysOn()
+    {
+        var (vm, family, _, _) = CreateCountdown(true, "a");
+        vm.ViewLoaded();
+        await vm.SelectSceneCommand.ExecuteAsync(PhotosOption(vm));
+
+        await vm.SetPhotosBehindSceneAsync(false);
+
+        family.Settings.UsesPhotos.Should().BeTrue();
+    }
+
+    [TestMethod]
+    public async Task PhotosToggle_WithNoPhotosYet_GoesToTheGrownUpsThroughTheGate()
+    {
+        var (vm, family, nav, gate) = CreateCountdown(true);
+
+        await vm.SetPhotosBehindSceneAsync(true);
+
+        gate.Asked.Should().Be(1);
+        nav.Visited.Should().Contain(typeof(ParentZoneViewModel));
+        family.Settings.UsesPhotos.Should().BeFalse();
+    }
+
+    [TestMethod]
+    public async Task PhotosToggle_InTheFreeVersion_StaysOff()
+    {
+        var (vm, family, _, _) = CreateCountdown(false, "a");
+
+        vm.PhotosNeedSetup.Should().BeTrue();
+        await vm.SetPhotosBehindSceneAsync(true);
+
+        family.Settings.UsesPhotos.Should().BeFalse();
     }
 
     [TestMethod]
@@ -330,7 +427,7 @@ public class PhotoFeatureViewModelTests
     }
 
     [TestMethod]
-    public async Task SceneMenu_PickingAScene_TurnsPhotosOff()
+    public async Task SceneMenu_PickingAScene_KeepsThePhotosBehindIt()
     {
         var (vm, family, _, _) = CreateCountdown(true, "a");
         family.Settings.UsesPhotos = true;
@@ -338,8 +435,9 @@ public class PhotoFeatureViewModelTests
 
         await vm.SelectSceneCommand.ExecuteAsync(vm.Scenes.First(s => s.Id == "globe"));
 
-        family.Settings.UsesPhotos.Should().BeFalse();
+        family.Settings.UsesPhotos.Should().BeTrue();
         vm.SceneId.Should().Be("globe");
+        vm.CanTogglePhotos.Should().BeTrue();
     }
 
     [TestMethod]

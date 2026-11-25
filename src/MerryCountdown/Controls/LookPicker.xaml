@@ -157,6 +157,13 @@
                         </DataTemplate>
                     </ItemsRepeater.ItemTemplate>
                 </ItemsRepeater>
+                <ToggleSwitch
+                    x:Name="PhotosToggle"
+                    AutomationProperties.AutomationId="PhotosBehindSceneToggle"
+                    Header="{markup:Localize Key=PhotosBehindScene}"
+                    IsEnabled="{x:Bind ViewModel.CanTogglePhotos, Mode=OneWay}"
+                    IsOn="{x:Bind ViewModel.PhotosBehindScene, Mode=OneWay}"
+                    Toggled="PhotosToggle_Toggled" />
             </StackPanel>
         </StackPanel>
     </StackPanel>

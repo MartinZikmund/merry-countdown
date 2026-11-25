@@ -761,7 +761,7 @@
     <value>Name</value>
   </data>
   <data name="Scene_photos" xml:space="preserve">
-    <value>My photos</value>
+    <value>Photos</value>
   </data>
   <data name="PhotosHeader" xml:space="preserve">
     <value>Your own photos</value>
@@ -774,15 +774,6 @@
   </data>
   <data name="PhotosAdd" xml:space="preserve">
     <value>Add photos</value>
-  </data>
-  <data name="PhotoForegroundHeader" xml:space="preserve">
-    <value>In front of the photos</value>
-  </data>
-  <data name="PhotoForegroundDescription" xml:space="preserve">
-    <value>Keep a scene’s houses, fireplace or train in front, or show just the photo.</value>
-  </data>
-  <data name="PhotoForegroundNone" xml:space="preserve">
-    <value>Just the photo</value>
   </data>
   <data name="PhotoIntervalHeader" xml:space="preserve">
     <value>Change the photo every</value>
@@ -918,5 +909,17 @@
   </data>
   <data name="WelcomeTipDone" xml:space="preserve">
     <value>Got it</value>
+  </data>
+  <data name="PhotosBehindScene" xml:space="preserve">
+    <value>My photos behind the scene</value>
+  </data>
+  <data name="GateHeader" xml:space="preserve">
+    <value>The grown-ups question</value>
+  </data>
+  <data name="KeepUnlockedHeader" xml:space="preserve">
+    <value>Keep this corner unlocked</value>
+  </data>
+  <data name="KeepUnlockedDescription" xml:space="preserve">
+    <value>Skips the question on this device, so anyone holding it can get in here, buy the full version and open links. When off, the question comes back 15 minutes after the last right answer.</value>
   </data>
 </root>

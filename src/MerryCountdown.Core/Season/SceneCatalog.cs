@@ -5,6 +5,9 @@ public sealed partial record SceneInfo(string Id, bool RequiresFullVersion);
 
 public static class SceneCatalog
 {
+    /// <summary>The family's photos with nothing painted in front. Chosen like a scene, but not one of <see cref="All"/>.</summary>
+    public const string PhotosId = "photos";
+
     public static IReadOnlyList<SceneInfo> All { get; } =
     [
         new("village", false),

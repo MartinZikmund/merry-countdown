@@ -219,12 +219,17 @@ public sealed class SnackService(IDialogService dialogs, IConfirmationDialogServ
 }
 
 /// <summary>Multiplication in words: a parent solves it in a second, a five-year-old doesn't.</summary>
-public sealed class ParentGateService(IDialogService dialogs, IStringLocalizer localizer) : IParentGateService
+public sealed class ParentGateService(IDialogService dialogs, IStringLocalizer localizer, ParentGatePass pass) : IParentGateService
 {
     private readonly ParentGate _gate = new(Random.Shared);
 
     public async Task<bool> PassAsync()
     {
+        if (pass.IsOpen)
+        {
+            return true;
+        }
+
         var challenge = _gate.Next();
         TextBox answer = new()
         {
@@ -253,7 +258,13 @@ public sealed class ParentGateService(IDialogService dialogs, IStringLocalizer l
             DefaultButton = ContentDialogButton.Primary,
         };
 
-        return await dialogs.ShowAsync(dialog) == ContentDialogResult.Primary
+        var isRight = await dialogs.ShowAsync(dialog) == ContentDialogResult.Primary
             && ParentGate.Check(challenge, answer.Text);
+        if (isRight)
+        {
+            pass.Remember();
+        }
+
+        return isRight;
     }
 }

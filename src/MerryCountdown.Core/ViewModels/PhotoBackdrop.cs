@@ -1,4 +1,5 @@
 using MerryCountdown.Core.Family;
+using MerryCountdown.Core.Season;
 using MerryCountdown.Core.Store;
 
 namespace MerryCountdown.Core.ViewModels;
@@ -32,9 +33,8 @@ public partial class PhotoBackdrop : ObservableObject
 
     public bool IsActive => Photo is not null;
 
-    /// <summary>Which scene to draw: its foreground goes in front of the photo, or the whole scene without one.</summary>
-    public string SceneFor(string chosenScene) =>
-        IsActive ? _family.Settings.PhotoForegroundSceneId ?? chosenScene : chosenScene;
+    /// <summary>The Photos scene is chosen: photos with nothing painted in front.</summary>
+    public bool IsPhotoScene => _family.Settings.SceneId == SceneCatalog.PhotosId;
 
     public void Next()
     {
@@ -55,7 +55,7 @@ public partial class PhotoBackdrop : ObservableObject
         }
     }
 
-    private bool IsWanted => _family.Settings.UsesPhotos && _fullVersion.IsFull;
+    private bool IsWanted => (_family.Settings.UsesPhotos || IsPhotoScene) && _fullVersion.IsFull;
 
     private void OnSecond()
     {
@@ -75,7 +75,7 @@ public partial class PhotoBackdrop : ObservableObject
             Photo = null;
         }
 
-        ShowForeground = !IsActive || settings.PhotoForegroundSceneId is not null;
+        ShowForeground = !IsActive || !IsPhotoScene;
         OnPropertyChanged(nameof(IsActive));
     }
 

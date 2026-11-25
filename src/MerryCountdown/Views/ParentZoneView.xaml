@@ -155,17 +155,6 @@
                             IsOn="{x:Bind ViewModel.UsesPhotos, Mode=TwoWay}" />
                     </StackPanel>
                 </toolkit:SettingsCard>
-                <toolkit:SettingsCard Description="{markup:Localize Key=PhotoForegroundDescription}" Header="{markup:Localize Key=PhotoForegroundHeader}">
-                    <toolkit:SettingsCard.HeaderIcon>
-                        <FontIcon Glyph="&#xE81E;" />
-                    </toolkit:SettingsCard.HeaderIcon>
-                    <ComboBox
-                        AutomationProperties.AutomationId="PhotoForegroundCombo"
-                        AutomationProperties.Name="{markup:Localize Key=PhotoForegroundHeader}"
-                        IsEnabled="{x:Bind ViewModel.IsFull, Mode=OneWay}"
-                        ItemsSource="{x:Bind ViewModel.ForegroundOptions}"
-                        SelectedIndex="{x:Bind ViewModel.ForegroundIndex, Mode=TwoWay}" />
-                </toolkit:SettingsCard>
                 <toolkit:SettingsCard Header="{markup:Localize Key=PhotoIntervalHeader}">
                     <toolkit:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE916;" />
@@ -288,6 +277,17 @@
                     </StackPanel>
                 </toolkit:SettingsCard>
             </StackPanel>
+
+            <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{markup:Localize Key=GateHeader}" />
+            <toolkit:SettingsCard Description="{markup:Localize Key=KeepUnlockedDescription}" Header="{markup:Localize Key=KeepUnlockedHeader}">
+                <toolkit:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE785;" />
+                </toolkit:SettingsCard.HeaderIcon>
+                <ToggleSwitch
+                    AutomationProperties.AutomationId="KeepUnlockedToggle"
+                    AutomationProperties.Name="{markup:Localize Key=KeepUnlockedHeader}"
+                    IsOn="{x:Bind ViewModel.KeepUnlocked, Mode=TwoWay}" />
+            </toolkit:SettingsCard>
         </StackPanel>
     </ScrollViewer>
 </local:ParentZoneViewBase>

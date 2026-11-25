@@ -145,6 +145,7 @@ public partial class App : Application, IApplication
         // The web head is left out for now: iOS Safari asks before it shares motion.
         services.AddScoped<IShakeService>(sp => OperatingSystem.IsBrowser() ? new NoShakeService() : ActivatorUtilities.CreateInstance<WindowShakeService>(sp));
 #endif
+        services.AddSingleton(provider => new ParentGatePass(provider.GetRequiredService<IFamilyService>(), provider.GetRequiredService<IAppClock>()));
         services.AddScoped<IParentGateService, ParentGateService>();
         services.AddScoped<ISnackService, SnackService>();
         services.AddScoped<IThemeManager, ThemeManager>();

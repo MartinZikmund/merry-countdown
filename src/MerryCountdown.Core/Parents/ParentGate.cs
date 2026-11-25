@@ -1,4 +1,5 @@
 using System.Globalization;
+using MerryCountdown.Core.Family;
 
 namespace MerryCountdown.Core.Parents;
 
@@ -16,6 +17,31 @@ public sealed class ParentGate(Random random)
     public static bool Check(ParentChallenge challenge, string? answer) =>
         int.TryParse(answer, NumberStyles.Integer, CultureInfo.InvariantCulture, out var value)
         && value == challenge.Left * challenge.Right;
+}
+
+/// <summary>Remembers a right answer for a while, so a grown-up isn't asked again at every step.</summary>
+public sealed class ParentGatePass(IFamilyService family, IAppClock clock)
+{
+    public static readonly TimeSpan Cooldown = TimeSpan.FromMinutes(15);
+
+    private DateTime? _answeredAt;
+
+    public bool IsOpen
+    {
+        get
+        {
+            if (family.Settings.KeepGrownUpsUnlocked)
+            {
+                return true;
+            }
+
+            // A clock set back must not keep the gate open.
+            var since = clock.Now - _answeredAt;
+            return since >= TimeSpan.Zero && since < Cooldown;
+        }
+    }
+
+    public void Remember() => _answeredAt = clock.Now;
 }
 
 public interface IParentGateService

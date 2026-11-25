@@ -20,7 +20,9 @@ One page per topic. Keep it that way — see [`.claude/rules/docs.md`](../.claud
 - [json-aot-serialization.md](./json-aot-serialization.md) — `JsonSerializerContext` conventions for AOT-safe, trim-safe JSON serialization.
 - [keep-screen-on.md](./keep-screen-on.md) — the setting that stops the screen sleeping, how it combines with Family Display and window visibility, and what each head uses.
 - [localization.md](./localization.md) — adding strings, plural forms for counted things, names in Czech, and the Czech house style.
+- [parent-gate.md](./parent-gate.md) — the grown-ups' question: what sits behind it, the 15-minute memory and the switch that turns it off.
 - [performance.md](./performance.md) — how to measure scene frame times and the app's memory, what was found and fixed, and what is still unmeasured.
+- [photos.md](./photos.md) — family photos behind the countdown: the Photos scene, the switch for any scene, and how old settings are carried over.
 - [scene-drawing.md](./scene-drawing.md) — the layers a scene is painted in, the rules that keep it looking right at every size and in front of a photo, and how to look at it.
 - [scene-shake.md](./scene-shake.md) — what each scene does when the device or the window is shaken, and how a shake is told apart from a drag.
 - [scene-taps.md](./scene-taps.md) — what each scene does when tapped, and how to make something tappable.
