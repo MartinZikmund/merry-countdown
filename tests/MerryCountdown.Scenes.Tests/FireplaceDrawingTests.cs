@@ -29,9 +29,9 @@ public class FireplaceDrawingTests
         using var scene = Scene.Create("fireplace");
         var flames = scene.VisibleElements(width, height, 0).First().Area;
 
-        // The front log is 0.09 of the firebox thick and its middle sits just over one thickness above the floor.
+        // The front log is 0.09 of the firebox thick and lies almost on the floor: its middle is 0.65 of that up.
         var thick = flames.Width * 0.09f;
-        var y = (int)(flames.Bottom - (thick * 1.05f));
+        var y = (int)(flames.Bottom - (thick * 0.65f));
         using var frame = Drawing.Render(scene, width, height, 2);
 
         // Across the middle of the log, where the flames stand. A stray ember may cross it, so not every pixel.
