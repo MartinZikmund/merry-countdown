@@ -7,6 +7,7 @@ using SkiaSharp;
 //   SceneBench frames [frames-per-run] [out.csv]
 //   SceneBench memory <scenario> [out.csv]    scenarios: steady, swap, swap-dispose, swap-slot, resize, photos, photos-dispose, taps
 //   SceneBench render <subject> <dir> [w h]       PNGs of a few frames, to check a speed-up didn't change the picture
+//                                             subjects: a scene id, confetti, photo, or photo+<scene id>
 //   SceneBench compare <dirA> <dirB>          how far apart two sets of those PNGs are
 // Run a Release build, one memory scenario per process, so one doesn't inherit another's heap.
 CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
@@ -34,6 +35,9 @@ internal static class Subjects
     public const float CalmFrameSeconds = 0.35f / 10f;
 
     public static readonly string[] All = [.. Scene.AllIds, "confetti", "photo+village", "photo"];
+
+    // "photo+globe" and so on: any scene's foreground in front of the photo.
+    private const string PhotoBehind = "photo+";
 
     private static byte[]? _photoJpeg;
 
@@ -73,7 +77,8 @@ internal static class Subjects
         Scene scene = subject switch
         {
             "confetti" => new ConfettiScene(),
-            "photo+village" or "photo" => Scene.Create("village"),
+            "photo" => Scene.Create("village"),
+            _ when subject.StartsWith(PhotoBehind, StringComparison.Ordinal) => Scene.Create(subject[PhotoBehind.Length..]),
             _ => Scene.Create(subject),
         };
         scene.CalmMotion = calm;
@@ -82,7 +87,7 @@ internal static class Subjects
         if (subject.StartsWith("photo", StringComparison.Ordinal))
         {
             photo = SKImage.FromEncodedData(PhotoJpeg());
-            scene.SetPhoto(photo, showForeground: subject == "photo+village");
+            scene.SetPhoto(photo, showForeground: subject.StartsWith(PhotoBehind, StringComparison.Ordinal));
         }
 
         return (scene, photo);
