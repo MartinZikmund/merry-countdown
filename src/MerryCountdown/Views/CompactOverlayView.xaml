@@ -35,7 +35,10 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Top"
             Stretch="Uniform">
-            <controls:CountdownSign CalmMotion="{x:Bind ViewModel.CalmMotion}" Sign="{x:Bind ViewModel.Sign}" />
+            <controls:CountdownSign
+                CalmMotion="{x:Bind ViewModel.CalmMotion}"
+                Shake="{x:Bind ViewModel.Shake, Mode=OneWay}"
+                Sign="{x:Bind ViewModel.Sign}" />
         </Viewbox>
 
         <Button

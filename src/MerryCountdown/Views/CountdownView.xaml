@@ -37,6 +37,7 @@
                 <controls:CountdownSign
                     x:Name="SignControl"
                     CalmMotion="{x:Bind ViewModel.CalmMotion, Mode=OneWay}"
+                    Shake="{x:Bind ViewModel.Shake, Mode=OneWay}"
                     Sign="{x:Bind ViewModel.Sign}" />
             </Viewbox>
 
