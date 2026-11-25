@@ -323,7 +323,7 @@
     <value>Poslat dopis!</value>
   </data>
   <data name="WishRemoved" xml:space="preserve">
-    <value>{0} už v dopise není.</value>
+    <value>{0} už v&#160;dopise není.</value>
   </data>
   <data name="UndoRemoveWish" xml:space="preserve">
     <value>Vrátit zpátky</value>
