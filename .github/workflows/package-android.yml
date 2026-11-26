@@ -3,12 +3,24 @@ name: Build Android Packages
 on:
   # Push to main: Dev-channel AAB (Dev applicationId, sideload-safe; no Play upload).
   # Push to release/v*: Prod-channel AAB uploaded to Google Play Production track.
-  # See docs/versioning.md for the full model.
+  # Manual run: pick the channel and, for Prod, a Play track (none = artifact only, e.g. the first upload).
+  # See docs/android-packaging.md and docs/versioning.md.
   push:
     branches:
       - "main"
       - "release/v**"
   workflow_dispatch:
+    inputs:
+      channel:
+        description: App channel to package
+        type: choice
+        options: [Dev, Prod]
+        default: Dev
+      play_track:
+        description: Google Play track for a Prod build (none = artifact only)
+        type: choice
+        options: [none, internal, alpha, beta, production]
+        default: none
 
 env:
   # App Configuration
@@ -20,7 +32,7 @@ env:
   ANDROID_TARGET_FRAMEWORK: net10.0-android
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ inputs.channel }}
   cancel-in-progress: true
 
 jobs:
@@ -40,8 +52,15 @@ jobs:
       - name: Compute app channel
         id: channel
         shell: bash
+        env:
+          INPUT_CHANNEL: ${{ inputs.channel }}
+          INPUT_PLAY_TRACK: ${{ inputs.play_track }}
         run: |
-          if [[ "$GITHUB_REF" == refs/heads/release/v* ]]; then
+          if [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" && "$INPUT_CHANNEL" == "Prod" ]]; then
+            echo "value=Prod" >> "$GITHUB_OUTPUT"
+            echo "package_name=dev.mzikmund.merrycountdown" >> "$GITHUB_OUTPUT"
+            echo "play_track=${INPUT_PLAY_TRACK/none/}" >> "$GITHUB_OUTPUT"
+          elif [[ "$GITHUB_EVENT_NAME" != "workflow_dispatch" && "$GITHUB_REF" == refs/heads/release/v* ]]; then
             echo "value=Prod" >> "$GITHUB_OUTPUT"
             echo "package_name=dev.mzikmund.merrycountdown" >> "$GITHUB_OUTPUT"
             echo "play_track=production" >> "$GITHUB_OUTPUT"
@@ -71,6 +90,16 @@ jobs:
           dotnet-version: |
             ${{ env.DOTNET_VERSION }}
 
+      # An empty key builds fine but leaves the paywall unable to sell anything; testing tracks may do without.
+      - name: Check the RevenueCat Android key
+        if: steps.channel.outputs.play_track == 'production'
+        shell: bash
+        run: |
+          if grep -q 'RevenueCatAndroidKey = "";' src/MerryCountdown/Services/Store/StoreConfig.cs; then
+            echo "::error file=src/MerryCountdown/Services/Store/StoreConfig.cs::RevenueCatAndroidKey is empty, so a production release could not sell Pro."
+            exit 1
+          fi
+
       - name: Install .NET workloads
         run:
           dotnet workload restore "${{ env.SOLUTION_FILE }}"
@@ -99,19 +128,21 @@ jobs:
       - name: Upload AAB artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Android_AAB
+          name: Android_AAB_${{ steps.channel.outputs.value }}
           path: |
             ${{ env.PROJECT_PATH }}/bin/Release/${{ env.ANDROID_TARGET_FRAMEWORK }}/publish/*.aab
 
+      # Play only takes draft releases until the app is first published: set the PLAY_RELEASE_STATUS
+      # repository variable to "completed" after that, so releases roll out without a click.
       - name: Upload to Google Play Console
-        if: steps.channel.outputs.value == 'Prod'
+        if: steps.channel.outputs.value == 'Prod' && steps.channel.outputs.play_track != ''
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: ${{ steps.channel.outputs.package_name }}
           releaseFiles: ${{ env.PROJECT_PATH }}/bin/Release/${{ env.ANDROID_TARGET_FRAMEWORK }}/publish/*-Signed.aab
           track: ${{ steps.channel.outputs.play_track }}
-          status: completed
+          status: ${{ vars.PLAY_RELEASE_STATUS || 'draft' }}
 
       # Clean up keystore
       - name: Remove keystore
