@@ -122,6 +122,13 @@ jobs:
           p12-file-base64: ${{ secrets.APPLE_DISTRIBUTION_P12_BASE64 }}
           p12-password: ${{ secrets.APPLE_P12_PASSWORD }}
 
+      # The action imports into its own keychain without adding it to the search list, where the build looks.
+      - name: Make the signing keychain searchable
+        if: steps.channel.outputs.value == 'Prod'
+        run: |
+          security list-keychains -d user -s signing_temp.keychain $(security list-keychains -d user | tr -d '"')
+          security find-identity -v -p codesigning
+
       # --- Provisioning profile install (App Store) ---
       - name: Install provisioning profile
         if: steps.channel.outputs.value == 'Prod'
