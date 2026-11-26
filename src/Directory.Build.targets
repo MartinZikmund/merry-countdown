@@ -10,6 +10,17 @@
         </PropertyGroup>
     </Target>
 
+    <!-- NBGV names Android builds after $(Version), which carries -g<commit> outside release branches. -->
+    <Target Name="SetNbgvVersionNameForAndroid"
+            Condition="'$(TargetPlatformIdentifier)' == 'android'"
+            AfterTargets="NBGV_SetVersionForMauiAndroid"
+            BeforeTargets="_GetAndroidPackageName"
+            DependsOnTargets="GetBuildVersion">
+        <PropertyGroup>
+            <ApplicationDisplayVersion>$(BuildVersionSimple)</ApplicationDisplayVersion>
+        </PropertyGroup>
+    </Target>
+
     <!-- Uno writes Publisher as "O=$(ApplicationPublisher)", but the Store needs Partner Center's CN. -->
     <Target Name="SetStorePackagePublisher"
             Condition="'$(StorePackagePublisher)' != ''"
