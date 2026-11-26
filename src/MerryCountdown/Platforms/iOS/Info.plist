@@ -33,6 +33,22 @@
 		<string>Assets.xcassets/icon.appiconset</string>
 		<key>UIApplicationSupportsIndirectInputEvents</key>
 		<true/>
+		<!-- Required from the iOS 27 SDK. Without UISceneDelegateClassName, Uno uses its own UnoUISceneDelegate. -->
+		<key>UIApplicationSceneManifest</key>
+		<dict>
+			<key>UIApplicationSupportsMultipleScenes</key>
+			<false/>
+			<key>UISceneConfigurations</key>
+			<dict>
+				<key>UIWindowSceneSessionRoleApplication</key>
+				<array>
+					<dict>
+						<key>UISceneConfigurationName</key>
+						<string>Default Configuration</string>
+					</dict>
+				</array>
+			</dict>
+		</dict>
 
 		<key>CFBundleLocalizations</key>
 		<array>
