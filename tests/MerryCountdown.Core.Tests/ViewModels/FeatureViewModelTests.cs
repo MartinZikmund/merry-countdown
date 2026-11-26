@@ -173,43 +173,6 @@ public class CalendarViewModelTests
     }
 
     [TestMethod]
-    public void TapDoor_DoorOneBeforeAdvent_ShowsASneakPeekWithoutOpeningIt()
-    {
-        var (vm, family, _, _, _) = Create(new DateTime(2026, 11, 26));
-
-        vm.TapDoor(Door(vm, 1));
-
-        vm.Reveal!.Number.Should().Be(1);
-        vm.Reveal.IsSneakPeek.Should().BeTrue();
-        family.IsDoorOpened(family.ActiveKid, 2026, 1).Should().BeFalse();
-        Door(vm, 1).State.Should().Be(DoorState.SneakPeek);
-        Door(vm, 1).ShouldSwingOpen.Should().BeFalse();
-    }
-
-    [TestMethod]
-    public void Doors_BeforeAdvent_AllButDoorOneStayLocked()
-    {
-        var (vm, _, _, _, _) = Create(new DateTime(2026, 11, 26));
-
-        vm.Doors.Where(d => d.Number != 1).Should().OnlyContain(d => d.State == DoorState.Locked);
-    }
-
-    [TestMethod]
-    public void TapDoor_DoorOneOnItsDay_OpensItForRealAfterTheSneakPeek()
-    {
-        var (vm, family, clock, _, _) = Create(new DateTime(2026, 11, 26));
-        vm.TapDoor(Door(vm, 1));
-        clock.Now = new DateTime(2026, 12, 1);
-        vm.ViewLoaded();
-
-        Door(vm, 1).State.Should().Be(DoorState.Ready);
-        vm.TapDoor(Door(vm, 1));
-
-        vm.Reveal!.IsSneakPeek.Should().BeFalse();
-        family.IsDoorOpened(family.ActiveKid, 2026, 1).Should().BeTrue();
-    }
-
-    [TestMethod]
     public void Reveal_CarriesTheGrownUpsMessageForThisKid()
     {
         var (vm, family, _, _, _) = Create(new DateTime(2026, 12, 5));

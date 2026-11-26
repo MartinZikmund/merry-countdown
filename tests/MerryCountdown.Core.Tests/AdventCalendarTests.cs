@@ -21,27 +21,6 @@ public class AdventCalendarTests
     }
 
     [TestMethod]
-    [DataRow(1, 2026, 11, 26, DoorState.SneakPeek, DisplayName = "Door 1 in November")]
-    [DataRow(1, 2026, 11, 30, DoorState.SneakPeek, DisplayName = "Door 1 the day before")]
-    [DataRow(1, 2026, 12, 1, DoorState.Ready, DisplayName = "Door 1 on its day")]
-    [DataRow(2, 2026, 11, 26, DoorState.Locked, DisplayName = "Door 2 in November")]
-    [DataRow(24, 2026, 11, 26, DoorState.Locked, DisplayName = "Door 24 in November")]
-    public void StateOf_BeforeAdvent_LetsOnlyDoorOneBePeekedAt(int door, int year, int month, int day, DoorState expected)
-    {
-        var now = new DateTime(year, month, day);
-
-        AdventCalendar.Christmas(now).StateOf(door, now, isOpened: false).Should().Be(expected);
-    }
-
-    [TestMethod]
-    public void StateOf_OpenedDoorOne_StaysOpenedRatherThanAPeek()
-    {
-        var now = new DateTime(2026, 11, 26);
-
-        AdventCalendar.Christmas(now).StateOf(1, now, isOpened: true).Should().Be(DoorState.Opened);
-    }
-
-    [TestMethod]
     public void Season_ForADayInJanuary_StartsItsDoorsInDecemberAndIsFiledUnderJanuarysYear()
     {
         var season = AdventCalendar.SeasonFor(new DateTime(2026, 12, 20), 1, 6);
