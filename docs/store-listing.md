@@ -84,7 +84,7 @@ Czech: adventní kalendář, vánoce, advent, odpočet, ježíšek, přání, d�
 | --- | --- | --- |
 | Product ID | `dev.mzikmund.merrycountdown.pro` | |
 | Type | Durable, lifetime Forever (Play and Apple: non-consumable) | |
-| Price | €3.99 tier | |
+| Price | US$2.99, converted per market; launch sale US$1.79 (−40%) until 2 December 2026, 00:00 UTC | |
 | Title | Merry Countdown Pro | Merry Countdown Pro |
 | Description (200) | Three more scenes, your family photos as a slideshow, personal messages behind doors, family events and an exact arrival time. One purchase, no subscription. | Tři další scény, rodinné fotky jako prezentace, vlastní vzkazy za dvířky, rodinné události a přesný čas příchodu. Jednorázový nákup, žádné předplatné. |
 | Age rating | Doesn't require more restrictive ratings than its parent product | |
@@ -99,7 +99,8 @@ Czech: adventní kalendář, vánoce, advent, odpočet, ježíšek, přání, d�
 | Category | Parenting; target audience under 13, so the Families policy applies | |
 | Tags | Christmas, Advent calendar, Kids, Family | |
 
-The in-app product uses the same id, title and description as the Microsoft Store add-on above.
+The in-app product uses the same id, title, description and price as the Microsoft Store add-on above. Play splits it into
+the product, a purchase option `lifetime` (Buy, backwards compatible, which RevenueCat needs) and the `launch-sale` discount offer.
 
 ### Graphics
 
