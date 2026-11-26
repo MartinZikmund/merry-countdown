@@ -39,8 +39,8 @@ slideshow, personal messages behind doors, family events and an exact arrival ti
 
 ### Popis (Czech)
 
-Kolikrát se ještě vyspíme do Vánoc? Čekání na Vánoce to ukáže ve velké, útulné animované scéně, které rozumí i děti,
-které ještě neumí číst.
+Kolik dní ještě zbývá do Vánoc? Čekání na Vánoce to ukáže ve velké, útulné animované scéně, které porozumí i nejmenší
+děti, co ještě neumí číst.
 
 Každý den adventu otevřete jedna dvířka a najdete vtip se schovanou pointou, vánoční zajímavost, malý úkol, dobrý
 skutek nebo vánoční video. Dvířka se každý rok zamíchají a když nějaký den vynecháte, počkají na vás.
@@ -94,7 +94,7 @@ Czech: adventní kalendář, vánoce, advent, odpočet, ježíšek, přání, d�
 | Field | English | Czech |
 | --- | --- | --- |
 | App name (30) | Merry Countdown | Čekání na Vánoce |
-| Short description (80) | Count the sleeps to Christmas: advent calendar doors and a wish list for kids | Počítejte spaní do Vánoc: adventní kalendář s dvířky a seznam přání pro děti |
+| Short description (80) | Count the sleeps to Christmas: advent calendar doors and a wish list for kids | Zkraťte si čekání do Vánoc: adventní kalendář s dvířky a seznam přání pro děti |
 | Full description (4000) | The description above, without the sentence about the always-on-top window on Windows | Popis výše, bez věty o okně vždy navrchu na Windows |
 | Category | Parenting; target audience under 13, so the Families policy applies | |
 | Tags | Christmas, Advent calendar, Kids, Family | |
