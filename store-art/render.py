@@ -1,6 +1,6 @@
 """Render store graphics from the HTML templates with headless Chrome.
 
-Usage: python store-art/render.py play|msstore [--lang en,cs]
+Usage: python store-art/render.py play|msstore|appstore [--lang en,cs]
 Captures are read from store-art/raw*/ and output goes to store-art/out-<target>/ (both git-ignored).
 Set CHROME to the browser binary if it isn't in the usual place.
 """
@@ -19,6 +19,7 @@ CHROME_CANDIDATES = [
     r"C:\Program Files\Google\Chrome\Application\chrome.exe",
     r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
     "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
     shutil.which("google-chrome") or "",
     shutil.which("chromium") or "",
 ]
@@ -30,7 +31,7 @@ def chrome() -> str:
     for c in CHROME_CANDIDATES:
         if c and Path(c).exists():
             return c
-    sys.exit("Chrome not found; set CHROME to its path.")
+    sys.exit("Chrome or Edge not found; set CHROME to its path.")
 
 
 def shot(page: str, query: str, size: tuple[int, int], out: Path) -> None:
@@ -70,12 +71,20 @@ def msstore(langs: list[str]) -> None:
             shot("compose.html", f"f={f}&lang={lang}", (3840, 2160), out / f"{lang}-{f}.png")
 
 
+def appstore(langs: list[str]) -> None:
+    out = HERE / "out-appstore"
+    for lang in langs:
+        for device, size in (("iphone", (1320, 2868)), ("ipad", (2064, 2752))):
+            for f in range(1, 7):
+                shot("compose-ios.html", f"device={device}&f={f}&lang={lang}", size, out / f"{device}-{lang}-{f}.png")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("target", choices=["play", "msstore"])
+    ap.add_argument("target", choices=["play", "msstore", "appstore"])
     ap.add_argument("--lang", default="en,cs")
     a = ap.parse_args()
-    {"play": play, "msstore": msstore}[a.target](a.lang.split(","))
+    {"play": play, "msstore": msstore, "appstore": appstore}[a.target](a.lang.split(","))
 
 
 if __name__ == "__main__":
