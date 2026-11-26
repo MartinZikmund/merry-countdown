@@ -3,12 +3,23 @@ name: Build iOS Packages
 on:
   # Push to main: Dev-channel build (verify-only; no signed .ipa to avoid Apple dev-provisioning overhead in the template).
   # Push to release/v*: Prod-channel signed .ipa uploaded to TestFlight (manual "Submit for Review" gate).
-  # See docs/versioning.md for the full model.
+  # Manual run: pick the channel and, for Prod, whether to upload to TestFlight (never straight to review).
+  # See docs/ios-packaging.md and docs/versioning.md.
   push:
     branches:
       - "main"
       - "release/v**"
   workflow_dispatch:
+    inputs:
+      channel:
+        description: App channel to package
+        type: choice
+        options: [Dev, Prod]
+        default: Dev
+      testflight:
+        description: Upload a Prod build to TestFlight
+        type: boolean
+        default: false
 
 env:
   # App Configuration
@@ -20,7 +31,7 @@ env:
   IOS_TARGET_FRAMEWORK: net10.0-ios
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ inputs.channel }}
   cancel-in-progress: true
 
 jobs:
@@ -39,11 +50,19 @@ jobs:
       - name: Compute app channel
         id: channel
         shell: bash
+        env:
+          INPUT_CHANNEL: ${{ inputs.channel }}
+          INPUT_TESTFLIGHT: ${{ inputs.testflight }}
         run: |
-          if [[ "$GITHUB_REF" == refs/heads/release/v* ]]; then
+          if [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" && "$INPUT_CHANNEL" == "Prod" ]]; then
             echo "value=Prod" >> "$GITHUB_OUTPUT"
+            echo "testflight=$INPUT_TESTFLIGHT" >> "$GITHUB_OUTPUT"
+          elif [[ "$GITHUB_EVENT_NAME" != "workflow_dispatch" && "$GITHUB_REF" == refs/heads/release/v* ]]; then
+            echo "value=Prod" >> "$GITHUB_OUTPUT"
+            echo "testflight=true" >> "$GITHUB_OUTPUT"
           else
             echo "value=Dev" >> "$GITHUB_OUTPUT"
+            echo "testflight=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Checkout
@@ -74,8 +93,20 @@ jobs:
         with:
           xcode-version: latest-stable
 
-      - name: Show Xcode version (debug)
-        run: xcodebuild -version
+      - name: Show toolchain versions
+        run: |
+          dotnet --version
+          dotnet workload list
+          xcodebuild -version
+
+      # An empty key builds fine, but the TestFlight build couldn't sell Pro, not even in the sandbox.
+      - name: Check the RevenueCat iOS key
+        if: steps.channel.outputs.testflight == 'true'
+        shell: bash
+        run: |
+          if grep -q 'RevenueCatIosKey = "";' src/MerryCountdown/Services/Store/StoreConfig.cs; then
+            echo "::warning file=src/MerryCountdown/Services/Store/StoreConfig.cs::RevenueCatIosKey is empty, so this build can't sell Pro."
+          fi
 
       - name: Download iOS Platform (workaround for https://github.com/actions/runner-images/issues/13275)
         run: xcodebuild -downloadPlatform iOS
@@ -127,7 +158,7 @@ jobs:
             ${{ env.PROJECT_PATH }}/bin/Release/${{ env.IOS_TARGET_FRAMEWORK }}/ios-arm64/publish/*.ipa
       
       - name: Upload to TestFlight
-        if: steps.channel.outputs.value == 'Prod'
+        if: steps.channel.outputs.value == 'Prod' && steps.channel.outputs.testflight == 'true'
         uses: apple-actions/upload-testflight-build@v3
         with:
           app-path: "${{ env.PROJECT_PATH }}/bin/Release/${{ env.IOS_TARGET_FRAMEWORK }}/ios-arm64/publish/${{ env.APP_NAME }}.ipa"
