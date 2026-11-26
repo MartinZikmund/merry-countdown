@@ -1,0 +1,124 @@
+{
+  "Version": 1,
+  "Kids": [
+    {
+      "Id": "kid1",
+      "Name": "Emma",
+      "Sticker": "reindeer",
+      "Wishes": [
+        {
+          "Id": "w1",
+          "Text": "A purple bike with a bell",
+          "Sticker": null
+        },
+        {
+          "Id": "w2",
+          "Text": "",
+          "Sticker": "teddy"
+        },
+        {
+          "Id": "w3",
+          "Text": "Paints and a big sketchbook",
+          "Sticker": null
+        },
+        {
+          "Id": "w4",
+          "Text": "",
+          "Sticker": "kitten"
+        }
+      ],
+      "LetterSentYear": null,
+      "OpenedDoors": {
+        "2026": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "DoorMessages": {
+        "12": "Hot chocolate after school today!"
+      }
+    },
+    {
+      "Id": "kid2",
+      "Name": "Leo",
+      "Sticker": "snowman",
+      "Wishes": [
+        {
+          "Id": "w5",
+          "Text": "",
+          "Sticker": "bricks"
+        },
+        {
+          "Id": "w6",
+          "Text": "",
+          "Sticker": "gingerbread"
+        },
+        {
+          "Id": "w7",
+          "Text": "",
+          "Sticker": "snowman"
+        }
+      ],
+      "LetterSentYear": 2026,
+      "OpenedDoors": {
+        "2026": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ]
+      },
+      "DoorMessages": {}
+    }
+  ],
+  "ActiveKidId": "kid1",
+  "Settings": {
+    "BigDay": "ChristmasDay",
+    "GiftBringer": "Santa",
+    "ArrivalMinutes": 0,
+    "SceneId": "village",
+    "Sign": "Plank",
+    "CountdownStyle": "Plates",
+    "Snow": "Gentle",
+    "CalmMotion": false,
+    "SoundEnabled": false,
+    "DisplayRotatesScenes": false,
+    "StartInFamilyDisplay": false,
+    "UsesPhotos": false,
+    "PhotoIds": [],
+    "PhotoIntervalSeconds": 300,
+    "PhotoForegroundSceneId": null
+  },
+  "Events": [
+    {
+      "Id": "e1",
+      "Name": "Grandma's visit",
+      "Month": 12,
+      "Day": 20,
+      "Sticker": "gift"
+    },
+    {
+      "Id": "e2",
+      "Name": "School nativity play",
+      "Month": 12,
+      "Day": 17,
+      "Sticker": "star"
+    }
+  ],
+  "IsFullVersionCached": true
+}

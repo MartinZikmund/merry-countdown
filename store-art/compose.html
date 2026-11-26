@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Store screenshot frames, 3840x2160. ?f=1..8&lang=en|cs. Play tablets: &dir=raw-tablet&tag=N (frame 4 is Windows-only), &crop=x,y,w,h&rw=2560 for frame 3. -->
+<style>
+  @font-face { font-family: "Baloo 2"; src: url("../src/MerryCountdown/Assets/Fonts/Baloo2-Bold.ttf"); font-weight: 700; }
+  @font-face { font-family: "Patrick Hand"; src: url("../src/MerryCountdown/Assets/Fonts/PatrickHand-Regular.ttf"); }
+  :root { --midnight: #101A3E; --dusk: #3B2A7E; --gold: #FFC95C; --holly: #D62846; --fir: #1FA476; --snow: #F7F4FF; --lilac: #D9D4FF; }
+  * { margin: 0; box-sizing: border-box; }
+  body { width: 3840px; height: 2160px; overflow: hidden; position: relative; color: var(--snow); font-family: "Baloo 2", sans-serif;
+    background: linear-gradient(170deg, var(--midnight) 0%, #1B1F55 45%, var(--dusk) 100%); }
+  .flake { position: absolute; border-radius: 50%; background: var(--snow); }
+  .hill { position: absolute; left: -10%; right: -10%; bottom: -1200px; height: 1500px; border-radius: 50%;
+    background: radial-gradient(ellipse at 50% 0%, #E9E6FB 0%, #B9BCE8 60%, #8E92D0 100%); opacity: .16; }
+
+  .copy { position: absolute; top: 0; bottom: 0; width: 1180px; display: flex; flex-direction: column; justify-content: center; }
+  .left .copy { left: 220px; }
+  .right .copy { right: 200px; }
+  .tag { position: relative; width: 210px; height: 290px; margin-bottom: 86px; }
+  .tag .string { position: absolute; left: 50%; top: -900px; width: 4px; height: 920px; background: linear-gradient(var(--gold), #C99A3A); transform: translateX(-50%); opacity: .8; }
+  .tag .door { position: absolute; inset: 20px 0 0 0; background: var(--holly); border-radius: 100px 100px 22px 22px; border: 8px solid #F2B8C3;
+    box-shadow: 0 30px 60px rgba(0,0,0,.35), inset 0 -18px 0 rgba(0,0,0,.12); transform: rotate(-4deg); transform-origin: 50% 0; }
+  .tag .wreath { position: absolute; left: 50%; top: 52px; width: 128px; height: 128px; transform: translateX(-50%); border-radius: 50%; border: 22px solid var(--fir); display: grid; place-items: center; }
+  .tag .wreath span { font-size: 74px; line-height: 1; color: var(--snow); padding-top: 10px; }
+  .tag .knob { position: absolute; right: 34px; bottom: 54px; width: 22px; height: 22px; border-radius: 50%; background: var(--gold); }
+  h1 { font-size: 160px; line-height: 1.02; letter-spacing: -1px; text-wrap: balance; }
+  p { margin-top: 52px; font-family: "Patrick Hand", cursive; font-size: 88px; line-height: 1.18; color: var(--lilac); text-wrap: pretty; }
+
+  .brand { position: absolute; bottom: 140px; display: flex; align-items: center; gap: 34px; font-size: 64px; opacity: .92; }
+  .left .brand { left: 220px; }
+  .right .brand { right: 200px; flex-direction: row-reverse; }
+  .brand img { width: 120px; height: 120px; border-radius: 28px; box-shadow: 0 12px 30px rgba(0,0,0,.35); }
+
+  .glow { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(255,201,92,.26), transparent 72%); }
+  .shot { position: absolute; border-radius: 24px; box-shadow: 0 60px 140px rgba(5,8,30,.75), 0 0 0 3px rgba(255,255,255,.08); display: block; }
+  .crop { position: absolute; overflow: hidden; border-radius: 40px; box-shadow: 0 50px 120px rgba(5,8,30,.8), 0 0 0 10px #FFF8E6; background-repeat: no-repeat; }
+  .sticker { position: absolute; filter: drop-shadow(0 16px 22px rgba(5,8,30,.5)); }
+
+  .tv { position: absolute; background: #14141C; border-radius: 34px; padding: 34px; box-shadow: 0 70px 150px rgba(5,8,30,.8), inset 0 0 0 3px #2A2A36; }
+  .tv img { display: block; width: 100%; border-radius: 8px; }
+  .tv::after { content: ""; position: absolute; left: 50%; bottom: -110px; width: 520px; height: 110px; transform: translateX(-50%);
+    background: linear-gradient(#22222C, #14141C); clip-path: polygon(30% 0, 70% 0, 100% 100%, 0 100%); border-radius: 0 0 12px 12px; }
+
+  .fan img { position: absolute; width: 1220px; border-radius: 24px; box-shadow: 0 50px 120px rgba(5,8,30,.75), 0 0 0 3px rgba(255,255,255,.1); }
+  .pro { position: absolute; display: flex; align-items: center; gap: 26px; padding: 22px 46px 22px 28px; border-radius: 100px;
+    background: var(--gold); color: #3A2208; font-size: 68px; box-shadow: 0 24px 60px rgba(5,8,30,.5); }
+  .pro img { width: 92px; height: 92px; }
+
+  .desk { position: absolute; border-radius: 28px; overflow: hidden; background: linear-gradient(160deg, #E8EAF6, #C9CDEB);
+    box-shadow: 0 60px 140px rgba(5,8,30,.75), 0 0 0 3px rgba(255,255,255,.08); }
+  .desk .win { position: absolute; background: #FDFDFF; border-radius: 18px; box-shadow: 0 20px 50px rgba(30,30,70,.18); }
+  .desk .bar { position: absolute; left: 0; right: 0; top: 0; height: 64px; background: #F1F1F8; border-radius: 18px 18px 0 0; }
+  .desk .line { position: absolute; height: 26px; border-radius: 13px; background: #E1E3F0; }
+  .desk .taskbar { position: absolute; left: 0; right: 0; bottom: 0; height: 96px; background: rgba(245,245,252,.85); }
+  .mini { position: absolute; border-radius: 16px; box-shadow: 0 40px 90px rgba(5,8,30,.55), 0 0 0 4px rgba(255,201,92,.9); }
+</style>
+</head>
+<body>
+<div class="hill"></div>
+<script>
+const q = new URLSearchParams(location.search);
+const f = Number(q.get("f") ?? 1);
+const lang = q.get("lang") ?? "en";
+const dir = q.get("dir") ?? "raw";
+const raw = name => `${dir}/${lang}-${name}.png`;
+
+const copy = {
+  en: [
+    ["Make the wait for Christmas magical", "Kids count the sleeps in a cosy, animated scene, even before they can read."],
+    ["A little surprise every single day", "24 doors of jokes, missions and kind deeds make the wait fly by."],
+    ["Open today's door!", "A joke, a kind deed or a video, plus a secret note from you."],
+    ["Christmas in the corner of your screen", "The mini countdown stays on top during homework, games and work."],
+    ["Every kid writes to Santa", "Pick pictures if you can't write yet, sign the letter and send it flying."],
+    ["Count down together on the big screen", "Family Display shows the sleeps, the clock and a card for every kid."],
+    ["Northern lights, a fireplace or a toy train", "Pick the scene that makes your family smile."],
+    ["Made for little ones, relaxing for parents", "Everything stays on your device."],
+  ],
+  cs: [
+    ["Čekání na Vánoce plné kouzel", "Děti počítají spaní v útulné animované scéně, i když ještě neumí číst."],
+    ["Každý den malé překvapení", "24 dvířek s vtipy, úkoly a dobrými skutky. Čekání uteče jako voda."],
+    ["Otevři dnešní dvířka!", "Vtip, dobrý skutek nebo video, a k tomu tajný vzkaz od vás."],
+    ["Vánoce v rohu obrazovky", "Malý odpočet zůstane navrchu při úkolech, hrách i práci."],
+    ["Každé dítě píše Ježíškovi", "Kdo ještě neumí psát, vybere obrázky. Podepsat a ať dopis letí!"],
+    ["Odpočítávejte spolu na velké obrazovce", "Rodinný displej ukáže spaní, hodiny a kartičku pro každé dítě."],
+    ["Polární záře, krb nebo vláček", "Vyberte scénu, která rozzáří celou rodinu."],
+    ["Pro nejmenší, v klidu pro rodiče", "Vše zůstává ve vašem zařízení."],
+  ],
+};
+const extra = {
+  en: { onTop: "Always on top!", promises: [["star", "No ads, no accounts, no tracking"], ["lock", "Purchases, videos and sharing behind a grown-up check"], ["gift", "Pro is one purchase. No subscription."]] },
+  cs: { onTop: "Vždy navrchu!", promises: [["star", "Žádné reklamy, účty ani sledování"], ["lock", "Nákupy, videa a sdílení za kontrolou pro dospělé"], ["gift", "Pro jednou koupíte. Žádné předplatné."]] },
+}[lang];
+// Czech typography: a one-letter word never ends a line.
+const nb = t => lang === "cs" ? t.replace(/(?<=^|\s)([aikosuvzAIKOSUVZ])\s/g, "$1\u00A0") : t;
+const [title, sub] = copy[lang][f - 1].map(nb);
+
+// Copy alternates sides so the set reads as a sequence, not eight copies of one slide.
+const side = f % 2 === 0 ? "right" : "left";
+document.body.classList.add(side);
+
+const add = (html) => { document.body.insertAdjacentHTML("beforeend", html); return document.body.lastElementChild; };
+add(`<section class="copy"><div class="tag"><div class="string"></div><div class="door"><div class="wreath"><span>${q.get("tag") ?? f}</span></div><div class="knob"></div></div></div><h1>${title}</h1><p>${sub}</p></section>`);
+add(`<div class="brand"><img src="icon.png" alt=""><span>Merry Countdown</span></div>`);
+const sticker = (name, x, y, w, rot) => add(`<img class="sticker" src="../src/MerryCountdown/Assets/Stickers/${name}.svg" style="left:${x}px;top:${y}px;width:${w}px;transform:rotate(${rot}deg)">`);
+const glow = (x, y, s) => add(`<div class="glow" style="left:${x}px;top:${y}px;width:${s}px;height:${s}px"></div>`);
+
+// Left layout: art lives in x 1500..3700. Right layout: x 120..2320.
+switch (f) {
+  case 1:
+    glow(1700, 180, 1900);
+    add(`<img class="shot" src="${raw("1-sleeps")}" style="right:140px;top:50%;width:2280px;transform:translateY(-50%)">`);
+    sticker("reindeer", 3440, 190, 270, 10);
+    sticker("gift", 1400, 1620, 230, -10);
+    break;
+  case 2:
+    glow(200, 180, 1900);
+    add(`<img class="shot" src="${raw("2-doors")}" style="left:120px;top:50%;width:2200px;transform:translateY(-50%)">`);
+    sticker("snowman", 2150, 1650, 240, 8);
+    sticker("candy", 60, 180, 190, -14);
+    break;
+  case 3: {
+    add(`<img class="shot" src="${raw("3-door")}" style="right:300px;top:50%;width:2000px;transform:translateY(-50%) rotate(-2deg);filter:brightness(.8)">`);
+    glow(1850, 250, 1700);
+    const [cx, cy, cw, ch] = (q.get("crop") ?? "885,552,772,634").split(",").map(Number);
+    const rw = Number(q.get("rw") ?? 2542);
+    const s = Number(q.get("zoom") ?? 1.55);
+    add(`<div class="crop" style="left:${2700 - cw * s / 2}px;top:${1080 - ch * s / 2}px;width:${cw * s}px;height:${ch * s}px;background-image:url(${raw("3-door")});background-size:${rw * s}px auto;background-position:${-cx * s}px ${-cy * s}px"></div>`);
+    sticker("star", 3520, 330, 170, 14);
+    sticker("gingerbread", 1720, 1500, 200, -12);
+    break;
+  }
+  case 4: {
+    // A kid's drawing app on the desktop, with the mini countdown floating above it.
+    glow(150, 150, 2100);
+    const desk = add(`<div class="desk" style="left:120px;top:50%;width:2200px;height:1500px;transform:translateY(-50%)"></div>`);
+    const dots = ["#D62846", "#FFC95C", "#1FA476", "#3B7DD8", "#8A5A3C", "#101A3E"];
+    desk.innerHTML = `
+      <div class="win" style="left:80px;top:90px;width:1660px;height:1230px"><div class="bar"></div>
+        <div style="position:absolute;left:30px;top:100px;width:110px;bottom:30px;display:flex;flex-direction:column;gap:26px;align-items:center">
+          ${dots.map(c => `<div style="width:76px;height:76px;border-radius:50%;background:${c}"></div>`).join("")}
+        </div>
+        <div style="position:absolute;left:170px;right:30px;top:100px;bottom:30px;border-radius:12px;background:#FFFFFF;box-shadow:inset 0 0 0 3px #ECECF6"></div>
+      </div>
+      <div class="taskbar"></div>`;
+    sticker("tree", 640, 760, 420, -3);
+    sticker("snowman", 1080, 900, 300, 5);
+    sticker("star", 460, 620, 150, -12);
+    sticker("reindeer", 400, 1110, 220, -6);
+    add(`<img class="mini" src="${raw("7-mini-sleeps")}" style="left:1380px;top:370px;width:900px">`);
+    add(`<div style="position:absolute;left:560px;top:120px;font-family:'Patrick Hand',cursive;font-size:104px;color:var(--gold);transform:rotate(-4deg)">${extra.onTop}</div>`);
+    add(`<svg style="position:absolute;left:1180px;top:170px;transform:scaleY(-1)" width="300" height="200" viewBox="0 0 300 200"><path d="M10 180 C 90 170, 200 120, 250 30" fill="none" stroke="#FFC95C" stroke-width="10" stroke-linecap="round"/><path d="M215 45 L252 26 L262 68" fill="none" stroke="#FFC95C" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></svg>`);
+    break;
+  }
+  case 5:
+    glow(1700, 180, 1900);
+    add(`<img class="shot" src="${raw("4-wishes")}" style="right:140px;top:50%;width:2280px;transform:translateY(-50%)">`);
+    sticker("letter", 3440, 170, 260, 16);
+    sticker("teddy", 1460, 1560, 220, -10);
+    sticker("bike", 3420, 1700, 230, 8);
+    break;
+  case 6:
+    glow(150, 120, 2100);
+    add(`<div class="tv" style="left:150px;top:300px;width:2150px"><img src="${raw("5-display")}"></div>`);
+    sticker("star", 2160, 200, 170, 12);
+    sticker("stocking", 60, 1640, 210, -10);
+    break;
+  case 7: {
+    const scenes = ["scene-aurora", "scene-fireplace", "scene-train"];
+    glow(1650, 150, 2000);
+    const fan = add(`<div class="fan"></div>`);
+    [[1480, 240, -4], [2530, 600, 3], [1600, 1180, -2]].forEach(([x, y, r], i) => {
+      fan.insertAdjacentHTML("beforeend", `<img src="${raw(scenes[i])}" style="left:${x}px;top:${y}px;transform:rotate(${r}deg)">`);
+    });
+    add(`<div class="pro" style="left:3020px;top:330px"><img src="icon.png" alt="">Pro</div>`);
+    break;
+  }
+  case 8: {
+    glow(250, 200, 1900);
+    const list = add(`<div style="position:absolute;left:150px;top:50%;width:2150px;transform:translateY(-50%);display:flex;flex-direction:column;gap:70px"></div>`);
+    extra.promises.forEach(([icon, text], i) => {
+      list.insertAdjacentHTML("beforeend", `<div style="display:flex;align-items:center;gap:60px;padding:56px 70px;border-radius:44px;background:rgba(247,244,255,.1);box-shadow:inset 0 0 0 3px rgba(247,244,255,.14);transform:rotate(${[-1.2, 0.8, -0.6][i]}deg)">
+        <div style="flex:none;width:200px;height:200px;border-radius:50%;background:#FFF8E6;display:grid;place-items:center;box-shadow:0 20px 50px rgba(5,8,30,.4)"><img src="../src/MerryCountdown/Assets/Stickers/${icon}.svg" style="width:130px"></div>
+        <div style="font-size:96px;line-height:1.08">${nb(text)}</div></div>`);
+    });
+    sticker("teddy", 2200, 160, 230, 12);
+    break;
+  }
+}
+let seed = f * 9301;
+const rand = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+for (let i = 0; i < 140; i++) {
+  const r = 3 + rand() * 9;
+  const el = document.createElement("div");
+  el.className = "flake";
+  Object.assign(el.style, { width: r + "px", height: r + "px", left: rand() * 3840 + "px", top: rand() * 2160 + "px", opacity: (0.15 + rand() * 0.55).toFixed(2) });
+  document.body.prepend(el);
+}
+</script>
+</body>
+</html>

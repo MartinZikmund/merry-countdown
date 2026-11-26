@@ -505,3 +505,8 @@ solution-config.props
 
 # Playwright MCP session output
 .playwright-mcp/
+
+# Store art captures and renders (the templates in store-art/ are tracked)
+store-art/raw*/
+store-art/out*/
+store-art/__pycache__/

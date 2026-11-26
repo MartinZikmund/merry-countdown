@@ -1,0 +1,124 @@
+{
+  "Version": 1,
+  "Kids": [
+    {
+      "Id": "kid1",
+      "Name": "Ema",
+      "Sticker": "reindeer",
+      "Wishes": [
+        {
+          "Id": "w1",
+          "Text": "Fialové kolo se zvonkem",
+          "Sticker": null
+        },
+        {
+          "Id": "w2",
+          "Text": "",
+          "Sticker": "teddy"
+        },
+        {
+          "Id": "w3",
+          "Text": "Barvy a velký skicák",
+          "Sticker": null
+        },
+        {
+          "Id": "w4",
+          "Text": "",
+          "Sticker": "kitten"
+        }
+      ],
+      "LetterSentYear": null,
+      "OpenedDoors": {
+        "2026": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "DoorMessages": {
+        "12": "Dnes po škole horká čokoláda!"
+      }
+    },
+    {
+      "Id": "kid2",
+      "Name": "Kuba",
+      "Sticker": "snowman",
+      "Wishes": [
+        {
+          "Id": "w5",
+          "Text": "",
+          "Sticker": "bricks"
+        },
+        {
+          "Id": "w6",
+          "Text": "",
+          "Sticker": "gingerbread"
+        },
+        {
+          "Id": "w7",
+          "Text": "",
+          "Sticker": "snowman"
+        }
+      ],
+      "LetterSentYear": 2026,
+      "OpenedDoors": {
+        "2026": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ]
+      },
+      "DoorMessages": {}
+    }
+  ],
+  "ActiveKidId": "kid1",
+  "Settings": {
+    "BigDay": "ChristmasEve",
+    "GiftBringer": "Jezisek",
+    "ArrivalMinutes": 1020,
+    "SceneId": "village",
+    "Sign": "Plank",
+    "CountdownStyle": "Plates",
+    "Snow": "Gentle",
+    "CalmMotion": false,
+    "SoundEnabled": false,
+    "DisplayRotatesScenes": false,
+    "StartInFamilyDisplay": false,
+    "UsesPhotos": false,
+    "PhotoIds": [],
+    "PhotoIntervalSeconds": 300,
+    "PhotoForegroundSceneId": null
+  },
+  "Events": [
+    {
+      "Id": "e1",
+      "Name": "Návštěva babičky",
+      "Month": 12,
+      "Day": 20,
+      "Sticker": "gift"
+    },
+    {
+      "Id": "e2",
+      "Name": "Besídka ve škole",
+      "Month": 12,
+      "Day": 17,
+      "Sticker": "star"
+    }
+  ],
+  "IsFullVersionCached": true
+}

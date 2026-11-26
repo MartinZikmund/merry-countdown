@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Google Play phone screenshots, 2160x3840 (9:16). ?f=1..6&lang=en|cs. Raw captures in raw-phone/. -->
+<style>
+  @font-face { font-family: "Baloo 2"; src: url("../src/MerryCountdown/Assets/Fonts/Baloo2-Bold.ttf"); font-weight: 700; }
+  @font-face { font-family: "Patrick Hand"; src: url("../src/MerryCountdown/Assets/Fonts/PatrickHand-Regular.ttf"); }
+  :root { --midnight: #101A3E; --dusk: #3B2A7E; --gold: #FFC95C; --holly: #D62846; --fir: #1FA476; --snow: #F7F4FF; --lilac: #D9D4FF; }
+  * { margin: 0; box-sizing: border-box; }
+  body { width: 2160px; height: 3840px; overflow: hidden; position: relative; color: var(--snow); font-family: "Baloo 2", sans-serif;
+    background: linear-gradient(170deg, var(--midnight) 0%, #1B1F55 45%, var(--dusk) 100%); }
+  .flake { position: absolute; border-radius: 50%; background: var(--snow); }
+  .hill { position: absolute; left: -30%; right: -30%; bottom: -1500px; height: 2300px; border-radius: 50%;
+    background: radial-gradient(ellipse at 50% 0%, #E9E6FB 0%, #B9BCE8 60%, #8E92D0 100%); opacity: .16; }
+
+  .copy { position: absolute; left: 170px; right: 170px; top: 170px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .tag { position: relative; width: 150px; height: 208px; margin-bottom: 64px; }
+  .tag .string { position: absolute; left: 50%; top: -400px; width: 4px; height: 415px; background: linear-gradient(var(--gold), #C99A3A); transform: translateX(-50%); opacity: .8; }
+  .tag .door { position: absolute; inset: 14px 0 0 0; background: var(--holly); border-radius: 75px 75px 16px 16px; border: 6px solid #F2B8C3;
+    box-shadow: 0 24px 50px rgba(0,0,0,.35), inset 0 -14px 0 rgba(0,0,0,.12); transform: rotate(-4deg); transform-origin: 50% 0; }
+  .tag .wreath { position: absolute; left: 50%; top: 36px; width: 92px; height: 92px; transform: translateX(-50%); border-radius: 50%; border: 16px solid var(--fir); display: grid; place-items: center; }
+  .tag .wreath span { font-size: 52px; line-height: 1; color: var(--snow); padding-top: 8px; }
+  .tag .knob { position: absolute; right: 24px; bottom: 38px; width: 16px; height: 16px; border-radius: 50%; background: var(--gold); }
+  h1 { font-size: 172px; line-height: 1.02; letter-spacing: -1px; text-wrap: balance; }
+  p { margin-top: 40px; font-family: "Patrick Hand", cursive; font-size: 96px; line-height: 1.16; color: var(--lilac); text-wrap: balance; }
+
+  .glow { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(255,201,92,.26), transparent 72%); }
+  .phone { position: absolute; background: #14141C; border-radius: 120px; padding: 34px; box-shadow: 0 70px 160px rgba(5,8,30,.8), inset 0 0 0 4px #2E2E3A; }
+  .phone img { display: block; width: 100%; border-radius: 90px; }
+  .phone::before { content: ""; position: absolute; left: 50%; top: 66px; width: 46px; height: 46px; margin-left: -23px; border-radius: 50%; background: #0A0A10; box-shadow: inset 0 0 0 6px #1C1C26; }
+  .crop { position: absolute; overflow: hidden; border-radius: 50px; box-shadow: 0 50px 120px rgba(5,8,30,.8), 0 0 0 12px #FFF8E6; background-repeat: no-repeat; }
+  .sticker { position: absolute; filter: drop-shadow(0 16px 22px rgba(5,8,30,.5)); }
+  .pro { position: absolute; display: flex; align-items: center; gap: 26px; padding: 22px 50px 22px 28px; border-radius: 100px;
+    background: var(--gold); color: #3A2208; font-size: 76px; box-shadow: 0 24px 60px rgba(5,8,30,.5); }
+  .pro img { width: 100px; height: 100px; }
+  .brand { position: absolute; left: 0; right: 0; bottom: 150px; display: flex; justify-content: center; align-items: center; gap: 34px; font-size: 76px; opacity: .92; }
+  .brand img { width: 150px; height: 150px; border-radius: 34px; box-shadow: 0 12px 30px rgba(5,8,30,.35); }
+</style>
+</head>
+<body>
+<div class="hill"></div>
+<script>
+const q = new URLSearchParams(location.search);
+const f = Number(q.get("f") ?? 1);
+const lang = q.get("lang") ?? "en";
+const raw = name => `raw-phone/${lang}-${name}.png`;
+
+const copy = {
+  en: [
+    ["Make the wait for Christmas magical", "Kids count the sleeps in a cosy, animated scene, even before they can read."],
+    ["A little surprise every single day", "24 doors of jokes, missions and kind deeds make the wait fly by."],
+    ["Open today's door!", "A joke, a kind deed or a video, plus a secret note from you."],
+    ["Every kid writes to Santa", "Pick pictures if you can't write yet, sign the letter and send it flying."],
+    ["Northern lights, a fireplace or a toy train", "Pick the scene that makes your family smile."],
+    ["Made for little ones, relaxing for parents", "Everything stays on your device."],
+  ],
+  cs: [
+    ["Čekání na Vánoce plné kouzel", "Děti počítají spaní v útulné animované scéně, i když ještě neumí číst."],
+    ["Každý den malé překvapení", "24 dvířek s vtipy, úkoly a dobrými skutky. Čekání uteče jako voda."],
+    ["Otevři dnešní dvířka!", "Vtip, dobrý skutek nebo video, a k tomu tajný vzkaz od vás."],
+    ["Každé dítě píše Ježíškovi", "Kdo ještě neumí psát, vybere obrázky. Podepsat a ať dopis letí!"],
+    ["Polární záře, krb nebo vláček", "Vyberte scénu, která rozzáří celou rodinu."],
+    ["Pro nejmenší, v klidu pro rodiče", "Vše zůstává ve vašem zařízení."],
+  ],
+};
+const promises = {
+  en: [["star", "No ads, no accounts, no tracking"], ["lock", "Purchases, videos and sharing behind a grown-up check"], ["gift", "Pro is one purchase. No subscription."]],
+  cs: [["star", "Žádné reklamy, účty ani sledování"], ["lock", "Nákupy, videa a sdílení za kontrolou pro dospělé"], ["gift", "Pro jednou koupíte. Žádné předplatné."]],
+}[lang];
+// Czech typography: a one-letter word never ends a line.
+const nb = t => lang === "cs" ? t.replace(/(?<=^|\s)([aikosuvzAIKOSUVZ])\s/g, "$1 ") : t;
+const [title, sub] = copy[lang][f - 1].map(nb);
+
+const add = (html) => { document.body.insertAdjacentHTML("beforeend", html); return document.body.lastElementChild; };
+add(`<section class="copy"><div class="tag"><div class="string"></div><div class="door"><div class="wreath"><span>${f}</span></div><div class="knob"></div></div></div><h1>${title}</h1><p>${sub}</p></section>`);
+const sticker = (name, x, y, w, rot) => add(`<img class="sticker" src="../src/MerryCountdown/Assets/Stickers/${name}.svg" style="left:${x}px;top:${y}px;width:${w}px;transform:rotate(${rot}deg)">`);
+const glow = (x, y, s) => add(`<div class="glow" style="left:${x}px;top:${y}px;width:${s}px;height:${s}px"></div>`);
+// The phone runs off the bottom edge: the top of the app is what sells it.
+const phone = (name, { x = 330, y = 1260, w = 1500, rot = 0 } = {}) =>
+  add(`<div class="phone" style="left:${x}px;top:${y}px;width:${w}px;transform:rotate(${rot}deg)"><img src="${raw(name)}"></div>`);
+
+switch (f) {
+  case 1:
+    glow(80, 1200, 2000);
+    phone("1-sleeps");
+    sticker("reindeer", 1750, 1500, 300, 10);
+    sticker("gift", 90, 2500, 250, -10);
+    break;
+  case 2:
+    glow(80, 1200, 2000);
+    phone("2-doors", { rot: 2 });
+    sticker("candy", 100, 1480, 220, -14);
+    sticker("snowman", 1780, 2700, 280, 8);
+    break;
+  case 3: {
+    phone("3-door", { rot: -2 });
+    add(`<div style="position:absolute;left:0;right:0;top:1150px;bottom:0;background:rgba(16,26,62,.35)"></div>`);
+    glow(230, 1700, 1700);
+    // Zoom on the opened door's content; crop box is in raw-capture pixels.
+    const [cx, cy, cw, ch] = (q.get("crop") ?? "70,800,1140,1300").split(",").map(Number);
+    const s = 1.55;
+    add(`<div class="crop" style="left:${1080 - cw * s / 2}px;top:${2480 - ch * s / 2}px;width:${cw * s}px;height:${ch * s}px;background-image:url(${raw("3-door")});background-size:${1280 * s}px auto;background-position:${-cx * s}px ${-cy * s}px"></div>`);
+    sticker("star", 1800, 1450, 200, 14);
+    sticker("gingerbread", 120, 3300, 240, -12);
+    break;
+  }
+  case 4:
+    glow(80, 1200, 2000);
+    phone("4-wishes", { rot: -1.5 });
+    sticker("letter", 1760, 1480, 290, 16);
+    sticker("teddy", 80, 2400, 260, -10);
+    sticker("bike", 1790, 3200, 260, 8);
+    break;
+  case 5: {
+    glow(80, 1200, 2000);
+    const scenes = ["scene-aurora", "scene-fireplace", "scene-train"];
+    [[60, 1480, -6], [1180, 1480, 6], [620, 1360, 0]].forEach(([x, y, r], i) =>
+      phone(scenes[i], { x, y, w: 920, rot: r }));
+    add(`<div class="pro" style="left:50%;top:1170px;transform:translateX(-50%)"><img src="icon.png" alt="">Pro</div>`);
+    break;
+  }
+  case 6: {
+    glow(80, 1300, 2000);
+    const list = add(`<div style="position:absolute;left:150px;right:150px;top:1720px;display:flex;flex-direction:column;gap:80px"></div>`);
+    promises.forEach(([icon, text], i) => {
+      list.insertAdjacentHTML("beforeend", `<div style="display:flex;align-items:center;gap:56px;padding:60px 64px;border-radius:50px;background:rgba(247,244,255,.1);box-shadow:inset 0 0 0 3px rgba(247,244,255,.14);transform:rotate(${[-1.2, 0.8, -0.6][i]}deg)">
+        <div style="flex:none;width:220px;height:220px;border-radius:50%;background:#FFF8E6;display:grid;place-items:center;box-shadow:0 20px 50px rgba(5,8,30,.4)"><img src="../src/MerryCountdown/Assets/Stickers/${icon}.svg" style="width:140px"></div>
+        <div style="font-size:96px;line-height:1.08">${nb(text)}</div></div>`);
+    });
+    add(`<div class="brand"><img src="icon.png" alt=""><span>Merry Countdown</span></div>`);
+    sticker("teddy", 1780, 3060, 260, 12);
+    break;
+  }
+}
+let seed = f * 9301;
+const rand = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+for (let i = 0; i < 150; i++) {
+  const r = 3 + rand() * 9;
+  const el = document.createElement("div");
+  el.className = "flake";
+  Object.assign(el.style, { width: r + "px", height: r + "px", left: rand() * 2160 + "px", top: rand() * 3840 + "px", opacity: (0.15 + rand() * 0.55).toFixed(2) });
+  document.body.prepend(el);
+}
+</script>
+</body>
+</html>
