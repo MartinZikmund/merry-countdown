@@ -100,11 +100,6 @@ public partial class CalendarViewModel : ViewModelBase
                 _family.OpenDoor(kid, year, door.Number);
                 ShowReveal(door, year, kid);
                 break;
-            case DoorState.SneakPeek:
-                // Not marked as opened, so its real day still gets the full moment.
-                _sounds.Play(SoundEffect.Reveal);
-                ShowReveal(door, year, kid, isSneakPeek: true);
-                break;
             default:
                 _sounds.Play(SoundEffect.Reveal);
                 ShowReveal(door, year, kid);
@@ -124,7 +119,7 @@ public partial class CalendarViewModel : ViewModelBase
         }
     }
 
-    private void ShowReveal(DoorViewModel door, int year, Kid kid, bool isSneakPeek = false)
+    private void ShowReveal(DoorViewModel door, int year, Kid kid)
     {
         var content = _library.For(door.Number, year);
         var bringer = _localizer.BringerName(_family.Settings.GiftBringer);
@@ -133,7 +128,7 @@ public partial class CalendarViewModel : ViewModelBase
         door.Refresh(_library, _clock.Now, year, _family, kid);
         UpdateProgress(year, kid);
         Hint = "";
-        Reveal = new DoorRevealViewModel(door.Number, content.Title, content.Body.Replace("{bringer}", bringer), content.Sticker, content.Punchline, content.VideoUrl, message, content.Kind == DoorKind.Finale, _sounds, isSneakPeek);
+        Reveal = new DoorRevealViewModel(door.Number, content.Title, content.Body.Replace("{bringer}", bringer), content.Sticker, content.Punchline, content.VideoUrl, message, content.Kind == DoorKind.Finale, _sounds);
     }
 
     private void OnSecond(object? sender, EventArgs e)
@@ -229,7 +224,7 @@ public partial class DoorViewModel(int number, IStringLocalizer localizer) : Obs
     }
 }
 
-public partial class DoorRevealViewModel(int number, string title, string body, string sticker, string? punchline, string? videoUrl, string? personalMessage, bool isFinale, ISoundService sounds, bool isSneakPeek = false) : ObservableObject
+public partial class DoorRevealViewModel(int number, string title, string body, string sticker, string? punchline, string? videoUrl, string? personalMessage, bool isFinale, ISoundService sounds) : ObservableObject
 {
     public int Number { get; } = number;
 
@@ -246,9 +241,6 @@ public partial class DoorRevealViewModel(int number, string title, string body, 
     public string? PersonalMessage { get; } = personalMessage;
 
     public bool IsFinale { get; } = isFinale;
-
-    /// <summary>Door 1 shown before advent starts. The card says so, and the door stays shut.</summary>
-    public bool IsSneakPeek { get; } = isSneakPeek;
 
     public bool HasPersonalMessage => !string.IsNullOrEmpty(PersonalMessage);
 

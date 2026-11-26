@@ -81,8 +81,7 @@ public sealed partial class CalendarView : CalendarViewBase
 
     private void CelebrateReveal()
     {
-        // A sneak peek saves the confetti for the door's real day.
-        if (_confetti is null && ViewModel?.Reveal?.IsSneakPeek != true)
+        if (_confetti is null)
         {
             _confetti = SceneCanvas.CreateConfetti();
             RevealLayer.Children.Insert(0, _confetti);

@@ -5,9 +5,6 @@ public enum DoorState
     Locked,
     Ready,
     Opened,
-
-    /// <summary>Door 1 before advent starts: it can be looked behind, but it isn't opened until its day.</summary>
-    SneakPeek,
 }
 
 /// <summary>One year's 24 doors, a door a day, the last one on <paramref name="LastDoor"/>.</summary>
@@ -25,13 +22,7 @@ public readonly record struct AdventSeason(DateTime LastDoor)
             return DoorState.Opened;
         }
 
-        if (now.Date >= DoorDate(door))
-        {
-            return DoorState.Ready;
-        }
-
-        // A taste of what's coming, so the wall isn't all padlocks in November.
-        return door == 1 ? DoorState.SneakPeek : DoorState.Locked;
+        return now.Date >= DoorDate(door) ? DoorState.Ready : DoorState.Locked;
     }
 
     public int SleepsUntil(int door, DateTime now) => Math.Max(0, (DoorDate(door) - now.Date).Days);

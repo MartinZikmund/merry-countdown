@@ -271,12 +271,6 @@
   <data name="DoorAccessible_Ready" xml:space="preserve">
     <value>Door {0}, ready to open!</value>
   </data>
-  <data name="DoorAccessible_SneakPeek" xml:space="preserve">
-    <value>Door {0}, take a sneak peek</value>
-  </data>
-  <data name="SneakPeekLabel" xml:space="preserve">
-    <value>Sneak peek</value>
-  </data>
   <data name="DoorAccessible_Opened" xml:space="preserve">
     <value>Door {0}, already open</value>
   </data>
