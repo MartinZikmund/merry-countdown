@@ -36,7 +36,7 @@ One page per topic. Keep it that way — see [`.claude/rules/docs.md`](../.claud
 ## Release
 
 - [android-packaging.md](./android-packaging.md) — building the Google Play `.aab`, the first manual upload, signing secrets and the version code.
-- [ios-packaging.md](./ios-packaging.md) — building the App Store `.ipa`, TestFlight uploads, signing secrets and the Xcode pin.
+- [ios-packaging.md](./ios-packaging.md) — building the App Store `.ipa`, TestFlight uploads, signing secrets and the Xcode version.
 - [store-art.md](./store-art.md) — the screenshot and key art templates, how to capture the app for them, and `render.py`.
 - [store-listing.md](./store-listing.md) — the store text in English and Czech, and how the Microsoft Store, Google Play and App Store graphics are made.
 - [store-setup.md](./store-setup.md) — what to create in each store before the full version can be sold, and how to test the paywall without one.

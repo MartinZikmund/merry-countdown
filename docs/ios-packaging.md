@@ -35,9 +35,18 @@ the short version of the build you submit. See [versioning.md](./versioning.md).
 
 ## Xcode
 
-The iOS workload pins one exact Xcode version, and the runner image usually has a newer one. The workflow builds with
-`-p:ValidateXcodeVersion=false` (the `XCODE_CHECK` variable), which works as long as the Xcode is newer. Locally, do
-the same, or point `DEVELOPER_DIR` at a matching Xcode.
+Each iOS workload builds with exactly one Xcode version, and App Store Connect warns (ITMS-90725) about uploads built
+with an iOS SDK older than the current one, so the workflow pins both:
+
+- `WORKLOAD_SET` in the workflow (`10.0.115` carries iOS workload 27.2) goes to `dotnet workload restore --version`.
+- The job runs on the `xcode-27` image, and `.github/actions/select-xcode` selects the Xcode the installed workload
+  asks for. If the image doesn't have it, the step fails and lists the Xcode versions it has.
+
+To move to a newer iOS SDK, bump `WORKLOAD_SET`, which is easy to look up: `dotnet workload search version <set>` lists
+the workloads in a set.
+
+Locally, build with a matching Xcode: `DEVELOPER_DIR=/Applications/Xcode-27.2.0.app/Contents/Developer`, with the
+same workload set installed (`dotnet workload install ios --version 10.0.115`).
 
 ## Export compliance
 
