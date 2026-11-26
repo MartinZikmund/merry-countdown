@@ -35,6 +35,8 @@ One page per topic. Keep it that way — see [`.claude/rules/docs.md`](../.claud
 
 ## Release
 
+- [android-packaging.md](./android-packaging.md) — building the Google Play `.aab`, the first manual upload, signing secrets and the version code.
+- [store-listing.md](./store-listing.md) — the store text in English and Czech, and how the Microsoft Store and Google Play graphics are made.
 - [store-setup.md](./store-setup.md) — what to create in each store before the full version can be sold, and how to test the paywall without one.
 - [versioning.md](./versioning.md) — the Dev/Prod channel model, git-height versions, side-by-side identity.
 - [versioning-migration.md](./versioning-migration.md) — applying that model to an existing app.
