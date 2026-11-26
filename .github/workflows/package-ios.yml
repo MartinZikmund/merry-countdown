@@ -122,14 +122,17 @@ jobs:
           p12-file-base64: ${{ secrets.APPLE_DISTRIBUTION_P12_BASE64 }}
           p12-password: ${{ secrets.APPLE_P12_PASSWORD }}
 
-      # A distribution identity only counts as valid with Apple's WWDR G3 intermediate, which the image may lack.
+      # A distribution identity only counts as valid with Apple's WWDR G3 intermediate, which the image may lack,
+      # and with the private key that belongs to the certificate: fail early when either is missing.
       - name: Trust the Apple WWDR intermediate
         if: steps.channel.outputs.value == 'Prod'
         run: |
           curl -fsSL -o "$RUNNER_TEMP/AppleWWDRCAG3.cer" https://www.apple.com/certificateauthority/AppleWWDRCAG3.cer
           security import "$RUNNER_TEMP/AppleWWDRCAG3.cer" -k signing_temp.keychain -T /usr/bin/codesign || true
-          security find-certificate -a signing_temp.keychain | grep -E '"labl"|"alis"' || true
-          security find-identity -p codesigning signing_temp.keychain
+          if ! security find-identity -v -p codesigning signing_temp.keychain | grep -q "1 valid identities found"; then
+            echo "::error::The .p12 doesn't hold a usable signing identity: its private key must belong to the certificate. Re-export both together from Keychain Access (My Certificates)."
+            exit 1
+          fi
 
       # --- Provisioning profile install (App Store) ---
       - name: Install provisioning profile
