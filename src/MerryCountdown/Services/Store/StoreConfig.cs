@@ -6,7 +6,7 @@ public static class StoreConfig
     /// <summary>Microsoft Store add-on token, and the RevenueCat entitlement and product id.</summary>
     public const string FullVersionProductId = "dev.mzikmund.merrycountdown.pro";
 
-    // RevenueCat's public SDK keys are designed to ship inside apps. iOS is empty until its app exists in RevenueCat.
+    // RevenueCat's public SDK keys are designed to ship inside apps.
     public const string RevenueCatAndroidKey = "goog_fZVItMOpixvXZXNYqsfQKHaPMdZ";
-    public const string RevenueCatIosKey = "";
+    public const string RevenueCatIosKey = "appl_IqCsCekKEBuaBlMHlsQNxKxmlTy";
 }
