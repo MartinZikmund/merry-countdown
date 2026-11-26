@@ -1,6 +1,7 @@
 <Project ToolsVersion="15.0">
   <ItemGroup>
     <PackageVersion Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.1" />
+    <PackageVersion Include="SkiaSharp.NativeAssets.Win32" Version="4.157.0" />
     <PackageVersion Include="Uno.Microsoft.Xaml.Behaviors.WinUI.Managed" Version="2.4.2" />
     <PackageVersion Include="Nerdbank.GitVersioning" Version="3.9.50" />
     <PackageVersion Include="Microsoft.Windows.SDK.BuildTools.WinApp" Version="0.3.1" />
