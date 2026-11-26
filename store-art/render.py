@@ -47,7 +47,7 @@ def play(langs: list[str]) -> None:
     out = HERE / "out-play"
     shot("tile.html", "s=512", (512, 512), out / "icon-512.png")
     for lang in langs:
-        shot("art.html", f"kind=feature&zoom=0.33334&sub={quote(SUBTITLES[lang])}", (1024, 500), out / f"feature-{lang}.png")
+        shot("art.html", f"kind=feature&zoom=0.33334&lang={lang}&sub={quote(SUBTITLES[lang])}", (1024, 500), out / f"feature-{lang}.png")
         for f in range(1, 7):
             shot("compose-phone.html", f"f={f}&lang={lang}", (2160, 3840), out / f"phone-{lang}-{f}.png")
         # Frame 4 (the Windows mini window) is left out; tags keep the numbering 1..7.

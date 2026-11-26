@@ -25,7 +25,10 @@
 <script>
 const q = new URLSearchParams(location.search);
 const kind = q.get("kind") ?? "hero";
-const title = q.get("title") ?? "Merry Countdown";
+const lang = q.get("lang") ?? "en";
+// The app's name per language, with the line break the two-line titles use.
+const titleLines = { en: "Merry<br>Countdown", cs: "Čekání na<br>Vánoce" }[lang];
+const title = q.get("title") ?? titleLines;
 const sub = q.get("sub") ?? "";
 const size = { hero: [3840, 2160], poster: [1440, 2160], box: [2160, 2160], square: [2160, 2160], titled: [3840, 2160], feature: [3072, 1500] }[kind];
 const [W, H] = size;
@@ -122,7 +125,7 @@ if (kind === "poster" || kind === "box" || kind === "square") {
   const h = document.createElement("h1");
   h.style.top = (box ? 150 : 190) + "px";
   h.style.fontSize = (box ? 250 : 210) + "px";
-  h.innerHTML = title.replace(" ", "<br>") + (sub ? `<small style="font-size:${box ? 96 : 84}px;margin-top:${box ? 26 : 30}px">${sub}</small>` : "");
+  h.innerHTML = title.replace(/^([^<]*?) ([^<]*)$/, "$1<br>$2") + (sub ? `<small style="font-size:${box ? 96 : 84}px;margin-top:${box ? 26 : 30}px">${sub}</small>` : "");
   document.body.appendChild(h);
   }
 }
@@ -142,7 +145,7 @@ if (kind === "titled") {
   img("../src/MerryCountdown/Assets/Stickers/star.svg", 2020, 470, 130, -8);
   const h = document.createElement("h1");
   Object.assign(h.style, { left: "220px", right: "auto", top: "380px", textAlign: "left", fontSize: "300px" });
-  h.innerHTML = title.replace(" ", "<br>");
+  h.innerHTML = title.replace(/^([^<]*?) ([^<]*)$/, "$1<br>$2");
   document.body.appendChild(h);
 }
 
@@ -160,7 +163,7 @@ if (kind === "feature") {
   img("../src/MerryCountdown/Assets/Stickers/star.svg", 1690, 330, 110, -8);
   const h = document.createElement("h1");
   Object.assign(h.style, { left: "200px", right: "auto", top: "300px", textAlign: "left", fontSize: "250px" });
-  h.innerHTML = title.replace(" ", "<br>") + (sub ? `<small style="font-size:104px;margin-top:40px">${sub}</small>` : "");
+  h.innerHTML = title.replace(/^([^<]*?) ([^<]*)$/, "$1<br>$2") + (sub ? `<small style="font-size:104px;margin-top:40px">${sub}</small>` : "");
   document.body.appendChild(h);
 }
 </script>
