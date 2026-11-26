@@ -29,6 +29,9 @@ env:
   PROJECT_PATH: src/MerryCountdown
   PROJECT_FILE: src/MerryCountdown/MerryCountdown.csproj
   IOS_TARGET_FRAMEWORK: net10.0-ios
+  # The restored iOS workload pins an exact Xcode (26.0) that the runner image no longer has (26.6).
+  # A newer Xcode builds it fine, so skip the check rather than chase images.
+  XCODE_CHECK: -p:ValidateXcodeVersion=false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ inputs.channel }}
@@ -136,7 +139,7 @@ jobs:
         if: steps.channel.outputs.value == 'Prod'
         run: |
           dotnet publish "${{ env.PROJECT_FILE }}" -c Release -f ${{ env.IOS_TARGET_FRAMEWORK }} -r ios-arm64 \
-            -p:AppChannel=Prod \
+            -p:AppChannel=Prod ${{ env.XCODE_CHECK }} \
             -p:ArchiveOnBuild=true \
             -p:BuildIpa=true \
             -p:CodesignKey="${{ secrets.APPLE_CODESIGN_KEY }}" \
@@ -147,7 +150,7 @@ jobs:
         if: steps.channel.outputs.value == 'Dev'
         run: |
           dotnet build "${{ env.PROJECT_FILE }}" -c Release -f ${{ env.IOS_TARGET_FRAMEWORK }} \
-            -p:AppChannel=Dev
+            -p:AppChannel=Dev ${{ env.XCODE_CHECK }}
 
       - name: Upload .ipa
         if: steps.channel.outputs.value == 'Prod'
