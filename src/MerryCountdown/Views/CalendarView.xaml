@@ -105,6 +105,18 @@
                         <CompositeTransform x:Name="RevealTransform" />
                     </Border.RenderTransform>
                     <StackPanel Spacing="12">
+                        <Border
+                            Padding="14,4"
+                            HorizontalAlignment="Center"
+                            Background="{ThemeResource FullVersionCardBrush}"
+                            CornerRadius="12"
+                            Visibility="{x:Bind ViewModel.Reveal.IsSneakPeek, Mode=OneWay, FallbackValue=Collapsed}">
+                            <TextBlock
+                                AutomationProperties.AutomationId="SneakPeekLabel"
+                                FontWeight="SemiBold"
+                                Foreground="{ThemeResource FullVersionCardForegroundBrush}"
+                                Text="{markup:Localize Key=SneakPeekLabel}" />
+                        </Border>
                         <Image
                             Width="112"
                             Height="112"

@@ -271,6 +271,12 @@
   <data name="DoorAccessible_Ready" xml:space="preserve">
     <value>Okénko {0}, můžeš otevřít!</value>
   </data>
+  <data name="DoorAccessible_SneakPeek" xml:space="preserve">
+    <value>Okénko {0}, můžeš nakouknout</value>
+  </data>
+  <data name="SneakPeekLabel" xml:space="preserve">
+    <value>Ochutnávka</value>
+  </data>
   <data name="DoorAccessible_Opened" xml:space="preserve">
     <value>Okénko {0}, už otevřené</value>
   </data>
