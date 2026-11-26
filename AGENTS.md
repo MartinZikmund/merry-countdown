@@ -13,7 +13,7 @@ behind `IParentGateService`.
 
 - `SkiaSharp.Views.Uno.WinUI` has no Uno 7 runtime build: Uno heads draw through `SKCanvasElement`, WinUI through `SkiaSharp.Views.WinUI`. Only `Controls/SceneCanvas.cs` knows this.
 - `WINAPPSDK` is defined in the head's csproj. It isn't a built-in constant, so don't use it in Core.
-- `SettingsControls/` is a source copy compiled into the head, because `dotnet build` can't build a WinUI class library with XAML. Delete it once the toolkit ships for Uno 7.
+- `SettingsControls/` is a source copy compiled into the head, because `dotnet build` can't build a WinUI class library with XAML. Delete it once the toolkit ships for Uno 7. It's kept verbatim, so the XAML style check skips it; if the styler touches it locally, `git checkout -- src/MerryCountdown/SettingsControls`.
 - Don't name embedded files `x.en.json`: MSBuild treats `en` as a culture and moves them to a satellite assembly.
 
 ## Conventions

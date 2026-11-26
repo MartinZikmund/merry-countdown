@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'src/**/*.xaml'
+      - '!src/MerryCountdown/SettingsControls/**'
       - 'Settings.XamlStyler'
       - '.config/dotnet-tools.json'
       - '.github/workflows/xaml-style-check.yml'
@@ -30,7 +31,10 @@ jobs:
         run: dotnet tool restore
 
       - name: Run XAML Styler
-        run: dotnet xstyler -c Settings.XamlStyler -r -d ./src
+        run: |
+          dotnet xstyler -c Settings.XamlStyler -r -d ./src
+          # SettingsControls/ is a verbatim toolkit copy; keep it identical to upstream.
+          git checkout -- src/MerryCountdown/SettingsControls
 
       - name: Detect drift
         id: drift

@@ -95,7 +95,10 @@ jobs:
         run: dotnet tool restore
 
       - name: Run XAML Styler
-        run: dotnet xstyler -c Settings.XamlStyler -r -d ./src
+        run: |
+          dotnet xstyler -c Settings.XamlStyler -r -d ./src
+          # SettingsControls/ is a verbatim toolkit copy; keep it identical to upstream.
+          git checkout -- src/MerryCountdown/SettingsControls
 
       - name: Commit and push if drift
         id: commit
