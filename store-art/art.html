@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Store key art. ?kind=hero (3840x2160, no text), poster (1440x2160), box (2160x2160), feature (Play, 3072x1500: render with &zoom=0.3333 for 1024x500). -->
+<style>
+  @font-face { font-family: "Baloo 2"; src: url("../src/MerryCountdown/Assets/Fonts/Baloo2-Bold.ttf"); font-weight: 700; }
+  @font-face { font-family: "Patrick Hand"; src: url("../src/MerryCountdown/Assets/Fonts/PatrickHand-Regular.ttf"); }
+  :root { --gold: #FFC95C; --holly: #D62846; --fir: #1FA476; --snow: #F7F4FF; }
+  * { margin: 0; box-sizing: border-box; }
+  body { overflow: hidden; position: relative; font-family: "Baloo 2", sans-serif; color: var(--snow);
+    background: radial-gradient(120% 90% at 50% 38%, #3B2A7E 0%, #1B1F55 48%, #101A3E 100%); }
+  .flake { position: absolute; border-radius: 50%; background: var(--snow); }
+  .layer { position: absolute; }
+  .glow { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(255,201,92,.42), rgba(255,201,92,.12) 55%, transparent); }
+  .hill { position: absolute; border-radius: 50%; }
+  .sticker { position: absolute; filter: drop-shadow(0 18px 26px rgba(5,8,30,.45)); }
+  .door { position: absolute; filter: drop-shadow(0 30px 40px rgba(5,8,30,.5)); }
+  h1 { position: absolute; left: 0; right: 0; text-align: center; line-height: .95; letter-spacing: -2px;
+    text-shadow: 0 10px 40px rgba(5,8,30,.6); }
+  h1 small { display: block; font-family: "Patrick Hand", cursive; letter-spacing: 0; color: #D9D4FF; font-weight: 400; }
+</style>
+</head>
+<body>
+<script>
+const q = new URLSearchParams(location.search);
+const kind = q.get("kind") ?? "hero";
+const title = q.get("title") ?? "Merry Countdown";
+const sub = q.get("sub") ?? "";
+const size = { hero: [3840, 2160], poster: [1440, 2160], box: [2160, 2160], square: [2160, 2160], titled: [3840, 2160], feature: [3072, 1500] }[kind];
+const [W, H] = size;
+document.body.style.width = W + "px";
+document.body.style.height = H + "px";
+if (q.get("zoom")) document.documentElement.style.zoom = q.get("zoom");
+
+let seed = 7;
+const rand = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+const el = (cls, style, html = "") => {
+  const d = document.createElement("div");
+  d.className = cls; Object.assign(d.style, style); d.innerHTML = html;
+  document.body.appendChild(d); return d;
+};
+const img = (src, x, y, w, rot = 0, cls = "sticker") => {
+  const i = document.createElement("img");
+  i.src = src; i.className = cls;
+  Object.assign(i.style, { left: x - w / 2 + "px", top: y - w / 2 + "px", width: w + "px", transform: `rotate(${rot}deg)` });
+  document.body.appendChild(i); return i;
+};
+
+// An advent door; open ones swing aside and spill warm light.
+const door = (x, baseY, w, open, hue) => {
+  const h = w * 1.45;
+  const panel = { holly: ["#D62846", "#F2B8C3"], fir: ["#1FA476", "#A8E6CE"], dusk: ["#5B47B8", "#C9BEFF"] }[hue];
+  const svg = `
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 290" width="${w}" height="${h}">
+    <path d="M0 290V100A100 100 0 0 1 200 100V290Z" fill="#F7F4FF" opacity=".95"/>
+    <path d="M14 290V102A86 86 0 0 1 186 102V290Z" fill="${open ? "#2A1A12" : panel[0]}"/>
+    ${open ? `
+      <path d="M14 290V102A86 86 0 0 1 186 102V290Z" fill="url(#warm)"/>
+      <defs><radialGradient id="warm" cx=".5" cy=".55" r=".7"><stop offset="0" stop-color="#FFD98A"/><stop offset=".55" stop-color="#E89A3C"/><stop offset="1" stop-color="#7A3A18"/></radialGradient></defs>
+      <path d="M14 290V102A86 86 0 0 1 60 26L60 290Z" fill="${panel[0]}" transform="translate(-58 0) skewY(-8)" stroke="${panel[1]}" stroke-width="8"/>`
+    : `
+      <circle cx="100" cy="112" r="44" fill="none" stroke="#1B5A45" stroke-width="20"/>
+      <circle cx="100" cy="112" r="44" fill="none" stroke="#1FA476" stroke-width="12" stroke-dasharray="10 14"/>
+      <circle cx="100" cy="66" r="9" fill="#D62846"/>
+      <rect x="44" y="190" width="112" height="78" rx="10" fill="rgba(0,0,0,.14)"/>
+      <circle cx="160" cy="176" r="10" fill="#FFC95C"/>`}
+  </svg>`;
+  return el("door", { left: x - w / 2 + "px", top: baseY - h + "px", width: w + "px", height: h + "px" }, svg);
+};
+
+// Snow everywhere, denser at the top.
+for (let i = 0; i < (kind === "hero" ? 220 : 140); i++) {
+  const r = 3 + rand() * 10;
+  el("flake", { width: r + "px", height: r + "px", left: rand() * W + "px", top: Math.pow(rand(), 1.4) * H + "px", opacity: (0.18 + rand() * 0.6).toFixed(2) });
+}
+
+if (kind === "hero") {
+  // Key art sits in the middle band; the bottom third is snow only, because the Store may lay a gradient over it.
+  el("glow", { left: "1220px", top: "120px", width: "1400px", height: "1400px" });
+  el("hill", { left: "-400px", right: "-400px", top: "1300px", height: "2000px", background: "radial-gradient(ellipse at 50% 0%, #EDEAFD 0%, #C3C3EC 40%, #8E92D0 100%)" });
+  el("hill", { left: "-900px", width: "2600px", top: "1180px", height: "1600px", background: "radial-gradient(ellipse at 60% 0%, #DCD9F7 0%, #A9ABDF 60%)", opacity: ".55" });
+  el("hill", { left: "2200px", width: "2600px", top: "1230px", height: "1600px", background: "radial-gradient(ellipse at 40% 0%, #DCD9F7 0%, #A9ABDF 60%)", opacity: ".55" });
+  img("../src/MerryCountdown/Assets/Icons/icon_foreground.svg", 1920, 820, 1180, 0, "layer");
+
+  door(760, 1420, 300, false, "fir");
+  door(1210, 1370, 340, true, "holly");
+  door(2630, 1370, 340, false, "dusk");
+  door(3080, 1420, 300, true, "fir");
+  door(380, 1470, 230, false, "holly");
+  door(3460, 1470, 230, false, "holly");
+
+  // Treats spilling out of the open doors, arcing up towards the tree.
+  img("../src/MerryCountdown/Assets/Stickers/teddy.svg", 1150, 920, 230, -12);
+  img("../src/MerryCountdown/Assets/Stickers/gift.svg", 1330, 690, 190, 10);
+  img("../src/MerryCountdown/Assets/Stickers/star.svg", 1040, 560, 140, -8);
+  img("../src/MerryCountdown/Assets/Stickers/train.svg", 3120, 960, 250, 8);
+  img("../src/MerryCountdown/Assets/Stickers/reindeer.svg", 2860, 700, 230, -6);
+  img("../src/MerryCountdown/Assets/Stickers/candy.svg", 3330, 640, 150, 18);
+  img("../src/MerryCountdown/Assets/Stickers/kitten.svg", 2330, 1300, 150, 4);
+  img("../src/MerryCountdown/Assets/Stickers/snowman.svg", 1600, 1250, 180, -4);
+  img("../src/MerryCountdown/Assets/Stickers/bauble.svg", 640, 760, 130, -14);
+  img("../src/MerryCountdown/Assets/Stickers/bell.svg", 3530, 880, 130, 12);
+}
+
+if (kind === "poster" || kind === "box" || kind === "square") {
+  const box = kind !== "poster";
+  const cx = W / 2;
+  const treeY = box ? 1220 : 1250;
+  const treeW = box ? 1100 : 1040;
+  el("glow", { left: cx - 700 + "px", top: treeY - 760 + "px", width: "1400px", height: "1400px" });
+  el("hill", { left: "-600px", right: "-600px", top: (box ? 1720 : 1760) + "px", height: "2000px", background: "radial-gradient(ellipse at 50% 0%, #EDEAFD 0%, #C3C3EC 40%, #8E92D0 100%)" });
+  img("../src/MerryCountdown/Assets/Icons/icon_foreground.svg", cx, treeY, treeW, 0, "layer");
+  door(cx - (box ? 700 : 470), (box ? 1860 : 1890), box ? 300 : 250, true, "holly");
+  door(cx + (box ? 700 : 470), (box ? 1860 : 1890), box ? 300 : 250, false, "fir");
+  img("../src/MerryCountdown/Assets/Stickers/teddy.svg", cx - (box ? 760 : 520), box ? 1380 : 1420, box ? 220 : 190, -12);
+  img("../src/MerryCountdown/Assets/Stickers/gift.svg", cx - (box ? 600 : 420), box ? 1110 : 1180, box ? 170 : 150, 10);
+  img("../src/MerryCountdown/Assets/Stickers/reindeer.svg", cx + (box ? 720 : 500), box ? 1240 : 1330, box ? 230 : 190, -6);
+  img("../src/MerryCountdown/Assets/Stickers/candy.svg", cx + (box ? 620 : 430), box ? 990 : 1090, box ? 140 : 120, 18);
+
+  if (kind === "square") { treeless(); } else {
+  const h = document.createElement("h1");
+  h.style.top = (box ? 150 : 190) + "px";
+  h.style.fontSize = (box ? 250 : 210) + "px";
+  h.innerHTML = title.replace(" ", "<br>") + (sub ? `<small style="font-size:${box ? 96 : 84}px;margin-top:${box ? 26 : 30}px">${sub}</small>` : "");
+  document.body.appendChild(h);
+  }
+}
+function treeless() {}
+
+if (kind === "titled") {
+  // Title on the left in the top two-thirds; the tree and doors carry the right side.
+  el("glow", { left: "1900px", top: "80px", width: "1500px", height: "1500px" });
+  el("hill", { left: "-400px", right: "-400px", top: "1500px", height: "2000px", background: "radial-gradient(ellipse at 60% 0%, #EDEAFD 0%, #C3C3EC 40%, #8E92D0 100%)" });
+  img("../src/MerryCountdown/Assets/Icons/icon_foreground.svg", 2650, 850, 1150, 0, "layer");
+  door(1880, 1600, 300, true, "holly");
+  door(3420, 1600, 300, false, "fir");
+  img("../src/MerryCountdown/Assets/Stickers/teddy.svg", 1830, 1180, 230, -12);
+  img("../src/MerryCountdown/Assets/Stickers/gift.svg", 1960, 880, 180, 10);
+  img("../src/MerryCountdown/Assets/Stickers/reindeer.svg", 3420, 1000, 240, -6);
+  img("../src/MerryCountdown/Assets/Stickers/candy.svg", 3330, 640, 150, 18);
+  img("../src/MerryCountdown/Assets/Stickers/star.svg", 2020, 470, 130, -8);
+  const h = document.createElement("h1");
+  Object.assign(h.style, { left: "220px", right: "auto", top: "380px", textAlign: "left", fontSize: "300px" });
+  h.innerHTML = title.replace(" ", "<br>");
+  document.body.appendChild(h);
+}
+
+if (kind === "feature") {
+  // Play feature graphic: title on the left, the tree and doors on the right, nothing important near the edges.
+  el("glow", { left: "1560px", top: "-60px", width: "1300px", height: "1300px" });
+  el("hill", { left: "-400px", right: "-400px", top: "1120px", height: "1800px", background: "radial-gradient(ellipse at 60% 0%, #EDEAFD 0%, #C3C3EC 40%, #8E92D0 100%)" });
+  img("../src/MerryCountdown/Assets/Icons/icon_foreground.svg", 2210, 620, 1000, 0, "layer");
+  door(1700, 1270, 240, true, "holly");
+  door(2740, 1270, 240, false, "fir");
+  img("../src/MerryCountdown/Assets/Stickers/teddy.svg", 1660, 920, 190, -12);
+  img("../src/MerryCountdown/Assets/Stickers/gift.svg", 1640, 640, 160, 10);
+  img("../src/MerryCountdown/Assets/Stickers/reindeer.svg", 2800, 760, 200, -6);
+  img("../src/MerryCountdown/Assets/Stickers/candy.svg", 2780, 440, 130, 18);
+  img("../src/MerryCountdown/Assets/Stickers/star.svg", 1690, 330, 110, -8);
+  const h = document.createElement("h1");
+  Object.assign(h.style, { left: "200px", right: "auto", top: "300px", textAlign: "left", fontSize: "250px" });
+  h.innerHTML = title.replace(" ", "<br>") + (sub ? `<small style="font-size:104px;margin-top:40px">${sub}</small>` : "");
+  document.body.appendChild(h);
+}
+</script>
+</body>
+</html>

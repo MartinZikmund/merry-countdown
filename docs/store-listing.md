@@ -104,7 +104,7 @@ the product, a purchase option `lifetime` (Buy, backwards compatible, which Reve
 
 ### Graphics
 
-Made from the same templates as the Microsoft Store set (see below), in the dark theme to match.
+Made from the same templates as the Microsoft Store set, in the dark theme to match.
 
 | Asset | Size | Files |
 | --- | --- | --- |
@@ -113,9 +113,5 @@ Made from the same templates as the Microsoft Store set (see below), in the dark
 | Phone screenshots | 6 × 2160 × 3840 (9:16) | `phone-<lang>-1..6.png` |
 | 7" and 10" tablet screenshots | 7 × 3840 × 2160 (16:9) | `tablet-<lang>-1..7.png` (the Windows mini-window frame is left out) |
 
-The sources are git-ignored, in `.screenshots/store/`: `compose-phone.html` frames the phone captures from
-`raw-phone/` (Pixel 9 Pro emulator), `compose.html?dir=raw-tablet` the tablet captures from `raw-tablet/` (Pixel Tablet
-emulator), `art.html?kind=feature` draws the feature graphic and `tile.html?s=512` the icon. Output goes to `out-play/`.
-The captures come from a Debug build with `-p:AppChannel=Prod -p:UnoDisableHotDesign=true` (no DEV badge, no Hot Design
-toolbar), seeded through `run-as` with `family.json`, `devlang.txt`, `devdate.txt` (2026-12-12) and
-`simulate-store.txt` (`owned`), and Android's status bar demo mode.
+The templates and how to capture and render them are in [store-art.md](./store-art.md): `python store-art/render.py play`
+re-creates this set from the captures.
