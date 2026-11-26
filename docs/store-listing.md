@@ -7,7 +7,7 @@ when you change it there. The Google Play and App Store fields take the same tex
 
 | Field | English | Czech |
 | --- | --- | --- |
-| Name | Merry Countdown | Merry Countdown |
+| Name | Merry Countdown | Čekání na Vánoce (see [app-name.md](./app-name.md)) |
 | Subtitle (Apple, 30) | Advent Calendar & Wish List | Adventní kalendář a přání |
 | Category | Kids & family (Windows: Kids & family; Play: Parenting, Designed for Families) | |
 | Privacy policy | <https://mzikmund.dev/Apps/MerryCountdown/PrivacyPolicy> | same |
@@ -39,7 +39,7 @@ slideshow, personal messages behind doors, family events and an exact arrival ti
 
 ### Popis (Czech)
 
-Kolikrát se ještě vyspíme do Vánoc? Merry Countdown to ukáže ve velké, útulné animované scéně, které rozumí i děti,
+Kolikrát se ještě vyspíme do Vánoc? Čekání na Vánoce to ukáže ve velké, útulné animované scéně, které rozumí i děti,
 které ještě neumí číst.
 
 Každý den adventu otevřete jedna dvířka a najdete vtip se schovanou pointou, vánoční zajímavost, malý úkol, dobrý
@@ -57,7 +57,7 @@ Pro nejmenší:
 • Obrázky a velká tlačítka pro děti, které ještě neumí číst.
 • Čeština i angličtina, velký den na Štědrý večer nebo na Boží hod.
 
-Merry Countdown Pro odemkne tři další scény (polární záři, krb a vláček), vaše rodinné fotky jako prezentaci, vlastní
+Čekání na Vánoce Pro odemkne tři další scény (polární záři, krb a vláček), vaše rodinné fotky jako prezentaci, vlastní
 vzkazy za dvířky, rodinné události a přesný čas příchodu. Jednorázový nákup, žádné předplatné.
 
 ### Features (Windows, up to 20 × 200)
@@ -85,7 +85,7 @@ Czech: adventní kalendář, vánoce, advent, odpočet, ježíšek, přání, d�
 | Product ID | `dev.mzikmund.merrycountdown.pro` | |
 | Type | Durable, lifetime Forever (Play and Apple: non-consumable) | |
 | Price | US$2.99, converted per market; launch sale US$1.79 (−40%) until 2 December 2026, 00:00 UTC | |
-| Title | Merry Countdown Pro | Merry Countdown Pro |
+| Title | Merry Countdown Pro | Čekání na Vánoce Pro |
 | Description (200) | Three more scenes, your family photos as a slideshow, personal messages behind doors, family events and an exact arrival time. One purchase, no subscription. | Tři další scény, rodinné fotky jako prezentace, vlastní vzkazy za dvířky, rodinné události a přesný čas příchodu. Jednorázový nákup, žádné předplatné. |
 | Age rating | Doesn't require more restrictive ratings than its parent product | |
 
@@ -93,7 +93,7 @@ Czech: adventní kalendář, vánoce, advent, odpočet, ježíšek, přání, d�
 
 | Field | English | Czech |
 | --- | --- | --- |
-| App name (30) | Merry Countdown | Merry Countdown |
+| App name (30) | Merry Countdown | Čekání na Vánoce |
 | Short description (80) | Count the sleeps to Christmas: advent calendar doors and a wish list for kids | Počítejte spaní do Vánoc: adventní kalendář s dvířky a seznam přání pro děti |
 | Full description (4000) | The description above, without the sentence about the always-on-top window on Windows | Popis výše, bez věty o okně vždy navrchu na Windows |
 | Category | Parenting; target audience under 13, so the Families policy applies | |
