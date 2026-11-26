@@ -32,7 +32,7 @@ What changes per channel:
 | `ci.yml` | push: main, PR: main + release/** | n/a (Debug smoke test) | n/a |
 | `validate-manifest-version.yml` | push: main, PR: main + release/** | n/a | n/a |
 | `package-windows.yml` | push: main + release/v* + workflow_dispatch | Dev on main, Prod on release/v*, or picked on a manual run | No — manual Partner Center upload from artifact, see [windows-packaging.md](./windows-packaging.md) |
-| `package-android.yml` | push: main + release/v* + workflow_dispatch | Dev applicationId on main, Prod on release/v* | release/v* → Play Production track via `r0adkll/upload-google-play` |
+| `package-android.yml` | push: main + release/v* + workflow_dispatch | Dev applicationId on main, Prod on release/v*; a manual run picks the channel and Play track | release/v* → Play Production track via `r0adkll/upload-google-play` (drafts until `PLAY_RELEASE_STATUS` is `completed`) |
 | `package-ios.yml` | push: main + release/v* + workflow_dispatch | Dev Bundle ID on main, Prod on release/v* | release/v* → TestFlight via `apple-actions/upload-testflight-build` (manual "Submit for Review") |
 | `tag-release.yml` | workflow_run after the three packaging workflows on release/v* | n/a | Pushes annotated tag `v{version}` |
 | `prepare-release.yml` | workflow_dispatch | n/a | Cuts release/v{current}, opens PR for main bump |
