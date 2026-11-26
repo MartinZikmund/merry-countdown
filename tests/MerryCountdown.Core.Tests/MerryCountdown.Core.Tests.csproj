@@ -34,6 +34,7 @@
 
   <ItemGroup>
     <PackageReference Update="MSTest.TestFramework" Version="4.2.3" />
+    <PackageReference Include="SkiaSharp" Version="4.157.0" />
   </ItemGroup>
 
 </Project>
