@@ -115,11 +115,7 @@
         iOS. CFBundleDisplayName (home screen) keeps the localized name plus the full suffix;
         CFBundleName gets the short fixed form because of Apple's 16-character limit.
 
-        UNVERIFIED - this machine cannot build the iOS head. Note this swaps @(BundleResource)
-        items, which is the approach that turned out NOT to work for Android; the iOS bundle
-        pipeline runs later so it may well be fine here, but that is an assumption, not a result.
-        ContinueOnError keeps a mistake from blocking a local build. Verify on a Mac; if the label
-        comes out untagged, write over the staged copy the way ApplyMobileLabelAndroid does.
+        ContinueOnError keeps a mistake in the rewrite from blocking a local build.
 
         Forward slashes throughout: iOS builds only ever run on macOS.
     -->
@@ -130,7 +126,7 @@
     <Target Name="ApplyMobileLabelIos"
             Condition="'$(MSBuildProjectName)' == 'MerryCountdown' and '$(_MobileLabelSuffix)' != '' and '$(TargetPlatformIdentifier)' == 'ios'"
             Outputs="%(_MobileLabelIosSrc.RecursiveDir)"
-            BeforeTargets="_CompileAppManifest;CompileAppManifest;_CopyResourcesToBundle">
+            AfterTargets="_CopyResourcesToBundle">
         <PropertyGroup>
             <_MobileLabelIosSub>%(_MobileLabelIosSrc.RecursiveDir)</_MobileLabelIosSub>
             <_MobileLabelIosDest>$(IntermediateOutputPath)wtres/$(_MobileLabelIosSub)InfoPlist.strings</_MobileLabelIosDest>
@@ -142,10 +138,8 @@
                           Overwrite="true"
                           WriteOnlyWhenDifferent="true" />
 
-        <ItemGroup>
-            <BundleResource Remove="%(_MobileLabelIosSrc.FullPath)" />
-            <BundleResource Include="$(_MobileLabelIosDest)" Link="Resources/$(_MobileLabelIosSub)InfoPlist.strings" />
-        </ItemGroup>
+        <!-- Over the copy already in the bundle: swapping @(BundleResource) items doesn't reach it. -->
+        <Copy SourceFiles="$(_MobileLabelIosDest)" DestinationFolder="$(_AppBundlePath)$(_MobileLabelIosSub)" ContinueOnError="WarnAndContinue" />
     </Target>
 
     <!-- WebAssembly: surface the derived per-worktree dev-server port. The launch profiles are

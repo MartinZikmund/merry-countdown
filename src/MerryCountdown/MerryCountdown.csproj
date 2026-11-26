@@ -34,6 +34,8 @@
 
     <PropertyGroup Condition="'$(AppChannel)' == 'Dev'">
         <ApplicationTitle>Merry Countdown Dev</ApplicationTitle>
+        <!-- CFBundleName base for Dev builds, see WorktreeIdentity.targets. -->
+        <IosShortNameBase>Merry Countdown</IosShortNameBase>
         <ApplicationId>dev.mzikmund.merrycountdown.dev</ApplicationId>
     </PropertyGroup>
 
