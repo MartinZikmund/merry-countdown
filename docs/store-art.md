@@ -9,10 +9,12 @@ lives in `store-art/`: the templates are tracked, the captures (`raw*/`) and ren
 | --- | --- |
 | `compose.html` | Landscape screenshot frames, 3840 × 2160 (Microsoft Store, Play tablets). `?f=1..8&lang=en|cs`; for other captures `&dir=raw-tablet&tag=N` (the number on the door tag) and `&crop=x,y,w,h&rw=<capture width>&zoom=` for frame 3's zoomed door card. |
 | `compose-phone.html` | Portrait screenshot frames, 2160 × 3840 (Play phones), from `raw-phone/`. `?f=1..6&lang=en|cs`. |
+| `compose-ios.html` | App Store frames, `?device=iphone` (1320 × 2868) or `ipad` (2064 × 2752), `&f=1..6&lang=en|cs`, from `raw-iphone/` and `raw-ipad/`. |
 | `art.html` | Key art. `?kind=hero|poster|box|square|titled|feature`, optional `&sub=` subtitle and `&zoom=` to render a big layout at a smaller size. |
 | `tile.html` | The app icon tile at any size. `?s=512`. |
 | `seed/family-*.json` | The demo family (Emma and Leo / Ema and Kuba) for captures. |
-| `render.py` | Renders a whole set: `python store-art/render.py play` or `msstore`. |
+| `render.py` | Renders a whole set: `python store-art/render.py play`, `msstore` or `appstore`. |
+| `tools/iostap.m` | Taps and swipes a headless iOS Simulator, for driving the app during captures. |
 
 The templates use the app's own fonts, stickers and icon from `src/MerryCountdown/Assets/`, so the art follows the app.
 The copy on each frame is in the template's `copy` object, in English and Czech.
@@ -22,15 +24,17 @@ The copy on each frame is in the template's `copy` object, in English and Czech.
 ```bash
 python store-art/render.py play       # out-play/: icon, feature graphics, 6 phone + 7 tablet frames per language
 python store-art/render.py msstore    # out-msstore/: tiles, key art, 8 frames per language
+python store-art/render.py appstore   # out-appstore/: 6 iPhone and 6 iPad frames per language
 ```
 
-`render.py` finds Chrome on Windows and macOS, or takes `CHROME=<path>`. It runs headless Chrome at the exact output size.
+`render.py` finds Chrome on Windows and macOS (or Edge on macOS), or takes `CHROME=<path>`. It runs headless Chrome at the exact output size.
 The `play` target reproduces the set uploaded to Google Play on 2026-11-26 pixel for pixel. The `msstore` target's key
 art uses the templates' defaults; the Microsoft Store screenshots were framed from `raw/` captures of the Windows app.
 
 ## Capturing
 
-Captures go to `store-art/raw/` (Windows), `raw-phone/` and `raw-tablet/` (Android), named `<lang>-<frame>.png`:
+Captures go to `store-art/raw/` (Windows), `raw-phone/` and `raw-tablet/` (Android), `raw-iphone/` and `raw-ipad/`
+(iOS), named `<lang>-<frame>.png`:
 `1-sleeps`, `2-doors`, `3-door`, `4-wishes`, `5-display`, `scene-aurora`, `scene-fireplace`, `scene-train`.
 
 1. Build a Debug head with `-p:AppChannel=Prod -p:UnoDisableHotDesign=true`, in a throwaway worktree where
@@ -47,6 +51,20 @@ Captures go to `store-art/raw/` (Windows), `raw-phone/` and `raw-tablet/` (Andro
    `xcrun simctl status_bar booted override --time 9:41 --batteryState charged --batteryLevel 100`.
 5. The toy train moves: take a burst of screenshots and keep the one with the train in the middle.
 
+### iOS
+
+The App Store set came from the iPhone 18 Pro Max (1320 × 2868, exactly the 6.9" size) and iPad Pro 13" (M5)
+simulators, both in the dark theme (`xcrun simctl ui <udid> appearance dark`).
+
+- `LocalFolder` is `Library/Data` in the app's data container (`xcrun simctl get_app_container <udid> dev.mzikmund.merrycountdown data`).
+  Launch once so the folder exists, then copy the seed files in.
+- The language comes from launch arguments, not `devlang.txt`:
+  `xcrun simctl launch <udid> dev.mzikmund.merrycountdown -AppleLanguages "(cs)" -AppleLocale cs_CZ`.
+- Without Simulator.app on screen, drive the app with `tools/iostap` and capture with `xcrun simctl io <udid> screenshot`.
+- The clock's seconds flip all the time: take two captures 0.1 s apart and keep one where the sign is the same in both.
+  For the train, take a burst and keep the frame where the train is centred.
+- The iPad status bar shows the real date; `simctl status_bar` can't change it.
+
 Android captures used dedicated emulators (Pixel 9 Pro 1280 × 2856 and Pixel Tablet 2560 × 1600, 8 GB data partition)
 and an x64-only APK (`-p:RuntimeIdentifier=android-x64`), because a full Debug APK doesn't fit a default emulator.
 
@@ -58,5 +76,6 @@ and an x64-only APK (`-p:RuntimeIdentifier=android-x64`), because a full Debug A
 | Google Play | phone / tablet screenshots | 2160 × 3840 / 3840 × 2160 |
 | Microsoft Store | screenshots, hero | 3840 × 2160 |
 | Microsoft Store | poster / box art | 1440 × 2160 / 2160 × 2160 |
+| App Store | iPhone 6.9" / iPad 13" screenshots | 1320 × 2868 / 2064 × 2752 |
 
 The listing text that goes with them is in [store-listing.md](./store-listing.md).

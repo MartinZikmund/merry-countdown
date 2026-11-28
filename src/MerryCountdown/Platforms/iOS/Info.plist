@@ -33,6 +33,22 @@
 		<string>Assets.xcassets/icon.appiconset</string>
 		<key>UIApplicationSupportsIndirectInputEvents</key>
 		<true/>
+		<!-- Required from the iOS 27 SDK. Without UISceneDelegateClassName, Uno uses its own UnoUISceneDelegate. -->
+		<key>UIApplicationSceneManifest</key>
+		<dict>
+			<key>UIApplicationSupportsMultipleScenes</key>
+			<false/>
+			<key>UISceneConfigurations</key>
+			<dict>
+				<key>UIWindowSceneSessionRoleApplication</key>
+				<array>
+					<dict>
+						<key>UISceneConfigurationName</key>
+						<string>Default Configuration</string>
+					</dict>
+				</array>
+			</dict>
+		</dict>
 
 		<key>CFBundleLocalizations</key>
 		<array>
@@ -44,11 +60,9 @@
 		<key>CFBundleName</key>
 		<string>Merry Countdown</string>
 
-		<!--
-		Adjust this to your application's encryption usage.
+		<!-- Only the system's HTTPS (RevenueCat), which is exempt: skips the export compliance question on every upload. -->
 		<key>ITSAppUsesNonExemptEncryption</key>
 		<false/>
-		-->
 		<key>NSPhotoLibraryUsageDescription</key>
 	<string>Choose family photos to show behind the Christmas countdown. They stay on this device.</string>
 </dict>

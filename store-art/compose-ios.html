@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- App Store screenshots. ?device=iphone (1320x2868, 6.9") or ipad (2064x2752, 13"), &f=1..6&lang=en|cs.
+     Raw captures in raw-iphone/ and raw-ipad/. Laid out on a 2160-wide canvas and zoomed to the store size. -->
+<style>
+  @font-face { font-family: "Baloo 2"; src: url("../src/MerryCountdown/Assets/Fonts/Baloo2-Bold.ttf"); font-weight: 700; }
+  @font-face { font-family: "Patrick Hand"; src: url("../src/MerryCountdown/Assets/Fonts/PatrickHand-Regular.ttf"); }
+  :root { --midnight: #101A3E; --dusk: #3B2A7E; --gold: #FFC95C; --holly: #D62846; --fir: #1FA476; --snow: #F7F4FF; --lilac: #D9D4FF; }
+  * { margin: 0; box-sizing: border-box; }
+  body { width: 2160px; overflow: hidden; position: relative; color: var(--snow); font-family: "Baloo 2", sans-serif;
+    background: linear-gradient(170deg, var(--midnight) 0%, #1B1F55 45%, var(--dusk) 100%); }
+  .flake { position: absolute; border-radius: 50%; background: var(--snow); }
+  .hill { position: absolute; left: -30%; right: -30%; bottom: -1500px; height: 2300px; border-radius: 50%;
+    background: radial-gradient(ellipse at 50% 0%, #E9E6FB 0%, #B9BCE8 60%, #8E92D0 100%); opacity: .16; }
+
+  .copy { position: absolute; left: 170px; right: 170px; top: 170px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .tag { position: relative; width: 150px; height: 208px; margin-bottom: 64px; }
+  .tag .string { position: absolute; left: 50%; top: -400px; width: 4px; height: 415px; background: linear-gradient(var(--gold), #C99A3A); transform: translateX(-50%); opacity: .8; }
+  .tag .door { position: absolute; inset: 14px 0 0 0; background: var(--holly); border-radius: 75px 75px 16px 16px; border: 6px solid #F2B8C3;
+    box-shadow: 0 24px 50px rgba(0,0,0,.35), inset 0 -14px 0 rgba(0,0,0,.12); transform: rotate(-4deg); transform-origin: 50% 0; }
+  .tag .wreath { position: absolute; left: 50%; top: 36px; width: 92px; height: 92px; transform: translateX(-50%); border-radius: 50%; border: 16px solid var(--fir); display: grid; place-items: center; }
+  .tag .wreath span { font-size: 52px; line-height: 1; color: var(--snow); padding-top: 8px; }
+  .tag .knob { position: absolute; right: 24px; bottom: 38px; width: 16px; height: 16px; border-radius: 50%; background: var(--gold); }
+  h1 { font-size: 172px; line-height: 1.02; letter-spacing: -1px; text-wrap: balance; }
+  p { margin-top: 40px; font-family: "Patrick Hand", cursive; font-size: 96px; line-height: 1.16; color: var(--lilac); text-wrap: balance; }
+  .ipad .copy { top: 130px; }
+  .ipad .tag { display: none; }
+  .ipad h1 { font-size: 150px; }
+  .ipad p { margin-top: 28px; font-size: 84px; }
+
+  .glow { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(255,201,92,.26), transparent 72%); }
+  .device { position: absolute; background: #14141C; box-shadow: 0 70px 160px rgba(5,8,30,.8), inset 0 0 0 4px #2E2E3A; }
+  .device img { display: block; width: 100%; }
+  .iphone .device { border-radius: 150px; padding: 30px; }
+  .iphone .device img { border-radius: 122px; }
+  /* Simulator captures leave the Dynamic Island out. */
+  .iphone .device::before { content: ""; position: absolute; left: 50%; top: 62px; width: 23%; height: 2.6%; transform: translateX(-50%); border-radius: 60px; background: #050508; }
+  .ipad .device { border-radius: 70px; padding: 44px; }
+  .ipad .device img { border-radius: 30px; }
+  .crop { position: absolute; overflow: hidden; border-radius: 50px; box-shadow: 0 50px 120px rgba(5,8,30,.8), 0 0 0 12px #FFF8E6; background-repeat: no-repeat; }
+  .sticker { position: absolute; filter: drop-shadow(0 16px 22px rgba(5,8,30,.5)); }
+  .pro { position: absolute; display: flex; align-items: center; gap: 26px; padding: 22px 50px 22px 28px; border-radius: 100px;
+    background: var(--gold); color: #3A2208; font-size: 76px; box-shadow: 0 24px 60px rgba(5,8,30,.5); }
+  .pro img { width: 100px; height: 100px; }
+  .brand { position: absolute; left: 0; right: 0; bottom: 170px; display: flex; justify-content: center; align-items: center; gap: 34px; font-size: 76px; opacity: .92; }
+  .brand img { width: 150px; height: 150px; border-radius: 34px; box-shadow: 0 12px 30px rgba(5,8,30,.35); }
+</style>
+</head>
+<body>
+<div class="hill"></div>
+<script>
+const q = new URLSearchParams(location.search);
+const f = Number(q.get("f") ?? 1);
+const lang = q.get("lang") ?? "en";
+const device = q.get("device") ?? "iphone";
+const appName = { en: "Merry Countdown", cs: "Čekání na Vánoce" }[lang];
+
+// Output size, raw capture width, and the canvas height that keeps the output's aspect at 2160 wide.
+const spec = {
+  iphone: { out: [1320, 2868], rw: 1320, crop: "100,818,1120,1262" },
+  ipad: { out: [2064, 2752], rw: 2064, crop: "518,1018,1028,840" },
+}[device];
+const H = Math.round(2160 * spec.out[1] / spec.out[0]);
+document.body.classList.add(device);
+document.body.style.height = H + "px";
+document.documentElement.style.zoom = spec.out[0] / 2160;
+const raw = name => `raw-${device}/${lang}-${name}.png`;
+
+const copy = {
+  en: [
+    ["Make the wait for Christmas magical", "Kids count the sleeps in a cosy, animated scene, even before they can read."],
+    ["A little surprise every single day", "24 doors of jokes, missions and kind deeds make the wait fly by."],
+    ["Open today's door!", "A joke, a kind deed or a video, plus a secret note from you."],
+    ["Every kid writes to Santa", "Pick pictures if you can't write yet, sign the letter and send it flying."],
+    ["Northern lights, a fireplace or a toy train", "Pick the scene that makes your family smile."],
+    ["Made for little ones, relaxing for parents", "Everything stays on your device."],
+  ],
+  cs: [
+    ["Čekání na Vánoce plné kouzel", "Děti počítají spaní v útulné animované scéně, i když ještě neumí číst."],
+    ["Každý den malé překvapení", "24 dvířek s vtipy, úkoly a dobrými skutky. Čekání uteče jako voda."],
+    ["Otevři dnešní dvířka!", "Vtip, dobrý skutek nebo video, a k tomu tajný vzkaz od vás."],
+    ["Každé dítě píše Ježíškovi", "Kdo ještě neumí psát, vybere obrázky. Podepsat a ať dopis letí!"],
+    ["Polární záře, krb nebo vláček", "Vyberte scénu, která rozzáří celou rodinu."],
+    ["Pro nejmenší, v klidu pro rodiče", "Vše zůstává ve vašem zařízení."],
+  ],
+};
+const promises = {
+  en: [["star", "No ads, no accounts, no tracking"], ["lock", "Purchases, videos and sharing behind a grown-up check"], ["gift", "Pro is one purchase. No subscription."]],
+  cs: [["star", "Žádné reklamy, účty ani sledování"], ["lock", "Nákupy, videa a sdílení za kontrolou pro dospělé"], ["gift", "Pro jednou koupíte. Žádné předplatné."]],
+}[lang];
+// Czech typography: a one-letter word never ends a line.
+const nb = t => lang === "cs" ? t.replace(/(?<=^|\s)([aikosuvzAIKOSUVZ])\s/g, "$1 ") : t;
+const [title, sub] = copy[lang][f - 1].map(nb);
+
+const add = (html) => { document.body.insertAdjacentHTML("beforeend", html); return document.body.lastElementChild; };
+add(`<section class="copy"><div class="tag"><div class="string"></div><div class="door"><div class="wreath"><span>${f}</span></div><div class="knob"></div></div></div><h1>${title}</h1><p>${sub}</p></section>`);
+const sticker = (name, x, y, w, rot) => add(`<img class="sticker" src="../src/MerryCountdown/Assets/Stickers/${name}.svg" style="left:${x}px;top:${y}px;width:${w}px;transform:rotate(${rot}deg)">`);
+const glow = (x, y, s) => add(`<div class="glow" style="left:${x}px;top:${y}px;width:${s}px;height:${s}px"></div>`);
+
+// Where the main device sits: the phone shows almost whole, the tablet runs off the bottom edge.
+const main = device === "iphone" ? { x: 300, y: 1240, w: 1560 } : { x: 290, y: 860, w: 1580 };
+const shot = (name, { x = main.x, y = main.y, w = main.w, rot = 0 } = {}) =>
+  add(`<div class="device" style="left:${x}px;top:${y}px;width:${w}px;transform:rotate(${rot}deg)"><img src="${raw(name)}"></div>`);
+const low = y => device === "iphone" ? y : y * 0.62;   // sticker heights scale with the canvas
+
+switch (f) {
+  case 1:
+    glow(80, main.y, 2000);
+    shot("1-sleeps");
+    sticker("reindeer", 1780, low(1500), 300, 10);
+    sticker("gift", 70, low(2700), 250, -10);
+    break;
+  case 2:
+    glow(80, main.y, 2000);
+    shot("2-doors", { rot: 2 });
+    sticker("candy", 90, low(1480), 220, -14);
+    sticker("snowman", 1800, low(2900), 280, 8);
+    break;
+  case 3: {
+    shot("3-door", { rot: -2 });
+    add(`<div style="position:absolute;left:0;right:0;top:${main.y - 100}px;bottom:0;background:rgba(16,26,62,.35)"></div>`);
+    glow(230, main.y + 450, 1700);
+    // Zoom on the opened door's content; the crop box is in raw-capture pixels.
+    const [cx, cy, cw, ch] = (q.get("crop") ?? spec.crop).split(",").map(Number);
+    const s = Number(q.get("zoom") ?? (device === "iphone" ? 1.6 : 1.75));
+    const cy0 = device === "iphone" ? 2700 : 1950;
+    add(`<div class="crop" style="left:${1080 - cw * s / 2}px;top:${cy0 - ch * s / 2}px;width:${cw * s}px;height:${ch * s}px;background-image:url(${raw("3-door")});background-size:${spec.rw * s}px auto;background-position:${-cx * s}px ${-cy * s}px"></div>`);
+    sticker("star", 1820, low(1450), 200, 14);
+    sticker("gingerbread", 110, H - 560, 240, -12);
+    break;
+  }
+  case 4:
+    glow(80, main.y, 2000);
+    shot("4-wishes", { rot: -1.5 });
+    sticker("letter", 1790, low(1480), 290, 16);
+    sticker("teddy", 60, low(2500), 260, -10);
+    sticker("bike", 1810, low(3400), 260, 8);
+    break;
+  case 5: {
+    glow(80, main.y, 2000);
+    const scenes = ["scene-aurora", "scene-fireplace", "scene-train"];
+    const fan = device === "iphone"
+      ? [[40, 1500, -6, 940], [1180, 1500, 6, 940], [600, 1380, 0, 960]]
+      : [[30, 1120, -5, 1000], [1130, 1120, 5, 1000], [560, 1020, 0, 1040]];
+    fan.forEach(([x, y, r, w], i) => shot(scenes[i], { x, y, w, rot: r }));
+    add(`<div class="pro" style="left:50%;top:${fan[2][1] - 170}px;transform:translateX(-50%)"><img src="icon.png" alt="">Pro</div>`);
+    break;
+  }
+  case 6: {
+    glow(80, main.y, 2000);
+    const top = device === "iphone" ? 1900 : 1000;
+    const list = add(`<div style="position:absolute;left:150px;right:150px;top:${top}px;display:flex;flex-direction:column;gap:${device === "iphone" ? 110 : 70}px"></div>`);
+    promises.forEach(([icon, text], i) => {
+      list.insertAdjacentHTML("beforeend", `<div style="display:flex;align-items:center;gap:56px;padding:60px 64px;border-radius:50px;background:rgba(247,244,255,.1);box-shadow:inset 0 0 0 3px rgba(247,244,255,.14);transform:rotate(${[-1.2, 0.8, -0.6][i]}deg)">
+        <div style="flex:none;width:220px;height:220px;border-radius:50%;background:#FFF8E6;display:grid;place-items:center;box-shadow:0 20px 50px rgba(5,8,30,.4)"><img src="../src/MerryCountdown/Assets/Stickers/${icon}.svg" style="width:140px"></div>
+        <div style="font-size:96px;line-height:1.08">${nb(text)}</div></div>`);
+    });
+    add(`<div class="brand"><img src="icon.png" alt=""><span>${appName}</span></div>`);
+    sticker("teddy", 1800, H - 820, 260, 12);
+    break;
+  }
+}
+let seed = f * 9301;
+const rand = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+for (let i = 0; i < 180; i++) {
+  const r = 3 + rand() * 9;
+  const el = document.createElement("div");
+  el.className = "flake";
+  Object.assign(el.style, { width: r + "px", height: r + "px", left: rand() * 2160 + "px", top: rand() * H + "px", opacity: (0.15 + rand() * 0.55).toFixed(2) });
+  document.body.prepend(el);
+}
+</script>
+</body>
+</html>
