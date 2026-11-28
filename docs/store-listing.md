@@ -125,10 +125,14 @@ re-creates this set from the captures.
 | Promotional text (170) | Count the sleeps to Christmas: 24 advent doors, a letter to Santa for every kid and a cosy animated scene. No ads, no tracking. | Zkraťte si čekání do Vánoc: 24 adventních dvířek, dopis Ježíškovi pro každé dítě a útulná animovaná scéna. Bez reklam a sledování. |
 | Description (4000) | The description above, without the sentence about the always-on-top window on Windows | Popis výše, bez věty o okně vždy navrchu na Windows |
 | Keywords (100) | `advent calendar,christmas,advent,wish list,santa,kids,xmas,sleeps,december,family,doors,letter` | `adventní kalendář,advent,vánoce,ježíšek,přání,děti,odpočet,dopis,santa,rodina,dvířka,prosinec` |
-| Category | Lifestyle (primary), Kids: ages 5 and under | |
+| Category | Lifestyle (primary), Entertainment (secondary) | |
+| Age rating | 4+, age category *Not Applicable* (not in the Kids category) | |
 | Copyright | 2026 Martin Zikmund | |
 
 Keywords skip the words already in the name and subtitle, which Apple indexes anyway.
+
+The app isn't listed in the Kids category: *Made for Kids* is permanent once approved, and it would rule out ads
+later. The grown-up check still guards purchases, links and sharing.
 
 The in-app purchase is a **non-consumable** with the same id, title and description as the add-on above (Czech
 display name *Čekání na Vánoce Pro*). Apple has no discount offers for non-consumables, so the launch sale is a
